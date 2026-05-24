@@ -1626,19 +1626,21 @@
     width: 24px;
     height: 24px;
     background: white;
-    border: 3px solid var(--primary);
+    border: 3px solid var(--thumb-color, var(--primary));
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 3px 8px rgba(0,160,130,0.4);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    transition: border-color 0.2s;
   }
   .price-slider-input::-moz-range-thumb {
     width: 24px;
     height: 24px;
     background: white;
-    border: 3px solid var(--primary);
+    border: 3px solid var(--thumb-color, var(--primary));
     border-radius: 50%;
     cursor: pointer;
-    box-shadow: 0 3px 8px rgba(0,160,130,0.4);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    transition: border-color 0.2s;
   }
   .price-slider-range {
     display: flex;
@@ -1671,6 +1673,48 @@
     color: var(--primary);
     font-family: 'Manrope', sans-serif;
     letter-spacing: -0.4px;
+  }
+
+  /* Price feedback box (เปลี่ยนสีตามราคา) */
+  .price-feedback {
+    margin-top: 10px;
+    padding: 11px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s;
+  }
+  .price-feedback.fb-1 { background: #D1F0E8; color: #007A63; }   /* เขียว เข้ม */
+  .price-feedback.fb-2 { background: #E6F7F3; color: #00A082; }   /* เขียว อ่อน */
+  .price-feedback.fb-3 { background: #FFF1DC; color: #B86E00; }   /* เหลือง */
+  .price-feedback.fb-4 { background: #FFE4CC; color: #C2410C; }   /* ส้ม */
+  .price-feedback.fb-5 { background: #FEE2E2; color: #B91C1C; }   /* แดง */
+
+  /* ranking badge บนการ์ดทริป */
+  .trip-rank-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    margin-bottom: 6px;
+    letter-spacing: 0.2px;
+  }
+  .trip-rank-badge.best {
+    background: linear-gradient(135deg, #FFA630, #FF6B00);
+    color: white;
+    box-shadow: 0 2px 6px rgba(255,107,0,0.3);
+  }
+  .trip-rank-badge.recommended {
+    background: var(--primary-light);
+    color: var(--primary-dark);
   }
 
   /* ========== Pickup Points (Passenger) ========== */
@@ -1808,6 +1852,242 @@
   }
   .pickup-sum-row.total .pickup-sum-label { font-size: 14px; color: var(--text); font-weight: 700; }
   .pickup-sum-row.total .pickup-sum-val { font-size: 24px; color: var(--primary); letter-spacing: -0.5px; }
+
+  /* ====== Return Trip Dialog ====== */
+  .return-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    z-index: 10001;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    animation: fadeIn 0.25s ease;
+  }
+  .return-sheet {
+    background: var(--bg);
+    width: 100%;
+    max-width: 390px;
+    border-radius: 28px 28px 0 0;
+    padding: 8px 22px 26px;
+    max-height: 92vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .return-sheet::-webkit-scrollbar { width: 0; }
+  .return-confetti {
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .return-success-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    margin-top: 4px;
+    margin-bottom: 14px;
+  }
+  .return-title {
+    font-size: 22px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+  .return-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .return-route-card {
+    background: var(--bg-soft);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .return-route-icon {
+    font-size: 20px;
+    width: 36px;
+    height: 36px;
+    background: var(--primary-light);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .return-route-info { flex: 1; min-width: 0; }
+  .return-route-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .return-route-name {
+    font-size: 14px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    margin-top: 2px;
+  }
+  .return-date-picker {
+    margin-bottom: 16px;
+  }
+  .return-date-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .return-date-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: inherit;
+    font-weight: 700;
+    background: var(--bg);
+    outline: none;
+    color: var(--text);
+  }
+  .return-date-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-light);
+  }
+  .return-quick-dates {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .return-quick-btn {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  .return-quick-btn:hover, .return-quick-btn.active {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+  }
+  .return-trips-list {
+    margin-bottom: 16px;
+  }
+  .return-trip-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .return-trip-card:hover {
+    border-color: var(--primary);
+    transform: translateX(2px);
+  }
+  .return-trip-card.selected {
+    border-color: var(--primary);
+    background: var(--primary-light);
+  }
+  .return-trip-card .avatar { width: 38px; height: 38px; font-size: 12px; }
+  .rtc-info { flex: 1; min-width: 0; }
+  .rtc-time {
+    font-size: 14px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+  }
+  .rtc-driver {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .rtc-price {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'Manrope', sans-serif;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .return-no-trips {
+    text-align: center;
+    padding: 20px 14px;
+    background: var(--bg-soft);
+    border-radius: 14px;
+    margin-bottom: 16px;
+  }
+  .return-no-trips-emoji { font-size: 36px; margin-bottom: 8px; }
+  .return-no-trips-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .return-actions {
+    display: flex;
+    gap: 10px;
+  }
+  .return-skip-btn {
+    flex: 1;
+    padding: 14px;
+    background: var(--bg-soft);
+    color: var(--text);
+    border: none;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .return-skip-btn:hover { background: var(--border); }
+  .return-book-btn {
+    flex: 2;
+    padding: 14px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 4px 14px rgba(0, 160, 130, 0.35);
+  }
+  .return-book-btn:hover { background: var(--primary-dark); }
+  .return-book-btn:disabled {
+    background: var(--border-strong);
+    color: var(--text-light);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
 
   /* reset / load more */
   .end-marker {
@@ -2429,6 +2709,16 @@ const i18n = {
   fullRoute: { TH: 'เส้นทางเต็ม', EN: 'Full route' },
   perPassenger: { TH: '/คน', EN: '/passenger' },
 
+  // Price feedback (เปลี่ยนตาม slider)
+  priceFb1: { TH: '⭐ ราคาดีมาก! คุณจะอยู่ลำดับบนๆ', EN: '⭐ Great price! You\'ll rank top' },
+  priceFb2: { TH: '✅ ราคาดี ได้ผู้โดยสารง่าย', EN: '✅ Good price, easy to get riders' },
+  priceFb3: { TH: '👌 ราคาพอดี เหมาะสม', EN: '👌 Fair price, balanced' },
+  priceFb4: { TH: '⚠️ ราคาเริ่มสูง ผู้โดยสารอาจน้อย', EN: '⚠️ Getting high, fewer riders' },
+  priceFb5: { TH: '🔥 ราคาแพงไป อาจไม่มีคนจอง', EN: '🔥 Too expensive, may get no bookings' },
+  rank: { TH: 'อันดับ', EN: 'Rank' },
+  bestDeal: { TH: '🏆 ดีลที่ดีที่สุด', EN: '🏆 Best deal' },
+  recommended: { TH: '⭐ แนะนำ', EN: '⭐ Recommended' },
+
   // Pickup points (passenger)
   pickupPoints: { TH: 'เลือกจุดขึ้นรถ', EN: 'Choose pickup point' },
   pickupHint: { TH: 'นั่งจากไหนก็ได้ตามเส้นทาง — ราคาคิดตามระยะที่นั่งจริง', EN: 'Hop on anywhere along the route — pay only for the distance you travel' },
@@ -2493,6 +2783,18 @@ const i18n = {
   bookSeat: { TH: 'จองที่นั่งนี้', EN: 'Book this seat' },
   bookSuccess: { TH: 'จองสำเร็จ! (จำลอง)', EN: 'Booked successfully! (demo)' },
   postSuccess: { TH: 'ลงประกาศสำเร็จ! (จำลอง)', EN: 'Posted successfully! (demo)' },
+
+  // Return trip dialog
+  returnTitle: { TH: '🔄 จะจองขากลับเลยไหม?', EN: '🔄 Book a return trip?' },
+  returnSub: { TH: 'เราเจอทริปขากลับให้คุณแล้ว', EN: 'We found return trips for you' },
+  returnDate: { TH: 'วันที่กลับ', EN: 'Return date' },
+  returnNoTrips: { TH: 'ยังไม่มีทริปขากลับ ตั้งแจ้งเตือนรอ?', EN: 'No return trips yet. Set alert?' },
+  returnSkip: { TH: 'ไม่กลับ ขอบคุณ', EN: 'Skip, thanks' },
+  returnBook: { TH: 'จองขากลับ', EN: 'Book return' },
+  returnAlert: { TH: '🔔 ตั้งแจ้งเตือน', EN: '🔔 Set alert' },
+  alertSet: { TH: 'ตั้งแจ้งเตือนแล้ว! เราจะส่งข้อความเมื่อมีทริป', EN: 'Alert set! We\'ll notify you when a trip is found' },
+  returnRoute: { TH: 'เส้นทางขากลับ', EN: 'Return route' },
+  bookedBoth: { TH: '✓ จองทั้งขาไป-ขากลับสำเร็จ!', EN: '✓ Both trips booked!' },
   createGuide: { TH: 'สร้างบทความรีวิวของคุณ (จำลอง)', EN: 'Create your travel guide (demo)' },
   openPost: { TH: 'เปิดบทความรีวิว: ', EN: 'Open post: ' },
 
@@ -3194,21 +3496,30 @@ function scrollHomeToTop() {
   setTimeout(() => updateHome(), 400);
 }
 
-// ทริปจริง (mock) เมื่อกรอกครบทั้งต้น-ปลาย
+// ทริปจริง (mock) เมื่อกรอกครบทั้งต้น-ปลาย — มี pricePerKm สำหรับจัดอันดับ
 const mockTrips = [
   {
-    time: '07:00 → 16:00', meta: '9 ชม.', price: 650,
-    driver: 'สมชาย', initials: 'สม', car: 'Honda CR-V', rating: 4.8, seats: 2, av: 'av-1'
-  },
-  {
-    time: '09:30 → 19:00', meta: '9.5 ชม.', price: 580,
+    time: '09:30 → 19:00', meta: '9.5 ชม.', price: 580, pricePerKm: 1.6, distance: 696,
     driver: 'นภัทร', initials: 'นภ', car: 'Toyota Camry', rating: 4.9, seats: 3, av: 'av-2'
   },
   {
-    time: '14:00 → 23:30', meta: '9.5 ชม.', price: 700,
+    time: '07:00 → 16:00', meta: '9 ชม.', price: 650, pricePerKm: 1.9, distance: 696,
+    driver: 'สมชาย', initials: 'สม', car: 'Honda CR-V', rating: 4.8, seats: 2, av: 'av-1'
+  },
+  {
+    time: '14:00 → 23:30', meta: '9.5 ชม.', price: 700, pricePerKm: 2.0, distance: 696,
     driver: 'วรพล', initials: 'วร', car: 'Mazda CX-5', rating: 4.7, seats: 1, av: 'av-3'
   }
 ];
+
+// คะแนนรวมสำหรับจัดอันดับ — ราคาถูก+เรตติ้งสูง = คะแนนสูง = อยู่บนสุด
+// ราคาถูก (1.5) = 50 คะแนน, ราคาแพง (2.5) = 0 คะแนน
+// rating 5.0 = 50 คะแนน, rating 4.0 = 0 คะแนน
+function getTripScore(tr) {
+  const priceScore = (2.5 - tr.pricePerKm) / (2.5 - 1.5) * 50;
+  const ratingScore = (tr.rating - 4.0) / (5.0 - 4.0) * 50;
+  return priceScore + ratingScore;
+}
 
 // ทริปที่เปิดรับ (mock) ใช้แสดงใน search sheet
 const availableTrips = [
@@ -3592,9 +3903,19 @@ function updateHome() {
     return;
   }
 
-  // กรณี 3: กรอกครบทั้งต้น-ปลาย → แสดงทริปที่มี
-  let tripCards = mockTrips.map(tr => `
+  // กรณี 3: กรอกครบทั้งต้น-ปลาย → แสดงทริปที่มี (เรียงตามคะแนน)
+  const sortedTrips = [...mockTrips].sort((a, b) => getTripScore(b) - getTripScore(a));
+  let tripCards = sortedTrips.map((tr, idx) => {
+    // badge: อันดับ 1 = best deal, อันดับ 2 = recommended
+    let badge = '';
+    if (idx === 0) {
+      badge = `<div class="trip-rank-badge best">${t('bestDeal')} · ฿${tr.pricePerKm.toFixed(1)}/${currentLang === 'EN' ? 'km' : 'กม.'}</div>`;
+    } else if (idx === 1) {
+      badge = `<div class="trip-rank-badge recommended">${t('recommended')} · ฿${tr.pricePerKm.toFixed(1)}/${currentLang === 'EN' ? 'km' : 'กม.'}</div>`;
+    }
+    return `
     <div class="trip-card" data-screen="detail">
+      ${badge}
       <div class="trip-top">
         <div>
           <div class="trip-time">${tr.time}</div>
@@ -3610,7 +3931,7 @@ function updateHome() {
         </div>
       </div>
     </div>
-  `).join('');
+  `;}).join('');
   results.innerHTML = `
     <div class="section-title-row">
       <p class="section-title">${from} → ${to}${t('found')}${mockTrips.length}${t('foundTrips')}${t('closeP')}</p>
@@ -3756,6 +4077,9 @@ function getScreens() { return {
           <span class="pib-sub" id="price-sub">${t('fullRoute')}${t('perPassenger')}</span>
         </div>
         <span class="pib-value">฿<span id="price-total">—</span></span>
+      </div>
+      <div class="price-feedback" id="price-feedback">
+        <span id="price-feedback-text">⭐</span>
       </div>
     </div>
 
@@ -4188,20 +4512,71 @@ function updatePriceSlider() {
 
   document.getElementById('price-val').textContent = price.toFixed(1);
 
-  // สีเขียวบน track ตาม value
-  const percent = ((price - 1.5) / (2.5 - 1.5)) * 100;
-  slider.style.background = `linear-gradient(to right, var(--primary) 0%, var(--primary) ${percent}%, var(--border) ${percent}%, var(--border) 100%)`;
+  // เลือกสี + feedback ตามช่วงราคา
+  let color, feedbackClass, feedbackKey;
+  if (price <= 1.7) {
+    color = '#00A082';        // เขียวเข้ม
+    feedbackClass = 'fb-1';
+    feedbackKey = 'priceFb1';
+  } else if (price <= 1.9) {
+    color = '#43A047';        // เขียว
+    feedbackClass = 'fb-2';
+    feedbackKey = 'priceFb2';
+  } else if (price <= 2.1) {
+    color = '#FFA630';        // เหลือง/ส้ม
+    feedbackClass = 'fb-3';
+    feedbackKey = 'priceFb3';
+  } else if (price <= 2.3) {
+    color = '#FF6B00';        // ส้มเข้ม
+    feedbackClass = 'fb-4';
+    feedbackKey = 'priceFb4';
+  } else {
+    color = '#DC2626';        // แดง
+    feedbackClass = 'fb-5';
+    feedbackKey = 'priceFb5';
+  }
 
-  // คำนวณรายได้ประมาณ (ถ้ามีระยะทางจากที่แล้ว)
+  // สี track + thumb
+  const percent = ((price - 1.5) / (2.5 - 1.5)) * 100;
+  slider.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${percent}%, var(--border) ${percent}%, var(--border) 100%)`;
+  // เปลี่ยนสี thumb border ด้วย CSS variable
+  slider.style.setProperty('--thumb-color', color);
+
+  // เปลี่ยนสีตัวเลขราคา + ฿ ใหญ่ด้านบน
+  const priceValEl = document.getElementById('price-val');
+  if (priceValEl) priceValEl.style.color = color;
+  const priceSliderValue = document.querySelector('.price-slider-value');
+  if (priceSliderValue) priceSliderValue.style.color = color;
+
+  // เปลี่ยนสีของกล่องรายได้ (฿ และตัวเลข)
+  const incomeBox = document.querySelector('.price-income-box');
+  const incomeValue = document.querySelector('.pib-value');
+  if (incomeBox) {
+    // พื้นกล่องเปลี่ยนเป็นสีอ่อนของ feedback
+    const bgMap = { 'fb-1': '#D1F0E8', 'fb-2': '#E6F7F3', 'fb-3': '#FFF1DC', 'fb-4': '#FFE4CC', 'fb-5': '#FEE2E2' };
+    incomeBox.style.background = bgMap[feedbackClass] || 'var(--primary-light)';
+  }
+  if (incomeValue) {
+    incomeValue.style.color = color;
+  }
+
+  // อัปเดต feedback
+  const fb = document.getElementById('price-feedback');
+  const fbText = document.getElementById('price-feedback-text');
+  if (fb && fbText) {
+    fb.className = 'price-feedback ' + feedbackClass;
+    fbText.textContent = t(feedbackKey);
+  }
+
+  // คำนวณรายได้ประมาณ
   const totalEl = document.getElementById('price-total');
   if (totalEl) {
     if (tripData.distanceKm) {
       const total = Math.round(tripData.distanceKm * price);
       totalEl.textContent = total.toLocaleString();
     } else {
-      // ประมาณจากเส้นตรง (ถ้ามีพิกัด)
       if (tripData.fromCoords && tripData.toCoords) {
-        const approxKm = distanceKm(tripData.fromCoords, tripData.toCoords) * 1.3; // *1.3 เผื่อทาง
+        const approxKm = distanceKm(tripData.fromCoords, tripData.toCoords) * 1.3;
         const total = Math.round(approxKm * price);
         totalEl.textContent = '~' + total.toLocaleString();
       } else {
@@ -4332,13 +4707,126 @@ function goToMap() {
 }
 
 function confirmPost() {
-  const info = window._routeInfo || {};
-  alert('ลงประกาศสำเร็จ! (จำลอง)\n\n' +
-        '• ' + tripData.from + ' → ' + tripData.to + '\n' +
-        '• ' + tripData.date + ' เวลา ' + tripData.time + '\n' +
-        '• ระยะทาง: ' + (info.distance || '—') + '\n' +
-        '• เวลาขับ: ' + (info.duration || '—'));
+  showReturnDialog();
+}
+
+// ====== Return Trip Dialog ======
+function showReturnDialog() {
+  // หาทริปขากลับ (สลับ from/to)
+  const returnTrips = availableTrips.filter(tr =>
+    (tr.from.includes(tripData.to) || tripData.to.includes(tr.from)) &&
+    (tr.to.includes(tripData.from) || tripData.from.includes(tr.to))
+  );
+
+  // คำนวณวัน default — 3 วันหลังจากวันที่ไป
+  const baseDate = tripData.date ? new Date(tripData.date) : new Date();
+  const defaultReturn = new Date(baseDate);
+  defaultReturn.setDate(defaultReturn.getDate() + 3);
+  const defaultDateStr = defaultReturn.toISOString().split('T')[0];
+
+  // สร้างรายการทริปขากลับ
+  let tripsHtml = '';
+  if (returnTrips.length === 0) {
+    tripsHtml = `
+      <div class="return-no-trips">
+        <div class="return-no-trips-emoji">🔍</div>
+        <div class="return-no-trips-text">${t('returnNoTrips')}</div>
+        <button class="return-quick-btn active" onclick="setAlert()">${t('returnAlert')}</button>
+      </div>
+    `;
+  } else {
+    tripsHtml = '<div class="return-trips-list">' + returnTrips.map((tr, i) => `
+      <div class="return-trip-card ${i === 0 ? 'selected' : ''}" data-rt-idx="${i}" onclick="selectReturnTrip(${i})">
+        <div class="avatar ${tr.av}">${tripInitials(tr)}</div>
+        <div class="rtc-info">
+          <div class="rtc-time">${tripDate(tr)}</div>
+          <div class="rtc-driver">${tripDriver(tr)} • ⭐${tr.rating} • ${tr.seats}${t('seatsAvail')}</div>
+        </div>
+        <div class="rtc-price">฿${tr.price}</div>
+      </div>
+    `).join('') + '</div>';
+  }
+
+  const overlay = document.createElement('div');
+  overlay.className = 'return-overlay';
+  overlay.id = 'return-overlay';
+  overlay.innerHTML = `
+    <div class="return-sheet" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="return-confetti">
+        <span class="return-success-badge">✓ ${currentLang === 'EN' ? 'Booked' : 'จองสำเร็จ'}</span>
+      </div>
+      <div class="return-title">${t('returnTitle')}</div>
+      <div class="return-sub">${t('returnSub')}</div>
+
+      <div class="return-route-card">
+        <div class="return-route-icon">🔄</div>
+        <div class="return-route-info">
+          <div class="return-route-label">${t('returnRoute')}</div>
+          <div class="return-route-name">${tripData.to} → ${tripData.from}</div>
+        </div>
+      </div>
+
+      <div class="return-date-picker">
+        <div class="return-date-label">📅 ${t('returnDate')}</div>
+        <input type="date" id="return-date" class="return-date-input" value="${defaultDateStr}"/>
+        <div class="return-quick-dates">
+          <button class="return-quick-btn" onclick="setReturnDate(0)">${currentLang === 'EN' ? 'Same day' : 'วันเดียวกัน'}</button>
+          <button class="return-quick-btn" onclick="setReturnDate(1)">+1 ${currentLang === 'EN' ? 'day' : 'วัน'}</button>
+          <button class="return-quick-btn active" onclick="setReturnDate(3)">+3 ${currentLang === 'EN' ? 'days' : 'วัน'}</button>
+          <button class="return-quick-btn" onclick="setReturnDate(7)">+7 ${currentLang === 'EN' ? 'days' : 'วัน'}</button>
+        </div>
+      </div>
+
+      ${tripsHtml}
+
+      <div class="return-actions">
+        <button class="return-skip-btn" onclick="closeReturnDialog(true)">${t('returnSkip')}</button>
+        <button class="return-book-btn" id="return-book-btn" onclick="confirmReturnTrip()" ${returnTrips.length === 0 ? 'disabled' : ''}>${t('returnBook')}</button>
+      </div>
+    </div>
+  `;
+  overlay.addEventListener('click', () => closeReturnDialog(true));
+  document.body.appendChild(overlay);
+}
+
+let selectedReturnIdx = 0;
+
+function selectReturnTrip(idx) {
+  selectedReturnIdx = idx;
+  document.querySelectorAll('.return-trip-card').forEach(el => el.classList.remove('selected'));
+  const card = document.querySelector(`[data-rt-idx="${idx}"]`);
+  if (card) card.classList.add('selected');
+}
+
+function setReturnDate(daysAfter) {
+  const input = document.getElementById('return-date');
+  if (!input) return;
+  const baseDate = tripData.date ? new Date(tripData.date) : new Date();
+  baseDate.setDate(baseDate.getDate() + daysAfter);
+  input.value = baseDate.toISOString().split('T')[0];
+  // active state
+  document.querySelectorAll('.return-quick-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function setAlert() {
+  alert(t('alertSet'));
+}
+
+function confirmReturnTrip() {
+  closeReturnDialog(false);
+  alert(t('bookedBoth'));
   show('trips');
+}
+
+function closeReturnDialog(goToTrips) {
+  const overlay = document.getElementById('return-overlay');
+  if (overlay) overlay.remove();
+  if (goToTrips) {
+    alert(t('postSuccess'));
+    show('trips');
+  }
 }
 
 // Geocoding via Nominatim (OSM) — แปลงชื่อสถานที่เป็นพิกัด GPS
@@ -4416,20 +4904,82 @@ async function initMap() {
     map.fitBounds(routeLine.getBounds(), { padding: [40, 40], maxZoom: 8 });
 
     const distKm = (route.distance / 1000).toFixed(0);
+    const distKmNum = route.distance / 1000;
     const durHr = Math.floor(route.duration / 3600);
     const durMin = Math.round((route.duration % 3600) / 60);
     const durText = durHr > 0 ? durHr + ' ชม. ' + durMin + ' น.' : durMin + ' น.';
-    const fuelCost = Math.round((route.distance / 1000) * 2.5);
 
-    window._routeInfo = { distance: distKm + ' กม.', duration: durText, fuel: '฿' + fuelCost };
+    // เก็บระยะทางไว้สำหรับคำนวณราคา
+    tripData.distanceKm = distKmNum;
+    const pricePerKm = tripData.pricePerKm || 2.0;
+    const incomePerPassenger = Math.round(distKmNum * pricePerKm);
+
+    window._routeInfo = {
+      distance: distKm + ' กม.',
+      duration: durText,
+      income: '฿' + incomePerPassenger
+    };
 
     document.getElementById('rs-route').textContent = tripData.from + ' → ' + tripData.to;
     const dt = new Date(tripData.date);
-    const dateStr = dt.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
+    const locale = currentLang === 'EN' ? 'en-US' : 'th-TH';
+    const dateStr = dt.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
     document.getElementById('rs-when').textContent = dateStr + ' • ' + tripData.time;
     document.getElementById('rs-distance').textContent = distKm + ' กม.';
     document.getElementById('rs-duration').textContent = durText;
-    document.getElementById('rs-fuel').textContent = '฿' + fuelCost;
+    document.getElementById('rs-income').textContent = '฿' + incomePerPassenger;
+
+    // ====== Generate Pickup Points ======
+    // คัด pickup จุดตามจุด waypoints บนเส้นทาง (4 จุดระหว่างต้นทาง-ปลายทาง)
+    const routeCoords = route.geometry.coordinates; // [lng, lat]
+    const numPickups = 4; // จุดระหว่างทาง
+    const pickupCoords = [];
+    for (let i = 1; i <= numPickups; i++) {
+      const idx = Math.floor(routeCoords.length * i / (numPickups + 1));
+      if (routeCoords[idx]) pickupCoords.push(routeCoords[idx]);
+    }
+
+    // reverse geocode pickup points (async — ไม่รอจบก็ render ก่อน)
+    const pickupPoints = [
+      { name: tripData.from, distFromStart: 0, isStart: true }
+    ];
+    pickupCoords.forEach((c, i) => {
+      const distFraction = (i + 1) / (numPickups + 1);
+      pickupPoints.push({
+        name: currentLang === 'EN' ? `Stop ${i + 1}` : `จุดที่ ${i + 1}`,
+        distFromStart: distKmNum * distFraction,
+        lat: c[1], lng: c[0]
+      });
+    });
+    pickupPoints.push({ name: tripData.to, distFromStart: distKmNum, isEnd: true });
+
+    renderPickupPoints(pickupPoints, distKmNum, pricePerKm);
+
+    // วาด marker pickup บนแผนที่
+    pickupCoords.forEach((c, i) => {
+      const stopIcon = L.divIcon({
+        className: 'cp-marker',
+        html: `<div style="background:#FFA630;color:white;width:24px;height:24px;border-radius:50%;border:2.5px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;font-family:'Manrope',sans-serif">${i + 1}</div>`,
+        iconSize: [24, 24], iconAnchor: [12, 12]
+      });
+      L.marker([c[1], c[0]], { icon: stopIcon }).addTo(map);
+    });
+
+    // async reverse geocode pickup names (เปลี่ยนชื่อ "จุดที่ N" เป็นชื่อจริง)
+    pickupCoords.forEach(async (c, i) => {
+      try {
+        const lang = currentLang === 'EN' ? 'en' : 'th';
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${c[1]}&lon=${c[0]}&accept-language=${lang}&zoom=12`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const parts = (data.display_name || '').split(',').map(s => s.trim());
+        const realName = parts[0] || parts[1];
+        if (realName) {
+          const el = document.querySelector(`[data-pickup-idx="${i + 1}"] .pickup-name`);
+          if (el) el.textContent = realName;
+        }
+      } catch (e) {}
+    });
 
     loading.style.display = 'none';
     summary.style.display = 'block';
@@ -4441,6 +4991,54 @@ async function initMap() {
     loading.style.color = '#991B1B';
     loading.querySelector('.spinner').style.display = 'none';
   }
+}
+
+// render pickup points list
+function renderPickupPoints(points, totalKm, pricePerKm) {
+  const list = document.getElementById('pickup-list');
+  if (!list) return;
+
+  const pickupAt = currentLang === 'EN' ? 'Pickup at' : 'ขึ้นที่';
+  const kmLabel = currentLang === 'EN' ? ' km' : ' กม.';
+
+  list.innerHTML = points.map((pt, idx) => {
+    // ราคาคิดจาก pickup → ปลายทาง
+    const remainKm = totalKm - pt.distFromStart;
+    const price = pt.isEnd ? 0 : Math.round(remainKm * pricePerKm);
+    const km = remainKm.toFixed(0);
+
+    const startClass = pt.isStart ? 'start' : '';
+    const endClass = pt.isEnd ? 'end' : '';
+
+    return `
+      <div class="pickup-item ${startClass} ${endClass}" data-pickup-idx="${idx}"
+           ${!pt.isEnd ? `onclick="selectPickup(${idx}, ${remainKm}, ${pricePerKm})"` : ''}>
+        ${idx > 0 ? '<div class="pickup-line" style="bottom:50%;top:-50%"></div>' : ''}
+        ${idx < points.length - 1 ? '<div class="pickup-line" style="top:50%"></div>' : ''}
+        <div class="pickup-dot-wrap">
+          <div class="pickup-dot"></div>
+        </div>
+        <div class="pickup-content">
+          <div class="pickup-name">${pt.name}</div>
+          <div class="pickup-meta">${pt.isStart ? (currentLang === 'EN' ? 'Starting point' : 'จุดเริ่มต้น') :
+                                    pt.isEnd ? (currentLang === 'EN' ? 'Destination' : 'ปลายทาง') :
+                                    pickupAt + ' • ' + (totalKm - remainKm).toFixed(0) + kmLabel + ' ' + (currentLang === 'EN' ? 'in' : 'จากต้นทาง')}</div>
+        </div>
+        ${!pt.isEnd ? `
+          <div class="pickup-price-tag">
+            <div class="ppt-price">฿${price}</div>
+            <div class="ppt-km">${km}${kmLabel}</div>
+          </div>
+        ` : `<div class="pickup-price-tag"><div class="ppt-km">${currentLang === 'EN' ? 'End' : 'สิ้นสุด'}</div></div>`}
+      </div>
+    `;
+  }).join('');
+}
+
+function selectPickup(idx, remainKm, pricePerKm) {
+  document.querySelectorAll('.pickup-item').forEach(el => el.classList.remove('active'));
+  const item = document.querySelector(`[data-pickup-idx="${idx}"]`);
+  if (item) item.classList.add('active');
 }
 
 navBtns.forEach(b => b.addEventListener('click', () => show(b.dataset.screen)));
