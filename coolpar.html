@@ -1,0 +1,3183 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coolpar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --primary: #00A082;
+    --primary-dark: #007A63;
+    --primary-light: #E6F7F3;
+    --primary-soft: #D1F0E8;
+    --accent: #1A1A2E;
+    --text: #1A1A2E;
+    --text-muted: #6B7280;
+    --text-light: #9CA3AF;
+    --bg: #FFFFFF;
+    --bg-soft: #F7F8FA;
+    --border: #ECEEF1;
+    --border-strong: #DDE1E6;
+    --success: #00A082;
+    --success-bg: #D1F0E8;
+    --warning: #FFA630;
+    --warning-bg: #FFF1DC;
+  }
+  body {
+    font-family: 'IBM Plex Sans Thai', 'Manrope', -apple-system, sans-serif;
+    background: linear-gradient(135deg, #00A082 0%, #006B5C 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  .phone {
+    width: 390px;
+    max-width: 100%;
+    background: var(--bg);
+    border-radius: 36px;
+    overflow: hidden;
+    box-shadow: 0 30px 70px rgba(0, 107, 92, 0.4), 0 10px 30px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    height: 780px;
+  }
+  .status-bar {
+    background: var(--bg);
+    color: var(--text);
+    padding: 14px 26px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    position: relative;
+    min-height: 50px;
+  }
+  .status-time {
+    z-index: 1;
+  }
+  .status-icons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 1;
+    font-size: 14px;
+  }
+  .status-icons .signal,
+  .status-icons .wifi,
+  .status-icons .battery {
+    color: var(--text);
+  }
+  .status-icons .battery {
+    width: 24px;
+    height: 12px;
+    border: 1.2px solid var(--text);
+    border-radius: 3px;
+    position: relative;
+    display: inline-block;
+  }
+  .status-icons .battery::after {
+    content: '';
+    position: absolute;
+    right: -3px;
+    top: 3px;
+    width: 2px;
+    height: 4px;
+    background: var(--text);
+    border-radius: 0 1px 1px 0;
+  }
+  .status-icons .battery::before {
+    content: '';
+    position: absolute;
+    top: 1.5px;
+    left: 1.5px;
+    bottom: 1.5px;
+    width: 75%;
+    background: var(--text);
+    border-radius: 1px;
+  }
+  /* Dynamic Island */
+  .dynamic-island {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 34px;
+    background: #000;
+    border-radius: 999px;
+    z-index: 2;
+  }
+  .header-wrap {
+    background: var(--bg);
+  }
+  .header {
+    padding: 16px 22px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg);
+  }
+  .logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    box-shadow: 0 4px 12px rgba(0, 160, 130, 0.3);
+  }
+  .brand {
+    font-weight: 800;
+    font-size: 26px;
+    flex: 1;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.6px;
+  }
+  .brand span { color: var(--primary); }
+  .bell {
+    color: var(--text-muted);
+    font-size: 20px;
+    cursor: pointer;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: var(--bg-soft);
+  }
+
+  /* language toggle (TH/EN swap) */
+  .lang-toggle {
+    width: 64px;
+    height: 30px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .lang-toggle:hover { border-color: var(--primary); }
+  .lang-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 30px;
+    height: 24px;
+    background: var(--primary);
+    color: white;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(0, 160, 130, 0.35);
+    z-index: 2;
+  }
+  .lang-toggle.en .lang-knob {
+    transform: translateX(30px);
+  }
+  .lang-other {
+    position: absolute;
+    top: 0;
+    width: 32px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    color: var(--text-muted);
+    z-index: 1;
+    transition: opacity 0.2s;
+  }
+  .lang-other.r { right: 0; }
+  .lang-other.l { left: 0; }
+  .lang-toggle:not(.en) .lang-other.l { opacity: 0; pointer-events: none; }
+  .lang-toggle.en .lang-other.r { opacity: 0; pointer-events: none; }
+
+  .screen {
+    flex: 1;
+    overflow-y: auto;
+    padding: 22px 22px 18px;
+    background: var(--bg);
+    position: relative;
+  }
+  .screen.no-pad { padding: 0; }
+  .screen::-webkit-scrollbar { width: 0; }
+
+  .nav {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+    padding: 10px 0 8px;
+  }
+  .nav-btn {
+    background: none;
+    border: none;
+    padding: 6px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    color: var(--text-light);
+    font-family: inherit;
+    transition: color 0.2s;
+  }
+  .nav-btn .icon { font-size: 22px; }
+  .nav-btn .label {
+    font-size: 9.5px;
+    font-weight: 600;
+    font-family: 'Manrope', sans-serif;
+    text-align: center;
+    line-height: 1.2;
+    padding: 0 2px;
+  }
+  .nav-btn.active { color: var(--primary); }
+
+  h2 {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+  }
+
+  /* promote tagline */
+  .tagline {
+    font-size: 20px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    color: var(--primary);
+    margin: 0 0 22px;
+    letter-spacing: -0.4px;
+    line-height: 1.2;
+  }
+  .section-title {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+
+  /* section title with back button on the right */
+  .section-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .section-title-row .section-title {
+    margin-bottom: 0;
+    flex: 1;
+    min-width: 0;
+  }
+  .section-back-btn {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 5px 11px 5px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    transition: all 0.15s;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .section-back-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+  }
+
+  /* search box (home) */
+  .search-box {
+    background: var(--bg-soft);
+    border-radius: 18px;
+    padding: 6px 18px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+  }
+  .search-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .search-row:last-child { border-bottom: none; }
+  .search-row .dot { font-size: 14px; }
+  .search-row input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    color: var(--text);
+    font-weight: 500;
+    min-width: 0;
+  }
+  .search-row input::placeholder { color: var(--text-light); font-weight: 400; }
+
+  /* trip card */
+  .trip-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .trip-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 160, 130, 0.12);
+  }
+  .trip-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+  .trip-time { font-size: 17px; font-weight: 700; font-family: 'Manrope', sans-serif; letter-spacing: -0.3px; }
+  .trip-route { font-size: 12px; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
+  .trip-price { font-size: 20px; font-weight: 800; color: var(--primary); font-family: 'Manrope', sans-serif; letter-spacing: -0.5px; }
+  .trip-driver {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: 'Manrope', sans-serif;
+  }
+  .av-1 { background: var(--primary-soft); color: var(--primary-dark); }
+  .av-2 { background: #DBEAFE; color: #1E40AF; }
+  .av-3 { background: #FEF3C7; color: #92400E; }
+  .driver-info { flex: 1; font-size: 14px; font-weight: 600; }
+  .driver-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; font-weight: 400; }
+
+  /* detail */
+  .back-btn-inline {
+    background: var(--bg-soft);
+    border: none;
+    padding: 8px 14px 8px 10px;
+    margin-bottom: 16px;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    border-radius: 999px;
+  }
+  .driver-profile { text-align: center; padding: 12px 0 20px; }
+  .driver-profile .avatar {
+    width: 84px;
+    height: 84px;
+    font-size: 26px;
+    margin: 0 auto 14px;
+    box-shadow: 0 8px 20px rgba(0, 160, 130, 0.2);
+  }
+  .driver-name { font-size: 20px; font-weight: 800; font-family: 'Manrope', sans-serif; letter-spacing: -0.3px; }
+  .driver-rating { font-size: 13px; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
+  .route-box { background: var(--bg-soft); border-radius: 18px; padding: 20px; margin: 16px 0; }
+  .route-stop { display: flex; align-items: center; gap: 14px; }
+  .route-line { border-left: 2px dashed var(--border-strong); margin-left: 8px; height: 22px; }
+  .stop-name { font-size: 15px; font-weight: 600; }
+  .stop-time { font-size: 12px; color: var(--text-muted); margin-top: 2px; font-weight: 500; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .info-box { background: var(--bg-soft); padding: 14px 16px; border-radius: 16px; }
+  .info-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+  .info-value { font-size: 15px; font-weight: 700; margin-top: 4px; font-family: 'Manrope', sans-serif; }
+  .price-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    margin-bottom: 18px;
+  }
+  .price-row span:first-child { font-size: 14px; color: var(--text-muted); font-weight: 500; }
+  .price-row span:last-child { font-size: 28px; font-weight: 800; color: var(--primary); font-family: 'Manrope', sans-serif; letter-spacing: -0.5px; }
+
+  /* buttons */
+  .btn-primary {
+    width: 100%;
+    padding: 16px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    box-shadow: 0 4px 14px rgba(0, 160, 130, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  /* form field group (post screen new style) */
+  .field-group {
+    background: var(--bg-soft);
+    border-radius: 18px;
+    padding: 4px 18px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+  }
+  .field-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .field-row:last-child { border-bottom: none; }
+  .field-icon { width: 26px; text-align: center; font-size: 16px; }
+  .field-row input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    font-family: inherit;
+    outline: none;
+    color: var(--text);
+    font-weight: 600;
+    min-width: 0;
+  }
+  .field-row input::placeholder { color: var(--text-light); font-weight: 400; }
+
+  .error-msg {
+    background: #FEF2F2;
+    border: 1px solid #FECACA;
+    color: #991B1B;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+
+  /* tabs (trips screen) */
+  .tab-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+    background: var(--bg-soft);
+    padding: 4px;
+    border-radius: 14px;
+  }
+  .tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--text-muted);
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .tab.active {
+    background: var(--bg);
+    color: var(--text);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+
+  .status-pill {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+  }
+  .pill-success { background: var(--success-bg); color: var(--success); }
+  .pill-warning { background: var(--warning-bg); color: var(--warning); }
+  .my-trip {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .trip-when { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .trip-when-time { font-size: 13px; color: var(--primary); font-weight: 700; font-family: 'Manrope', sans-serif; }
+  .trip-name { font-size: 17px; font-weight: 700; font-family: 'Manrope', sans-serif; letter-spacing: -0.3px; }
+  .trip-sub { font-size: 13px; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
+
+  /* messages list */
+  .chat-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 4px; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background 0.15s;
+  }
+  .chat-item:hover { background: var(--bg-soft); }
+  .chat-item .avatar { width: 48px; height: 48px; font-size: 15px; }
+  .chat-body { flex: 1; min-width: 0; }
+  .chat-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+  .chat-name { font-size: 15px; font-weight: 700; font-family: 'Manrope', sans-serif; }
+  .chat-time { font-size: 11px; color: var(--text-light); font-weight: 500; }
+  .chat-last {
+    font-size: 13px; color: var(--text-muted);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-weight: 500;
+  }
+  .badge {
+    background: var(--primary); color: white; border-radius: 999px;
+    font-size: 11px; font-weight: 800; min-width: 22px; height: 22px;
+    padding: 0 7px; display: flex; align-items: center; justify-content: center;
+    font-family: 'Manrope', sans-serif;
+  }
+
+  /* chat view */
+  .chat-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 0 16px; border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .chat-header .avatar { width: 42px; height: 42px; font-size: 14px; }
+  .chat-name-block { font-size: 15px; font-weight: 700; font-family: 'Manrope', sans-serif; }
+  .chat-status { font-size: 11px; color: var(--primary); font-weight: 600; margin-top: 2px; }
+  .chat-feed { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .bubble {
+    max-width: 78%; padding: 11px 16px; border-radius: 20px;
+    font-size: 14px; line-height: 1.45; word-wrap: break-word; font-weight: 500;
+  }
+  .bubble.them { background: var(--bg-soft); color: var(--text); border-bottom-left-radius: 6px; align-self: flex-start; }
+  .bubble.me { background: var(--primary); color: white; border-bottom-right-radius: 6px; align-self: flex-end; }
+  .chat-input-row { display: flex; gap: 10px; align-items: center; }
+  .chat-input {
+    flex: 1; padding: 12px 18px; border: 1px solid var(--border);
+    border-radius: 999px; font-size: 14px; font-family: inherit; outline: none;
+    background: var(--bg-soft); font-weight: 500;
+  }
+  .chat-input:focus { border-color: var(--primary); background: var(--bg); }
+  .send-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--primary); color: white; border: none; cursor: pointer;
+    font-size: 16px; flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 160, 130, 0.3);
+  }
+  .send-btn:hover { background: var(--primary-dark); }
+
+  /* profile */
+  .profile-head { text-align: center; padding: 16px 0 24px; }
+  .profile-head .avatar {
+    width: 88px; height: 88px; font-size: 26px; margin: 0 auto 14px;
+    background: var(--primary-soft); color: var(--primary-dark);
+    box-shadow: 0 8px 20px rgba(0, 160, 130, 0.2);
+  }
+  .profile-name { font-size: 20px; font-weight: 800; font-family: 'Manrope', sans-serif; letter-spacing: -0.3px; }
+  .profile-rating { font-size: 13px; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
+  .stat { background: var(--bg-soft); padding: 16px 10px; border-radius: 16px; text-align: center; }
+  .stat-num { font-size: 22px; font-weight: 800; font-family: 'Manrope', sans-serif; color: var(--primary); letter-spacing: -0.5px; }
+  .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 4px; font-weight: 600; }
+  .menu-item {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; padding: 14px 4px; background: none; border: none;
+    border-bottom: 1px solid var(--border); cursor: pointer;
+    font-size: 15px; text-align: left; font-family: inherit;
+    color: var(--text); font-weight: 600;
+  }
+  .menu-item:last-child { border-bottom: none; }
+  .menu-item:hover { background: var(--bg-soft); border-radius: 12px; }
+  .menu-item .left { display: flex; align-items: center; gap: 14px; }
+  .menu-item .icon-bg {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: var(--primary-light); display: flex;
+    align-items: center; justify-content: center;
+    color: var(--primary); font-size: 18px;
+  }
+  .chevron { color: var(--text-light); font-size: 20px; font-weight: 400; }
+
+  /* map screen */
+  .map-screen-wrap { position: relative; height: 100%; display: flex; flex-direction: column; }
+  #map { flex: 1; width: 100%; background: #E8F4F0; z-index: 1; }
+  .back-btn-map {
+    position: absolute; top: 16px; left: 16px; z-index: 1000;
+    background: rgba(255,255,255,0.95); backdrop-filter: blur(8px);
+    border: none; padding: 10px 16px 10px 12px;
+    color: var(--text); font-size: 14px; font-weight: 600; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: inherit; border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .map-loading {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: white; padding: 18px 24px; border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    font-size: 14px; font-weight: 600; color: var(--text);
+    z-index: 999; display: flex; align-items: center; gap: 10px;
+  }
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2.5px solid var(--primary-light);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .route-summary {
+    background: white; padding: 16px 22px 18px;
+    border-top: 1px solid var(--border);
+    border-radius: 22px 22px 0 0; margin-top: -22px;
+    position: relative; z-index: 2;
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.08);
+  }
+  .route-handle {
+    width: 40px; height: 4px; background: var(--border-strong);
+    border-radius: 999px; margin: 0 auto 12px;
+  }
+  .route-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px;
+  }
+  .route-from-to { font-size: 15px; font-weight: 700; font-family: 'Manrope', sans-serif; }
+  .route-stats-pill {
+    background: var(--primary-light); color: var(--primary-dark);
+    padding: 6px 12px; border-radius: 999px;
+    font-size: 12px; font-weight: 700;
+  }
+  .route-detail-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px; margin-bottom: 14px;
+  }
+  .route-detail {
+    background: var(--bg-soft); padding: 10px 12px;
+    border-radius: 12px; text-align: center;
+  }
+  .rd-label {
+    font-size: 10px; color: var(--text-muted); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .rd-value {
+    font-size: 15px; font-weight: 800; font-family: 'Manrope', sans-serif;
+    color: var(--text); margin-top: 2px;
+  }
+  .rd-value.primary { color: var(--primary); }
+  .gps-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--primary-light); color: var(--primary-dark);
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 700; margin-bottom: 12px;
+  }
+  .gps-dot {
+    width: 6px; height: 6px; background: var(--primary);
+    border-radius: 50%; animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.3); }
+  }
+
+  .note {
+    margin-top: 20px;
+    text-align: center;
+    color: white;
+    font-size: 13px;
+    opacity: 0.92;
+    font-weight: 500;
+  }
+
+  /* empty state banner */
+  .hero-banner {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border-radius: 20px;
+    padding: 20px 22px;
+    color: white;
+    margin-bottom: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-banner::after {
+    content: '🚗';
+    position: absolute;
+    right: -10px;
+    bottom: -10px;
+    font-size: 90px;
+    opacity: 0.18;
+  }
+  .hero-title {
+    font-size: 18px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+  }
+  .hero-sub {
+    font-size: 13px;
+    opacity: 0.9;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* destination grid (popular places) */
+  .dest-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .dest-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    font-family: inherit;
+  }
+  .dest-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 160, 130, 0.12);
+  }
+  .dest-emoji { font-size: 24px; margin-bottom: 8px; }
+  .dest-name {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    margin-bottom: 2px;
+  }
+  .dest-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* horizontal scroll suggested routes */
+  .h-scroll {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    margin: 0 -22px 18px;
+    padding: 4px 22px 12px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    overscroll-behavior-x: contain;
+  }
+  .h-scroll::-webkit-scrollbar { display: none; height: 0; }
+  .h-scroll > * { scroll-snap-align: start; }
+  .suggest-card {
+    flex-shrink: 0;
+    width: 160px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .suggest-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+  .suggest-emoji { font-size: 22px; margin-bottom: 8px; }
+  .suggest-to {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    margin-bottom: 4px;
+  }
+  .suggest-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .suggest-price {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'Manrope', sans-serif;
+  }
+  .suggest-price small {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-left: 2px;
+  }
+
+  /* photo destination cards (popular places with real images) */
+  .photo-card {
+    flex-shrink: 0;
+    width: 150px;
+    background: var(--bg);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    text-align: left;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .photo-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  }
+  .photo-card .img-wrap {
+    position: relative;
+    width: 100%;
+    height: 110px;
+    overflow: hidden;
+    background: var(--bg-soft);
+  }
+  .photo-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s;
+  }
+  .photo-card:hover img { transform: scale(1.08); }
+  .photo-card .img-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.5) 100%);
+  }
+  .photo-card .img-name {
+    position: absolute;
+    bottom: 8px;
+    left: 10px;
+    right: 10px;
+    color: white;
+    font-size: 15px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.3px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  }
+  .photo-card .card-body {
+    padding: 10px 12px 12px;
+  }
+  .photo-card .pc-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .photo-card .pc-price {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'Manrope', sans-serif;
+  }
+  .photo-card .pc-price small {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-left: 2px;
+  }
+
+  /* Coolpar Star section */
+  .star-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 8px 0 6px;
+  }
+  .star-title {
+    font-size: 22px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .star-title .star { color: #FFA630; }
+  .create-guide-btn {
+    background: none;
+    border: 1.5px dashed var(--border-strong);
+    color: var(--text-light);
+    padding: 8px 14px 8px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+  }
+  .create-guide-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+  }
+  .star-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  /* post search bar */
+  .post-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 10px 16px;
+    margin-bottom: 14px;
+    transition: all 0.2s;
+  }
+  .post-search:focus-within {
+    border-color: var(--primary);
+    background: var(--bg);
+    box-shadow: 0 0 0 3px var(--primary-light);
+  }
+  .post-search-icon {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+  .post-search input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    color: var(--text);
+    font-weight: 500;
+    min-width: 0;
+  }
+  .post-search input::placeholder {
+    color: var(--text-light);
+    font-weight: 400;
+  }
+  .post-search-clear {
+    background: var(--border);
+    border: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--text-muted);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .post-search-clear.show { display: flex; }
+  .post-search-clear:hover { background: var(--border-strong); }
+
+  /* quick filter chips */
+  .filter-chips {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    margin: 0 -22px 14px;
+    padding: 0 22px 4px;
+    scrollbar-width: none;
+  }
+  .filter-chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .chip:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .chip.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+  }
+
+  /* no results */
+  .no-results {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .no-results-emoji {
+    font-size: 36px;
+    margin-bottom: 10px;
+  }
+
+  /* posts masonry (2 columns, staggered) */
+  .posts-grid {
+    column-count: 2;
+    column-gap: 12px;
+    margin-bottom: 8px;
+  }
+  /* เยื้องคอลัมน์ขวาให้ลงมาเล็กน้อย เพื่อความเหลื่อม */
+  .posts-grid .post-card:nth-child(2) {
+    margin-top: 28px;
+  }
+
+  /* review post card */
+  .post-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 12px;
+    display: block;
+    width: 100%;
+  }
+  .post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    border-color: var(--primary);
+  }
+  /* รูป 70% ของ aspect ratio (3:4 portrait แนวตั้ง) */
+  .post-cover {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background: var(--bg-soft);
+    overflow: hidden;
+    position: relative;
+  }
+  .post-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .post-rank {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    color: var(--text);
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .post-rank.top { background: #FFA630; color: white; }
+  .post-province-tag {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    color: white;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+  }
+  /* body 30% — กระชับ */
+  .post-body {
+    padding: 8px 10px 10px;
+  }
+  .post-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .post-author .avatar {
+    width: 20px;
+    height: 20px;
+    font-size: 9px;
+  }
+  .post-author-info { flex: 1; min-width: 0; }
+  .post-author-name {
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .post-title {
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.2px;
+    margin-bottom: 6px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .post-stats {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  .post-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+  }
+  .post-stat.liked { color: #DC2626; }
+
+  /* reset / load more */
+  .end-marker {
+    text-align: center;
+    padding: 24px 0 12px;
+    margin-top: 8px;
+  }
+  .end-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+  .reset-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 4px 14px rgba(0, 160, 130, 0.35);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .reset-btn:hover { background: var(--primary-dark); }
+  /* compact search pill (home top) */
+  .search-pill {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 12px 18px 12px 16px;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0, 160, 130, 0.10);
+    transition: all 0.2s;
+  }
+  .search-pill:hover {
+    border-color: var(--primary);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 160, 130, 0.18);
+  }
+  .search-pill .pill-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .search-pill .pill-text {
+    flex: 1;
+    min-width: 0;
+  }
+  .search-pill .pill-main {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    color: var(--text);
+  }
+  .search-pill .pill-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 1px;
+    font-weight: 500;
+  }
+  .search-pill .pill-arrow {
+    color: var(--text-light);
+    font-size: 18px;
+  }
+
+  /* full search overlay (เปิดเมื่อกด pill) */
+  .search-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0;
+    animation: fadeIn 0.2s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .search-sheet {
+    background: var(--bg);
+    width: 100%;
+    max-width: 390px;
+    border-radius: 24px 24px 0 0;
+    padding: 18px 22px 26px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .sheet-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--border-strong);
+    border-radius: 999px;
+    margin: 0 auto 16px;
+  }
+  .sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .sheet-title {
+    font-size: 18px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.3px;
+  }
+  .sheet-close {
+    background: var(--bg-soft);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sheet-close:hover { background: var(--border); }
+
+  /* compact trip row in search sheet */
+  .sheet-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0 12px;
+  }
+  .sheet-divider .line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .sheet-divider .text {
+    font-size: 11px;
+    color: var(--text-light);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+  }
+  .sheet-section-title {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sheet-section-title .count {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    background: var(--bg-soft);
+    padding: 3px 8px;
+    border-radius: 999px;
+  }
+  .mini-trip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .mini-trip:hover {
+    border-color: var(--primary);
+    transform: translateX(2px);
+  }
+  .mini-trip .avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+  .mini-trip-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .mini-trip-route {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.2px;
+  }
+  .mini-trip-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .mini-trip-price {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'Manrope', sans-serif;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .mini-trip-price small {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+    display: block;
+    margin-top: 1px;
+  }
+
+  /* promo banner */
+  .promo-banner {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border-radius: 20px;
+    padding: 18px 20px;
+    margin-bottom: 22px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 22px rgba(0, 160, 130, 0.3);
+  }
+  .promo-banner:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 160, 130, 0.4);
+  }
+  .promo-banner::before {
+    content: '';
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    width: 120px;
+    height: 120px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+  }
+  .promo-banner::after {
+    content: '';
+    position: absolute;
+    bottom: -40px;
+    right: 30px;
+    width: 80px;
+    height: 80px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+  }
+  .promo-icon {
+    width: 52px;
+    height: 52px;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(4px);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 26px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    padding: 3px 0;
+  }
+  .promo-icon-label {
+    font-size: 9px;
+    font-weight: 800;
+    color: white;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: 0.3px;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .promo-content {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+  }
+  .promo-title {
+    font-size: 16px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.3px;
+    margin-bottom: 3px;
+  }
+  .promo-sub {
+    font-size: 12px;
+    opacity: 0.92;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  .promo-highlight {
+    font-weight: 800;
+    background: rgba(255,255,255,0.2);
+    padding: 1px 7px;
+    border-radius: 6px;
+    font-family: 'Manrope', sans-serif;
+  }
+  .promo-arrow {
+    width: 32px;
+    height: 32px;
+    background: white;
+    color: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  /* CO2 impact card */
+  .co2-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .co2-leaf {
+    position: absolute;
+    top: -18px;
+    right: -10px;
+    font-size: 80px;
+    opacity: 0.06;
+    transform: rotate(-15deg);
+  }
+  .co2-happy-earth {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    width: 80px;
+    height: 67px;
+    z-index: 2;
+    filter: drop-shadow(0 4px 10px rgba(0, 160, 130, 0.3));
+    animation: bounce-earth 2.5s ease-in-out infinite;
+  }
+  /* แขนกดไลค์ - เด้งขึ้นลง */
+  .earth-arm-left {
+    transform-origin: 22px 52px;
+    animation: like-bounce 1.2s ease-in-out infinite;
+  }
+  @keyframes like-bounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-3px) rotate(-6deg); }
+  }
+  @keyframes bounce-earth {
+    0%, 100% { transform: translateY(-50%) rotate(-6deg); }
+    50% { transform: translateY(calc(-50% - 5px)) rotate(6deg); }
+  }
+  .co2-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+  }
+  .co2-badge {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .co2-live-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--primary);
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  .co2-date {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  .co2-main {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 4px;
+    position: relative;
+    z-index: 1;
+  }
+  .co2-number {
+    font-size: 30px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    color: var(--primary);
+    letter-spacing: -0.7px;
+    font-variant-numeric: tabular-nums;
+  }
+  .co2-unit {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+  }
+  .co2-label {
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 600;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+  }
+  .co2-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    position: relative;
+    z-index: 1;
+  }
+  .co2-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .co2-stat-icon {
+    font-size: 16px;
+    width: 30px;
+    height: 30px;
+    background: var(--bg-soft);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .co2-stat-text {
+    min-width: 0;
+  }
+  .co2-stat-value {
+    font-size: 14px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    line-height: 1.1;
+  }
+  .co2-stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div>
+<div class="phone">
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="dynamic-island"></div>
+    <div class="status-icons">
+      <span class="signal">●●●●</span>
+      <span class="wifi">📶</span>
+      <span class="battery"></span>
+    </div>
+  </div>
+
+  <div class="header-wrap">
+    <div class="header" id="app-header">
+      <div class="brand">Cool<span>par</span></div>
+      <div class="lang-toggle" id="lang-toggle" onclick="toggleLang()">
+        <div class="lang-other l">TH</div>
+        <div class="lang-other r">EN</div>
+        <div class="lang-knob" id="lang-knob">TH</div>
+      </div>
+      <span class="bell">🔔</span>
+    </div>
+  </div>
+
+  <div id="screen" class="screen"></div>
+
+  <div class="nav" id="app-nav">
+    <button class="nav-btn active" data-screen="home">
+      <span class="icon">🏠</span>
+      <span class="label">Home</span>
+    </button>
+    <button class="nav-btn" data-screen="post">
+      <span class="icon">➕</span>
+      <span class="label">แชร์รถของคุณ</span>
+    </button>
+    <button class="nav-btn" data-screen="trips">
+      <span class="icon">🛣️</span>
+      <span class="label">เดินทาง</span>
+    </button>
+    <button class="nav-btn" data-screen="messages">
+      <span class="icon">💬</span>
+      <span class="label">ข้อความ</span>
+    </button>
+    <button class="nav-btn" data-screen="profile">
+      <span class="icon">👤</span>
+      <span class="label">โปรไฟล์</span>
+    </button>
+  </div>
+</div>
+<p class="note" id="footer-note">Tap "Share Ride" → enter location → see real GPS map</p>
+</div>
+
+<script>
+// ====== ระบบแปลภาษา (i18n) ======
+let currentLang = 'TH';
+
+const i18n = {
+  // หัวข้อหลัก
+  greet: { TH: 'ไปไหนดีครับ, ', EN: 'Where to today, ' },
+  userName: { TH: 'คุณวีรนุช', EN: 'Weeranuch' },
+  tagline: { TH: 'Carpool with Coolpar', EN: 'Carpool with Coolpar' },
+
+  // search pill
+  pillStart: { TH: 'ค้นหารถ', EN: 'Find a ride' },
+  pillSub: { TH: 'เลือกต้นทาง ปลายทาง วันเดินทาง', EN: 'Choose origin, destination, date' },
+
+  // promo banner
+  promoTitle: { TH: 'เปิดแชร์รถของคุณ', EN: 'Share your ride' },
+  promoRole: { TH: 'ผู้ขับ', EN: 'Driver' },
+  promoSub1: { TH: 'ประหยัดค่าเดินทางได้ ', EN: 'Save on travel costs ' },
+  promoSub2: { TH: '/กม.', EN: '/km' },
+
+  // CO2 card
+  co2Label: { TH: 'ปริมาณคาร์บอนที่ลดไปวันนี้', EN: 'CO₂ reduced today' },
+  tripsLabel: { TH: 'ทริปวันนี้', EN: 'Trips today' },
+  distanceLabel: { TH: 'ระยะทางรวม', EN: 'Total distance' },
+  km: { TH: ' กม.', EN: ' km' },
+
+  // sections
+  popularDest: { TH: 'จุดหมายยอดนิยม', EN: 'Popular destinations' },
+  fromOrigin: { TH: 'น่าสนใจจาก ', EN: 'Interesting trips from ' },
+  pickDest: { TH: '💡 เลือกปลายทาง', EN: '💡 Choose destination' },
+  pickDestSub: { TH: 'เลื่อนการ์ดด้านบนแล้วกดเลือก หรือกด 🔍 ด้านบนเพื่อพิมพ์เอง', EN: 'Scroll cards above to pick, or tap 🔍 to type' },
+
+  // trip cards
+  foundTrips: { TH: ' เส้นทาง', EN: ' routes' },
+  found: { TH: ' (พบ ', EN: ' (' },
+  closeP: { TH: ')', EN: ' found)' },
+  seatsAvail: { TH: ' ที่นั่งว่าง', EN: ' seats left' },
+  perPerson: { TH: '/คน', EN: '/person' },
+
+  // Coolpar Star
+  starCreate: { TH: '➕ create your travel guide', EN: '➕ create your travel guide' },
+  searchPlaceholder: { TH: 'ค้นหาจังหวัด เช่น เชียงใหม่ ปาย ภูเก็ต', EN: 'Search provinces e.g. Chiang Mai, Pai, Phuket' },
+  chipAll: { TH: 'ทั้งหมด', EN: 'All' },
+  chipNorth: { TH: '🏔️ ภาคเหนือ', EN: '🏔️ North' },
+  chipCentral: { TH: '🏛️ ภาคกลาง', EN: '🏛️ Central' },
+  chipSouth: { TH: '🏖️ ภาคใต้', EN: '🏖️ South' },
+  chipNortheast: { TH: '🌾 ภาคอีสาน', EN: '🌾 Northeast' },
+  chipEast: { TH: '🌊 ภาคตะวันออก', EN: '🌊 East' },
+  noResults1: { TH: 'ไม่พบโพสที่ตรงกับ "', EN: 'No posts found for "' },
+  noResults2: { TH: '"', EN: '"' },
+  noResultsHint: { TH: 'ลองค้นหาด้วยชื่อจังหวัดอื่น', EN: 'Try a different province' },
+  endMarker: { TH: '— จบ ', EN: '— ' },
+  posts: { TH: ' โพส —', EN: ' posts —' },
+  resetBtn: { TH: '↑ กลับขึ้นบน · หาโพสใหม่', EN: '↑ Back to top · Find new posts' },
+
+  // nav
+  navHome: { TH: 'Home', EN: 'Home' },
+  navPost: { TH: 'แชร์รถของคุณ', EN: 'Share Ride' },
+  navTrips: { TH: 'เดินทาง', EN: 'Trips' },
+  navMessages: { TH: 'ข้อความ', EN: 'Messages' },
+  navProfile: { TH: 'โปรไฟล์', EN: 'Profile' },
+
+  // post screen
+  postTitle: { TH: 'ลงประกาศเส้นทาง', EN: 'Post a trip' },
+  postSub: { TH: 'บอกเราว่าจะไปไหน เมื่อไหร่', EN: 'Tell us where and when' },
+  postRoute: { TH: 'เส้นทาง', EN: 'Route' },
+  postWhen: { TH: 'เมื่อไหร่', EN: 'When' },
+  postFrom: { TH: 'ต้นทาง เช่น กรุงเทพ', EN: 'Origin e.g. Bangkok' },
+  postTo: { TH: 'ปลายทาง', EN: 'Destination' },
+  next: { TH: 'ถัดไป →', EN: 'Next →' },
+
+  // trips screen
+  tripsTitle: { TH: 'การเดินทาง', EN: 'My Trips' },
+  tripsSub: { TH: 'ทริปทั้งหมดของคุณ', EN: 'All your trips' },
+  upcoming: { TH: 'จะมาถึง', EN: 'Upcoming' },
+  past: { TH: 'ผ่านมาแล้ว', EN: 'Past' },
+  confirmed: { TH: 'ยืนยันแล้ว', EN: 'Confirmed' },
+  pending: { TH: 'รอตอบรับ', EN: 'Pending' },
+  driver: { TH: 'คนขับ: ', EN: 'Driver: ' },
+
+  // messages
+  messagesTitle: { TH: 'ข้อความ', EN: 'Messages' },
+  messagesSub: { TH: 'คุยกับคนขับและผู้โดยสาร', EN: 'Chat with drivers and passengers' },
+  online: { TH: '● ออนไลน์', EN: '● Online' },
+  typeMsg: { TH: 'พิมพ์ข้อความ...', EN: 'Type a message...' },
+  back: { TH: '← กลับ', EN: '← Back' },
+
+  // profile
+  profileTitle: { TH: 'โปรไฟล์', EN: 'Profile' },
+  profileSub: { TH: 'บัญชีและการตั้งค่า', EN: 'Account and settings' },
+  newMember: { TH: '⭐ 5.0 • สมาชิกใหม่', EN: '⭐ 5.0 • New member' },
+  statDriven: { TH: 'เที่ยวที่ขับ', EN: 'Driven' },
+  statRidden: { TH: 'เที่ยวที่นั่ง', EN: 'Ridden' },
+  statSaved: { TH: 'ประหยัด', EN: 'Saved' },
+  editProfile: { TH: 'แก้ไขโปรไฟล์', EN: 'Edit profile' },
+  addCar: { TH: 'เพิ่มรถของฉัน', EN: 'Add my car' },
+  verify: { TH: 'ยืนยันตัวตน', EN: 'Verify identity' },
+  settings: { TH: 'ตั้งค่า', EN: 'Settings' },
+
+  // search sheet
+  sheetTitle: { TH: 'ค้นหาเส้นทาง', EN: 'Search trips' },
+  sheetSelf: { TH: 'หาเอง', EN: 'Search yourself' },
+  sheetWhen: { TH: 'วันเดินทาง (ไม่ระบุก็ได้)', EN: 'Travel date (optional)' },
+  sheetGo: { TH: '🔍 ค้นหาเส้นทาง', EN: '🔍 Search trips' },
+  sheetOr: { TH: 'หรือ', EN: 'OR' },
+  sheetAvailable: { TH: '🚗 ทริปที่เปิดรับตอนนี้', EN: '🚗 Available trips now' },
+  sheetCount: { TH: ' ทริป', EN: ' trips' },
+  sheetEmpty: { TH: 'ยังไม่มีทริปที่ตรงกับเงื่อนไข', EN: 'No trips match your criteria' },
+  sheetEmptySub: { TH: 'ลองเปลี่ยนต้นทาง/ปลายทาง หรือกดค้นหาเลย', EN: 'Try changing origin/destination, or just search' },
+
+  // misc
+  bookSeat: { TH: 'จองที่นั่งนี้', EN: 'Book this seat' },
+  bookSuccess: { TH: 'จองสำเร็จ! (จำลอง)', EN: 'Booked successfully! (demo)' },
+  postSuccess: { TH: 'ลงประกาศสำเร็จ! (จำลอง)', EN: 'Posted successfully! (demo)' },
+  createGuide: { TH: 'สร้างบทความรีวิวของคุณ (จำลอง)', EN: 'Create your travel guide (demo)' },
+  openPost: { TH: 'เปิดบทความรีวิว: ', EN: 'Open post: ' }
+};
+
+function t(key) {
+  const entry = i18n[key];
+  if (!entry) return key;
+  return entry[currentLang] || entry.TH;
+}
+
+function toggleLang() {
+  currentLang = currentLang === 'TH' ? 'EN' : 'TH';
+  const toggle = document.getElementById('lang-toggle');
+  const knob = document.getElementById('lang-knob');
+  if (currentLang === 'EN') {
+    toggle.classList.add('en');
+    knob.textContent = 'EN';
+  } else {
+    toggle.classList.remove('en');
+    knob.textContent = 'TH';
+  }
+  applyLang();
+}
+
+// แปลข้อความใน nav + re-render หน้าปัจจุบัน
+function applyLang() {
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    const key = b.dataset.screen;
+    const labelMap = { home: 'navHome', post: 'navPost', trips: 'navTrips', messages: 'navMessages', profile: 'navProfile' };
+    const labelEl = b.querySelector('.label');
+    if (labelEl && labelMap[key]) labelEl.textContent = t(labelMap[key]);
+  });
+  // หาหน้าปัจจุบันแล้ว re-render
+  const activeBtn = document.querySelector('.nav-btn.active');
+  if (activeBtn) {
+    const scrollPos = screenEl ? screenEl.scrollTop : 0;
+    show(activeBtn.dataset.screen);
+    setTimeout(() => { if (screenEl) screenEl.scrollTop = scrollPos; }, 50);
+  }
+}
+
+const tripData = { from: '', to: '', date: '', time: '' };
+
+// ฟังก์ชันช่วยสร้าง URL รูปจาก Unsplash (ฟรี ไม่ต้องใช้ API key)
+function img(keyword) {
+  return `https://source.unsplash.com/300x220/?${encodeURIComponent(keyword)}`;
+}
+
+// ฐานข้อมูลจังหวัด (พิกัด GPS จริง + รูป + แปล EN)
+const provinceDB = [
+  { name: 'เชียงใหม่', nameEN: 'Chiang Mai', lat: 18.79, lng: 98.99, desc: 'ภูเขา ทะเลหมอก', descEN: 'Mountains, mist', img: img('chiang mai temple thailand') },
+  { name: 'เชียงราย', nameEN: 'Chiang Rai', lat: 19.91, lng: 99.84, desc: 'วัดร่องขุ่น', descEN: 'White Temple', img: img('chiang rai white temple') },
+  { name: 'ปาย', nameEN: 'Pai', lat: 19.36, lng: 98.44, desc: 'หุบเขาเงียบสงบ', descEN: 'Peaceful valley', img: img('pai thailand mountain') },
+  { name: 'แม่ฮ่องสอน', nameEN: 'Mae Hong Son', lat: 19.30, lng: 97.96, desc: 'ปายตกอำเภอนึง', descEN: 'Hilly remote town', img: img('mae hong son thailand') },
+  { name: 'ลำปาง', nameEN: 'Lampang', lat: 18.29, lng: 99.49, desc: 'รถม้า น้ำตก', descEN: 'Horse carriages, falls', img: img('lampang thailand horse carriage') },
+  { name: 'น่าน', nameEN: 'Nan', lat: 18.78, lng: 100.78, desc: 'ภูเขา วัด', descEN: 'Mountains, temples', img: img('nan thailand') },
+
+  { name: 'กรุงเทพ', nameEN: 'Bangkok', lat: 13.75, lng: 100.50, desc: 'เมืองหลวง', descEN: 'Capital city', img: img('bangkok skyline thailand') },
+  { name: 'อยุธยา', nameEN: 'Ayutthaya', lat: 14.36, lng: 100.58, desc: 'โบราณสถาน', descEN: 'Historical ruins', img: img('ayutthaya buddha statue') },
+  { name: 'นครปฐม', nameEN: 'Nakhon Pathom', lat: 13.82, lng: 100.06, desc: 'พระปฐมเจดีย์', descEN: 'Great Pagoda', img: img('nakhon pathom pagoda') },
+  { name: 'กาญจนบุรี', nameEN: 'Kanchanaburi', lat: 14.02, lng: 99.53, desc: 'แม่น้ำแคว น้ำตก', descEN: 'River Kwai, waterfalls', img: img('kanchanaburi river kwai') },
+  { name: 'สมุทรสงคราม', nameEN: 'Samut Songkhram', lat: 13.41, lng: 100.00, desc: 'ตลาดน้ำ', descEN: 'Floating markets', img: img('amphawa floating market') },
+
+  { name: 'พัทยา', nameEN: 'Pattaya', lat: 12.93, lng: 100.88, desc: 'ทะเลใกล้กรุงเทพ', descEN: 'Beach near Bangkok', img: img('pattaya beach thailand') },
+  { name: 'ระยอง', nameEN: 'Rayong', lat: 12.68, lng: 101.28, desc: 'เกาะเสม็ด', descEN: 'Koh Samet island', img: img('rayong koh samet') },
+  { name: 'จันทบุรี', nameEN: 'Chanthaburi', lat: 12.61, lng: 102.10, desc: 'ทุเรียน น้ำตก', descEN: 'Durian, waterfalls', img: img('chanthaburi waterfall') },
+  { name: 'ตราด', nameEN: 'Trat', lat: 12.24, lng: 102.51, desc: 'เกาะช้าง', descEN: 'Koh Chang island', img: img('koh chang trat') },
+
+  { name: 'หัวหิน', nameEN: 'Hua Hin', lat: 12.57, lng: 99.96, desc: 'ทะเลใกล้กรุงเทพ', descEN: 'Beach near Bangkok', img: img('hua hin beach thailand') },
+  { name: 'ประจวบคีรีขันธ์', nameEN: 'Prachuap', lat: 11.81, lng: 99.80, desc: 'อ่าวมะนาว', descEN: 'Manao Bay', img: img('prachuap khiri khan thailand') },
+  { name: 'ชุมพร', nameEN: 'Chumphon', lat: 10.50, lng: 99.18, desc: 'ทะเลใต้', descEN: 'Southern coast', img: img('chumphon thailand beach') },
+
+  { name: 'เขาใหญ่', nameEN: 'Khao Yai', lat: 14.44, lng: 101.37, desc: 'อุทยานแห่งชาติ', descEN: 'National park', img: img('khao yai national park') },
+  { name: 'นครราชสีมา', nameEN: 'Korat', lat: 14.97, lng: 102.10, desc: 'โคราช', descEN: 'Gateway to Isan', img: img('nakhon ratchasima thailand') },
+  { name: 'บุรีรัมย์', nameEN: 'Buriram', lat: 14.99, lng: 103.10, desc: 'ปราสาท สนามฟุตบอล', descEN: 'Castle, stadium', img: img('buriram castle thailand') },
+
+  { name: 'ภูเก็ต', nameEN: 'Phuket', lat: 7.88, lng: 98.39, desc: 'ทะเลอันดามัน', descEN: 'Andaman beaches', img: img('phuket beach thailand') },
+  { name: 'กระบี่', nameEN: 'Krabi', lat: 8.09, lng: 98.91, desc: 'หาด เกาะ', descEN: 'Beaches, islands', img: img('krabi beach thailand') },
+  { name: 'พังงา', nameEN: 'Phang Nga', lat: 8.45, lng: 98.52, desc: 'อ่าวพังงา', descEN: 'Phang Nga Bay', img: img('phang nga bay') },
+  { name: 'สุราษฎร์ธานี', nameEN: 'Surat Thani', lat: 9.14, lng: 99.33, desc: 'เกาะสมุย เกาะพะงัน', descEN: 'Koh Samui, Koh Phangan', img: img('koh samui thailand') },
+  { name: 'ตรัง', nameEN: 'Trang', lat: 7.56, lng: 99.61, desc: 'หาด ถ้ำ', descEN: 'Beaches, caves', img: img('trang thailand beach') },
+  { name: 'นครศรีธรรมราช', nameEN: 'Nakhon Si Thammarat', lat: 8.43, lng: 99.96, desc: 'เขาหลวง วัด', descEN: 'Khao Luang, temples', img: img('nakhon si thammarat') },
+  { name: 'สงขลา', nameEN: 'Songkhla', lat: 7.20, lng: 100.59, desc: 'หาดสมิหลา', descEN: 'Samila Beach', img: img('songkhla beach thailand') },
+
+  { name: 'อุดรธานี', nameEN: 'Udon Thani', lat: 17.41, lng: 102.79, desc: 'หนองหาน บานเย็น', descEN: 'Red Lotus Lake', img: img('udon thani red lotus lake') },
+  { name: 'ขอนแก่น', nameEN: 'Khon Kaen', lat: 16.43, lng: 102.83, desc: 'เมืองอีสานใหญ่', descEN: 'Major Isan city', img: img('khon kaen thailand') },
+  { name: 'อุบลราชธานี', nameEN: 'Ubon Ratchathani', lat: 15.23, lng: 104.86, desc: 'ผาแต้ม ดอกบัว', descEN: 'Pha Taem, lotus', img: img('ubon ratchathani thailand') },
+  { name: 'เลย', nameEN: 'Loei', lat: 17.49, lng: 101.72, desc: 'ภูกระดึง ภูเรือ', descEN: 'Phu Kradueng, Phu Ruea', img: img('loei phu kradueng') }
+];
+
+// helper: คืนชื่อจังหวัดตามภาษาปัจจุบัน
+function pName(p) { return currentLang === 'EN' ? (p.nameEN || p.name) : p.name; }
+function pDesc(p) { return currentLang === 'EN' ? (p.descEN || p.desc) : p.desc; }
+
+// คำนวณระยะทางตรง (km) ระหว่างพิกัด 2 จุด — Haversine formula
+function distanceKm(a, b) {
+  const R = 6371;
+  const toRad = d => d * Math.PI / 180;
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const lat1 = toRad(a.lat), lat2 = toRad(b.lat);
+  const h = Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLng/2)**2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+// ประมาณค่าโดยสาร — 1.2 บาท/กม. (เผื่อค่าน้ำมัน + แชร์กับคนอื่น)
+function estimatePrice(distKm) {
+  return Math.max(80, Math.round(distKm * 1.2 / 10) * 10);
+}
+
+// ประมาณเวลาขับ — เฉลี่ย 65 กม./ชม.
+function estimateDriveTime(distKm) {
+  const hr = distKm / 65;
+  const hrLabel = currentLang === 'EN' ? ' hr drive' : ' ชม. ขับรถ';
+  const minLabel = currentLang === 'EN' ? ' min drive' : ' น. ขับรถ';
+  if (hr < 1.5) return Math.round(hr * 60) + minLabel;
+  if (hr < 10) return hr.toFixed(1).replace('.0','') + hrLabel;
+  return Math.round(hr) + hrLabel;
+}
+
+// หา 7 จังหวัดที่ใกล้ต้นทางที่สุด (ยกเว้นต้นทางเอง)
+function findNearbyProvinces(originName, limit = 7) {
+  const key = originName.replace(/ฯ|จังหวัด/g, '').trim().toLowerCase();
+  const origin = provinceDB.find(p =>
+    p.name === key ||
+    key.includes(p.name) || p.name.includes(key) ||
+    (p.nameEN && (p.nameEN.toLowerCase() === key ||
+                  key.includes(p.nameEN.toLowerCase()) ||
+                  p.nameEN.toLowerCase().includes(key)))
+  );
+
+  if (!origin) {
+    // หาไม่เจอ → สุ่มมา 7 อัน
+    return shuffle(provinceDB).slice(0, limit).map(p => ({
+      to: pName(p),
+      meta: currentLang === 'EN' ? 'Popular destination' : 'จุดหมายยอดนิยม',
+      price: estimatePrice(300 + Math.random() * 400), img: p.img
+    }));
+  }
+
+  // คำนวณระยะทางทุกจังหวัด เรียงจากใกล้สุด
+  const sorted = provinceDB
+    .filter(p => p.name !== origin.name)
+    .map(p => ({ ...p, dist: distanceKm(origin, p) }))
+    .sort((a, b) => a.dist - b.dist)
+    .slice(0, limit);
+
+  return sorted.map(p => ({
+    to: pName(p),
+    meta: estimateDriveTime(p.dist),
+    price: estimatePrice(p.dist),
+    img: p.img
+  }));
+}
+
+// สุ่ม array (Fisher-Yates)
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ====== Coolpar Star: รีวิวจังหวัด ======
+// เรียงจากความนิยมมากไปน้อย (likes)
+const travelPosts = [
+  { authorTH: 'พลอย ส.', authorEN: 'Ploy S.', avatar: 'พล', avatarEN: 'PS', avClass: 'av-2', followers: '12.4k followers',
+    provinceTH: 'ปาย', provinceEN: 'Pai',
+    titleTH: 'ปาย 3 วัน 2 คืน หนีกรุงเทพ ดื่มกาแฟ ดูหมอกที่ภูเขา',
+    titleEN: '3 Days in Pai: Escape Bangkok, Coffee & Mountain Mist',
+    likes: 4832, comments: 287, img: img('pai thailand mountain mist') },
+  { authorTH: 'นัท ก.', authorEN: 'Nat K.', avatar: 'นั', avatarEN: 'NK', avClass: 'av-1', followers: '8.9k followers',
+    provinceTH: 'น่าน', provinceEN: 'Nan',
+    titleTH: 'น่าน เมืองแห่งความเงียบสงบ ที่จะทำให้คุณตกหลุมรัก',
+    titleEN: "Nan: The Peaceful Town You'll Fall in Love With",
+    likes: 3914, comments: 213, img: img('nan thailand temple') },
+  { authorTH: 'เก่ง ว.', authorEN: 'Keng W.', avatar: 'เก', avatarEN: 'KW', avClass: 'av-3', followers: '15.2k followers',
+    provinceTH: 'เกาะช้าง', provinceEN: 'Koh Chang',
+    titleTH: 'เกาะช้าง 5 จุดดำน้ำที่ห้ามพลาด ทะเลใสมาก',
+    titleEN: 'Koh Chang: 5 Must-Try Snorkeling Spots',
+    likes: 3521, comments: 412, img: img('koh chang trat thailand beach') },
+  { authorTH: 'มิ้น พ.', authorEN: 'Min P.', avatar: 'มิ', avatarEN: 'MP', avClass: 'av-2', followers: '6.1k followers',
+    provinceTH: 'อยุธยา', provinceEN: 'Ayutthaya',
+    titleTH: 'อยุธยา One day trip ปั่นจักรยานชมโบราณสถาน',
+    titleEN: 'Ayutthaya One-Day Trip: Cycling Through Ancient Ruins',
+    likes: 2876, comments: 156, img: img('ayutthaya buddha temple ruins') },
+  { authorTH: 'บอย ร.', authorEN: 'Boy R.', avatar: 'บอ', avatarEN: 'BR', avClass: 'av-1', followers: '22k followers',
+    provinceTH: 'เชียงราย', provinceEN: 'Chiang Rai',
+    titleTH: 'วัดร่องขุ่น วัดร่องเสือเต้น วัดห้วยปลากั้ง 3 วัดต้องไป',
+    titleEN: 'Chiang Rai: 3 Must-See Temples (White, Blue & Sky Temples)',
+    likes: 2654, comments: 198, img: img('chiang rai white temple') },
+  { authorTH: 'แอน จ.', authorEN: 'Ann J.', avatar: 'แอ', avatarEN: 'AJ', avClass: 'av-3', followers: '4.7k followers',
+    provinceTH: 'กระบี่', provinceEN: 'Krabi',
+    titleTH: 'ทะเลแหวก 4 เกาะ ทริปทะเลที่คุ้มที่สุด',
+    titleEN: 'Krabi 4-Islands Tour: Best Value Sea Trip',
+    likes: 2401, comments: 167, img: img('krabi beach thailand') },
+  { authorTH: 'ต่อ ม.', authorEN: 'Tor M.', avatar: 'ต่', avatarEN: 'TM', avClass: 'av-1', followers: '9.8k followers',
+    provinceTH: 'แม่ฮ่องสอน', provinceEN: 'Mae Hong Son',
+    titleTH: 'หมู่บ้านกะเหรี่ยงคอยาว และทะเลหมอกปางอุ๋ง',
+    titleEN: 'Long Neck Villages & Pang Oung Misty Lake',
+    likes: 2189, comments: 134, img: img('mae hong son pang oung lake') },
+  { authorTH: 'จูน ก.', authorEN: 'June K.', avatar: 'จู', avatarEN: 'JK', avClass: 'av-2', followers: '7.3k followers',
+    provinceTH: 'หัวหิน', provinceEN: 'Hua Hin',
+    titleTH: 'หัวหิน Weekend Trip ตลาดน้ำ + คาเฟ่ทะเล',
+    titleEN: 'Hua Hin Weekend: Floating Markets & Beach Cafés',
+    likes: 1987, comments: 142, img: img('hua hin beach thailand') },
+  { authorTH: 'นิว ส.', authorEN: 'New S.', avatar: 'นิ', avatarEN: 'NS', avClass: 'av-3', followers: '5.4k followers',
+    provinceTH: 'เขาใหญ่', provinceEN: 'Khao Yai',
+    titleTH: 'เขาใหญ่ Camping ใต้ดาว + ส่องสัตว์ป่ากลางคืน',
+    titleEN: 'Khao Yai Camping: Stars Above & Night Safari',
+    likes: 1854, comments: 98, img: img('khao yai national park') },
+  { authorTH: 'เอม ป.', authorEN: 'Aim P.', avatar: 'เอ', avatarEN: 'AP', avClass: 'av-1', followers: '11.6k followers',
+    provinceTH: 'สมุย', provinceEN: 'Koh Samui',
+    titleTH: 'เกาะสมุย 4 วัน 3 คืน หาดทรายขาว น้ำใสปิ๊ง',
+    titleEN: 'Koh Samui 4D3N: White Sand & Crystal Waters',
+    likes: 1722, comments: 156, img: img('koh samui thailand beach') },
+  { authorTH: 'แพร อ.', authorEN: 'Prae A.', avatar: 'แพ', avatarEN: 'PA', avClass: 'av-2', followers: '3.8k followers',
+    provinceTH: 'เลย', provinceEN: 'Loei',
+    titleTH: 'ภูกระดึง เดินขึ้น 5.5 กิโล ทะเลหมอกสวยที่สุด',
+    titleEN: 'Phu Kradueng: 5.5km Hike to the Best Sea of Mist',
+    likes: 1654, comments: 187, img: img('phu kradueng loei mountain') },
+  { authorTH: 'หมิว ท.', authorEN: 'Miu T.', avatar: 'หม', avatarEN: 'MT', avClass: 'av-3', followers: '6.9k followers',
+    provinceTH: 'กาญจนบุรี', provinceEN: 'Kanchanaburi',
+    titleTH: 'น้ำตกเอราวัณ 7 ชั้น สะพานข้ามแม่น้ำแคว',
+    titleEN: 'Erawan 7-Tier Waterfall & River Kwai Bridge',
+    likes: 1521, comments: 102, img: img('erawan waterfall kanchanaburi') },
+  { authorTH: 'อาร์ม ว.', authorEN: 'Arm W.', avatar: 'อา', avatarEN: 'AW', avClass: 'av-1', followers: '8.2k followers',
+    provinceTH: 'อุดรธานี', provinceEN: 'Udon Thani',
+    titleTH: 'ทะเลบัวแดง หนองหานกุมภวาปี โหดมาก',
+    titleEN: 'Red Lotus Sea at Nong Han Lake: Mind-Blowing',
+    likes: 1432, comments: 89, img: img('udon thani red lotus lake') },
+  { authorTH: 'ฟ้า ช.', authorEN: 'Fah C.', avatar: 'ฟ้', avatarEN: 'FC', avClass: 'av-2', followers: '4.1k followers',
+    provinceTH: 'นครปฐม', provinceEN: 'Nakhon Pathom',
+    titleTH: 'องค์พระปฐมเจดีย์ + ตลาดน้ำดอนหวาย',
+    titleEN: 'Phra Pathom Chedi & Don Wai Floating Market',
+    likes: 1287, comments: 76, img: img('nakhon pathom pagoda') },
+  { authorTH: 'ปั้น ก.', authorEN: 'Pan K.', avatar: 'ปั', avatarEN: 'PK', avClass: 'av-3', followers: '5.7k followers',
+    provinceTH: 'จันทบุรี', provinceEN: 'Chanthaburi',
+    titleTH: 'ตึกแถวเก่าจันทบุรี + น้ำตกพลิ้ว ทุเรียนนนท์',
+    titleEN: 'Chanthaburi Old Town + Phlio Waterfall + Durian Season',
+    likes: 1198, comments: 134, img: img('chanthaburi old town thailand') },
+  { authorTH: 'เจน อ.', authorEN: 'Jane A.', avatar: 'เจ', avatarEN: 'JA', avClass: 'av-1', followers: '3.2k followers',
+    provinceTH: 'ตรัง', provinceEN: 'Trang',
+    titleTH: 'อันดามันลับ ทะเลตรัง เกาะมุก เกาะกระดาน',
+    titleEN: "Hidden Andaman: Trang's Koh Muk & Koh Kradan",
+    likes: 1054, comments: 91, img: img('trang thailand beach koh muk') },
+  { authorTH: 'โบ พ.', authorEN: 'Bo P.', avatar: 'โบ', avatarEN: 'BP', avClass: 'av-2', followers: '4.6k followers',
+    provinceTH: 'บุรีรัมย์', provinceEN: 'Buriram',
+    titleTH: 'ปราสาทพนมรุ้ง ดูแสงลอดประตู 4 ครั้งต่อปี',
+    titleEN: 'Phanom Rung Castle: Sun Aligns Through 15 Doors',
+    likes: 987, comments: 73, img: img('phanom rung castle buriram') },
+  { authorTH: 'ตาล ม.', authorEN: 'Tan M.', avatar: 'ตา', avatarEN: 'TM', avClass: 'av-3', followers: '2.9k followers',
+    provinceTH: 'ลำปาง', provinceEN: 'Lampang',
+    titleTH: 'นั่งรถม้าชมเมืองลำปาง วัดพระธาตุลำปางหลวง',
+    titleEN: 'Lampang by Horse Carriage & Phra That Lampang Luang',
+    likes: 854, comments: 65, img: img('lampang horse carriage thailand') },
+  { authorTH: 'แต๊งกิ้ว ร.', authorEN: 'Thank R.', avatar: 'แต', avatarEN: 'TR', avClass: 'av-1', followers: '6.3k followers',
+    provinceTH: 'พังงา', provinceEN: 'Phang Nga',
+    titleTH: 'อ่าวพังงา เกาะปันหยี เกาะตะปู James Bond Island',
+    titleEN: 'Phang Nga Bay: Koh Panyee & James Bond Island',
+    likes: 743, comments: 54, img: img('phang nga bay james bond island') },
+  { authorTH: 'พีท ส.', authorEN: 'Pete S.', avatar: 'พี', avatarEN: 'PS', avClass: 'av-2', followers: '1.8k followers',
+    provinceTH: 'ระยอง', provinceEN: 'Rayong',
+    titleTH: 'เกาะเสม็ด หาดทรายแก้ว สุดยอดของฝั่งตะวันออก',
+    titleEN: 'Koh Samet: Crystal Sand Beach, Best of the East',
+    likes: 612, comments: 41, img: img('koh samet rayong beach') }
+];
+
+// helpers สำหรับ post i18n
+function postAuthor(p) { return currentLang === 'EN' ? p.authorEN : p.authorTH; }
+function postAvatar(p) { return currentLang === 'EN' ? (p.avatarEN || p.avatar) : p.avatar; }
+function postProvince(p) { return currentLang === 'EN' ? p.provinceEN : p.provinceTH; }
+function postTitle(p) { return currentLang === 'EN' ? p.titleEN : p.titleTH; }
+
+function formatLikes(n) {
+  if (n >= 1000) return (n / 1000).toFixed(1).replace('.0','') + 'k';
+  return n;
+}
+
+// จุดหมายแสดงตอนยังไม่กรอก — สุ่ม 7 จังหวัดจากจังหวัดดัง
+function getDefaultDestinations(limit = 7) {
+  const featured = ['เชียงใหม่', 'ภูเก็ต', 'พัทยา', 'อยุธยา', 'กระบี่', 'เขาใหญ่', 'หัวหิน', 'เชียงราย', 'สุราษฎร์ธานี', 'น่าน'];
+  const featuredProvinces = featured
+    .map(n => provinceDB.find(p => p.name === n))
+    .filter(Boolean);
+  return shuffle(featuredProvinces).slice(0, limit).map(p => ({
+    name: pName(p), meta: pDesc(p), img: p.img
+  }));
+}
+
+// state ของ post search
+const postSearch = { query: '', activeChip: 'all' };
+
+// render section รีวิว Coolpar Star
+function renderStarSection() {
+  // หา top regions ที่มีโพสเยอะที่สุด (เป็น chip filters)
+  const regionChips = [
+    { id: 'all', label: t('chipAll') },
+    { id: 'เหนือ', label: t('chipNorth'), provinces: ['เชียงใหม่','เชียงราย','ปาย','แม่ฮ่องสอน','ลำปาง','น่าน'] },
+    { id: 'กลาง', label: t('chipCentral'), provinces: ['กรุงเทพ','อยุธยา','นครปฐม','กาญจนบุรี','สมุทรสงคราม'] },
+    { id: 'ใต้', label: t('chipSouth'), provinces: ['ภูเก็ต','กระบี่','พังงา','สุราษฎร์ธานี','สมุย','ตรัง','นครศรีธรรมราช','สงขลา'] },
+    { id: 'อีสาน', label: t('chipNortheast'), provinces: ['เขาใหญ่','โคราช','บุรีรัมย์','อุดรธานี','ขอนแก่น','อุบลราชธานี','เลย'] },
+    { id: 'ตะวันออก', label: t('chipEast'), provinces: ['พัทยา','ระยอง','จันทบุรี','ตราด','เกาะช้าง'] }
+  ];
+
+  // กรองโพสตามเงื่อนไข
+  let filteredPosts = travelPosts.slice(0, 20);
+  if (postSearch.query) {
+    const q = postSearch.query.toLowerCase();
+    filteredPosts = filteredPosts.filter(p =>
+      p.provinceTH.toLowerCase().includes(q) ||
+      (p.provinceEN && p.provinceEN.toLowerCase().includes(q)) ||
+      p.titleTH.toLowerCase().includes(q) ||
+      (p.titleEN && p.titleEN.toLowerCase().includes(q)) ||
+      p.authorTH.toLowerCase().includes(q) ||
+      (p.authorEN && p.authorEN.toLowerCase().includes(q))
+    );
+  }
+  if (postSearch.activeChip !== 'all') {
+    const chip = regionChips.find(c => c.id === postSearch.activeChip);
+    if (chip && chip.provinces) {
+      filteredPosts = filteredPosts.filter(p =>
+        chip.provinces.some(pv => p.provinceTH.includes(pv) || pv.includes(p.provinceTH))
+      );
+    }
+  }
+
+  let chipsHtml = regionChips.map(c => `
+    <button class="chip ${postSearch.activeChip === c.id ? 'active' : ''}" onclick="setChip('${c.id}')">
+      ${c.label}
+    </button>
+  `).join('');
+
+  let postsHtml;
+  if (filteredPosts.length === 0) {
+    postsHtml = `
+      <div class="no-results">
+        <div class="no-results-emoji">🔍</div>
+        ${t('noResults1')}${postSearch.query}${t('noResults2')}<br>
+        ${t('noResultsHint')}
+      </div>
+    `;
+  } else {
+    postsHtml = `<div class="posts-grid">` + filteredPosts.map((p, i) => `
+      <div class="post-card" onclick="alert(${JSON.stringify(t('openPost'))} + ${JSON.stringify(postTitle(p))})">
+        <div class="post-cover">
+          <img src="${p.img}" alt="${postProvince(p)}" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>
+          <div class="post-rank ${i < 3 && !postSearch.query && postSearch.activeChip === 'all' ? 'top' : ''}">${i < 3 && !postSearch.query && postSearch.activeChip === 'all' ? '👑' : '#'}${i + 1}</div>
+          <div class="post-province-tag">📍 ${postProvince(p)}</div>
+        </div>
+        <div class="post-body">
+          <div class="post-author">
+            <div class="avatar ${p.avClass}">${postAvatar(p)}</div>
+            <div class="post-author-info">
+              <div class="post-author-name">${postAuthor(p)}</div>
+            </div>
+          </div>
+          <div class="post-title">${postTitle(p)}</div>
+          <div class="post-stats">
+            <span class="post-stat liked">♥ ${formatLikes(p.likes)}</span>
+            <span class="post-stat">💬 ${p.comments}</span>
+          </div>
+        </div>
+      </div>
+    `).join('') + `</div>`;
+  }
+
+  return `
+    <div class="star-header">
+      <div class="star-title">
+        <span class="star">★</span> Coolpar Star
+      </div>
+      <button class="create-guide-btn" onclick="alert(${JSON.stringify(t('createGuide'))})">
+        ${t('starCreate')}
+      </button>
+    </div>
+    <div class="post-search">
+      <span class="post-search-icon">🔍</span>
+      <input
+        id="post-search-input"
+        type="text"
+        placeholder="${t('searchPlaceholder')}"
+        value="${postSearch.query}"
+        oninput="onPostSearchInput(event)"
+        onkeydown="event.stopPropagation()"
+      />
+      <button class="post-search-clear ${postSearch.query ? 'show' : ''}" onclick="clearPostSearch()">✕</button>
+    </div>
+    <div class="filter-chips">${chipsHtml}</div>
+    ${postsHtml}
+    ${filteredPosts.length > 0 ? `
+      <div class="end-marker">
+        <div class="end-text">${t('endMarker')}${filteredPosts.length}${t('posts')}</div>
+        <button class="reset-btn" onclick="scrollHomeToTop()">${t('resetBtn')}</button>
+      </div>
+    ` : ''}
+  `;
+}
+
+function onPostSearchInput(e) {
+  postSearch.query = e.target.value;
+  // re-render เฉพาะ star section (เพื่อไม่ให้ทั้งหน้ากระพริบ)
+  rerenderStarOnly(e.target);
+}
+
+function clearPostSearch() {
+  postSearch.query = '';
+  updateHome();
+  // re-focus input หลัง render
+  setTimeout(() => {
+    const inp = document.getElementById('post-search-input');
+    if (inp) inp.focus();
+  }, 0);
+}
+
+function setChip(id) {
+  postSearch.activeChip = id;
+  updateHome();
+}
+
+// re-render เฉพาะ Coolpar Star ส่วน (เพื่อ smooth ตอนพิมพ์)
+function rerenderStarOnly(inputEl) {
+  const results = document.getElementById('home-results');
+  if (!results) return;
+  const cursorPos = inputEl.selectionStart;
+  const inputValue = inputEl.value;
+
+  // หา star section (อยู่ส่วนล่างของ results)
+  const allContent = results.innerHTML;
+  // เนื่องจากเรา render ทุกส่วนรวมกัน — วิธีง่ายสุดคือ render ใหม่ทั้งหมด แล้ว focus กลับ
+  updateHome();
+
+  setTimeout(() => {
+    const newInp = document.getElementById('post-search-input');
+    if (newInp) {
+      newInp.focus();
+      newInp.setSelectionRange(cursorPos, cursorPos);
+    }
+  }, 0);
+}
+
+function scrollHomeToTop() {
+  screenEl.scrollTo({ top: 0, behavior: 'smooth' });
+  // re-render หน้า home → สุ่มจังหวัดยอดนิยมใหม่
+  setTimeout(() => updateHome(), 400);
+}
+
+// ทริปจริง (mock) เมื่อกรอกครบทั้งต้น-ปลาย
+const mockTrips = [
+  {
+    time: '07:00 → 16:00', meta: '9 ชม.', price: 650,
+    driver: 'สมชาย', initials: 'สม', car: 'Honda CR-V', rating: 4.8, seats: 2, av: 'av-1'
+  },
+  {
+    time: '09:30 → 19:00', meta: '9.5 ชม.', price: 580,
+    driver: 'นภัทร', initials: 'นภ', car: 'Toyota Camry', rating: 4.9, seats: 3, av: 'av-2'
+  },
+  {
+    time: '14:00 → 23:30', meta: '9.5 ชม.', price: 700,
+    driver: 'วรพล', initials: 'วร', car: 'Mazda CX-5', rating: 4.7, seats: 1, av: 'av-3'
+  }
+];
+
+// ทริปที่เปิดรับ (mock) ใช้แสดงใน search sheet
+const availableTrips = [
+  { from: 'กรุงเทพ', fromEN: 'Bangkok', to: 'เชียงใหม่', toEN: 'Chiang Mai', date: 'พรุ่งนี้ 07:00', dateEN: 'Tmr 07:00', seats: 2, price: 650, driver: 'สมชาย', driverEN: 'Somchai', initials: 'สม', initialsEN: 'SC', av: 'av-1', rating: 4.8 },
+  { from: 'กรุงเทพ', fromEN: 'Bangkok', to: 'พัทยา', toEN: 'Pattaya', date: 'พรุ่งนี้ 14:00', dateEN: 'Tmr 14:00', seats: 3, price: 250, driver: 'นภัทร', driverEN: 'Napat', initials: 'นภ', initialsEN: 'NP', av: 'av-2', rating: 4.9 },
+  { from: 'เชียงใหม่', fromEN: 'Chiang Mai', to: 'ปาย', toEN: 'Pai', date: 'พรุ่งนี้ 09:00', dateEN: 'Tmr 09:00', seats: 2, price: 250, driver: 'วรพล', driverEN: 'Worapon', initials: 'วร', initialsEN: 'WP', av: 'av-3', rating: 4.7 },
+  { from: 'กรุงเทพ', fromEN: 'Bangkok', to: 'หัวหิน', toEN: 'Hua Hin', date: '25 พ.ค. 08:00', dateEN: 'May 25, 08:00', seats: 1, price: 350, driver: 'พลอย', driverEN: 'Ploy', initials: 'พล', initialsEN: 'PL', av: 'av-2', rating: 5.0 },
+  { from: 'ภูเก็ต', fromEN: 'Phuket', to: 'กระบี่', toEN: 'Krabi', date: '26 พ.ค. 10:00', dateEN: 'May 26, 10:00', seats: 4, price: 250, driver: 'เอม', driverEN: 'Aim', initials: 'เอ', initialsEN: 'AM', av: 'av-1', rating: 4.6 },
+  { from: 'กรุงเทพ', fromEN: 'Bangkok', to: 'เขาใหญ่', toEN: 'Khao Yai', date: 'เสาร์ 06:30', dateEN: 'Sat 06:30', seats: 2, price: 280, driver: 'นิว', driverEN: 'New', initials: 'นิ', initialsEN: 'NW', av: 'av-3', rating: 4.8 },
+  { from: 'เชียงใหม่', fromEN: 'Chiang Mai', to: 'กรุงเทพ', toEN: 'Bangkok', date: 'อาทิตย์ 20:00', dateEN: 'Sun 20:00', seats: 3, price: 650, driver: 'บอย', driverEN: 'Boy', initials: 'บอ', initialsEN: 'BY', av: 'av-1', rating: 4.9 },
+  { from: 'กรุงเทพ', fromEN: 'Bangkok', to: 'อยุธยา', toEN: 'Ayutthaya', date: 'พรุ่งนี้ 10:00', dateEN: 'Tmr 10:00', seats: 4, price: 150, driver: 'จูน', driverEN: 'June', initials: 'จู', initialsEN: 'JN', av: 'av-2', rating: 4.7 }
+];
+
+// helpers สำหรับ trip i18n
+function tripFrom(tr) { return currentLang === 'EN' ? (tr.fromEN || tr.from) : tr.from; }
+function tripTo(tr) { return currentLang === 'EN' ? (tr.toEN || tr.to) : tr.to; }
+function tripDate(tr) { return currentLang === 'EN' ? (tr.dateEN || tr.date) : tr.date; }
+function tripDriver(tr) { return currentLang === 'EN' ? (tr.driverEN || tr.driver) : tr.driver; }
+function tripInitials(tr) { return currentLang === 'EN' ? (tr.initialsEN || tr.initials) : tr.initials; }
+
+// กรองทริปตาม homeSearch (ถ้ามี)
+function filterAvailableTrips() {
+  const from = homeSearch.from.trim();
+  const to = homeSearch.to.trim();
+  if (!from && !to) return availableTrips;
+  return availableTrips.filter(tr => {
+    const matchFrom = !from || tr.from.includes(from) || from.includes(tr.from);
+    const matchTo = !to || tr.to.includes(to) || to.includes(tr.to);
+    return matchFrom && matchTo;
+  });
+}
+
+// ====== CO2 Impact Calculator ======
+// อิงค่ามาตรฐาน: รถยนต์ปล่อย CO2 ~170 ก./กม.
+// ผู้โดยสารแชร์เฉลี่ย 2 คน/ทริป → ลดรถที่จะวิ่งแยก = ลด CO2 50%
+function getTodayCO2Stats() {
+  // ข้อมูลรวมในวันนี้ (mock - ในแอปจริงจะดึงจาก backend)
+  const totalTrips = 234;        // ทริปที่วิ่งวันนี้
+  const totalDistance = 48520;   // กม. รวม
+  const avgSharedRiders = 2.1;   // ผู้โดยสารเฉลี่ยต่อทริป
+
+  // CO2 ที่ลดได้ = ระยะทาง × ปริมาณปล่อย × (จำนวนคนแชร์ - 1)
+  // เพราะถ้าไม่แชร์ ทุกคนต้องขับรถของตัวเอง → ปล่อย CO2 หลายเท่า
+  const co2PerKm = 170; // กรัม/กม.
+  const co2SavedGrams = totalDistance * co2PerKm * (avgSharedRiders - 1);
+  const co2SavedKg = co2SavedGrams / 1000;
+
+  return {
+    co2Kg: Math.round(co2SavedKg),
+    trips: totalTrips,
+    distance: totalDistance,
+    treesEquivalent: Math.round(co2SavedKg / 21) // ต้นไม้ดูดซับ CO2 ~21 kg/ปี
+  };
+}
+
+function renderCO2Card() {
+  const s = getTodayCO2Stats();
+  const locale = currentLang === 'TH' ? 'th-TH' : 'en-US';
+  const today = new Date().toLocaleDateString(locale, { day: 'numeric', month: 'long' });
+
+  return `
+    <div class="co2-card">
+      <div class="co2-leaf">🌱</div>
+      <svg class="co2-happy-earth" viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
+        <!-- โลกพื้นน้ำเงิน-เขียว -->
+        <defs>
+          <radialGradient id="earthGrad" cx="35%" cy="35%">
+            <stop offset="0%" stop-color="#4FC3F7"/>
+            <stop offset="100%" stop-color="#0288D1"/>
+          </radialGradient>
+        </defs>
+
+        <!-- แขนซ้าย (ชูนิ้วโป้ง 👍) -->
+        <g class="earth-arm-left">
+          <!-- แขน -->
+          <path d="M 22 52 Q 14 42 12 28" stroke="#0288D1" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <!-- กำปั้น -->
+          <circle cx="12" cy="24" r="6" fill="#FFD180" stroke="#1A1A2E" stroke-width="1.5"/>
+          <!-- นิ้วโป้งชี้ขึ้น -->
+          <path d="M 12 18 Q 10 12 11 8 Q 14 6 16 9 Q 17 13 15 18 Z" fill="#FFD180" stroke="#1A1A2E" stroke-width="1.5" stroke-linejoin="round"/>
+          <!-- เส้นนิ้วโค้งบนกำปั้น -->
+          <path d="M 8 23 Q 12 21 16 23" stroke="#1A1A2E" stroke-width="0.8" fill="none" stroke-linecap="round" opacity="0.5"/>
+        </g>
+
+        <!-- แขนขวา (ชี้ลงข้าง) -->
+        <g class="earth-arm-right">
+          <path d="M 98 52 Q 108 56 114 64" stroke="#0288D1" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <circle cx="115" cy="66" r="5" fill="#FFD180" stroke="#1A1A2E" stroke-width="1.5"/>
+        </g>
+
+        <!-- โลก -->
+        <circle cx="60" cy="50" r="42" fill="url(#earthGrad)" stroke="#01579B" stroke-width="2"/>
+        <!-- ทวีปสีเขียว -->
+        <path d="M 32 38 Q 38 32 45 36 Q 50 42 46 48 Q 40 52 34 48 Q 30 42 32 38 Z" fill="#43A047"/>
+        <path d="M 66 28 Q 74 26 80 32 Q 82 38 78 42 Q 70 42 66 38 Q 62 32 66 28 Z" fill="#43A047"/>
+        <path d="M 58 58 Q 68 56 76 62 Q 80 70 74 76 Q 64 78 56 72 Q 52 64 58 58 Z" fill="#43A047"/>
+        <path d="M 34 64 Q 40 62 46 66 Q 48 72 44 76 Q 38 78 34 74 Q 30 68 34 64 Z" fill="#43A047"/>
+        <!-- ตาซ้าย -->
+        <ellipse cx="46" cy="50" rx="6.5" ry="7.5" fill="#FFFFFF"/>
+        <circle cx="47.5" cy="51.5" r="4" fill="#1A1A2E"/>
+        <circle cx="48.8" cy="50.3" r="1.5" fill="#FFFFFF"/>
+        <!-- ตาขวา -->
+        <ellipse cx="74" cy="50" rx="6.5" ry="7.5" fill="#FFFFFF"/>
+        <circle cx="75.5" cy="51.5" r="4" fill="#1A1A2E"/>
+        <circle cx="76.8" cy="50.3" r="1.5" fill="#FFFFFF"/>
+        <!-- ปากยิ้ม -->
+        <path d="M 50 64 Q 60 74 70 64" stroke="#1A1A2E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div class="co2-header">
+        <div class="co2-badge">
+          <span class="co2-live-dot"></span>
+          <span>LIVE</span>
+        </div>
+        <span class="co2-date">${today}</span>
+      </div>
+      <div class="co2-main">
+        <span class="co2-number">${s.co2Kg.toLocaleString()}</span>
+        <span class="co2-unit">kg CO₂</span>
+      </div>
+      <div class="co2-label" style="margin-bottom:0">${t('co2Label')}</div>
+    </div>
+  `;
+}
+
+// state ของหน้า home search
+const homeSearch = { from: '', to: '', date: '' };
+
+function renderSearchPill() {
+  const wrap = document.getElementById('search-pill-wrap');
+  if (!wrap) return;
+
+  const hasData = homeSearch.from || homeSearch.to;
+  if (!hasData) {
+    wrap.innerHTML = `
+      <div class="search-pill" onclick="openSearchSheet()">
+        <div class="pill-icon">🔍</div>
+        <div class="pill-text">
+          <div class="pill-main">${t('pillStart')}</div>
+          <div class="pill-sub">${t('pillSub')}</div>
+        </div>
+        <div class="pill-arrow">→</div>
+      </div>
+    `;
+  } else {
+    const mainText = homeSearch.from && homeSearch.to
+      ? `${homeSearch.from} → ${homeSearch.to}`
+      : homeSearch.from || homeSearch.to;
+    const locale = currentLang === 'TH' ? 'th-TH' : 'en-US';
+    const noDateText = currentLang === 'TH' ? 'ไม่ระบุวัน · กดเพื่อแก้ไข' : 'No date · tap to edit';
+    const subText = homeSearch.date
+      ? new Date(homeSearch.date).toLocaleDateString(locale, { day: 'numeric', month: 'short' })
+      : noDateText;
+    wrap.innerHTML = `
+      <div class="search-pill" onclick="openSearchSheet()">
+        <div class="pill-icon">🔍</div>
+        <div class="pill-text">
+          <div class="pill-main">${mainText}</div>
+          <div class="pill-sub">${subText}</div>
+        </div>
+        <div class="pill-arrow">→</div>
+      </div>
+    `;
+  }
+}
+
+function openSearchSheet() {
+  // ลบ overlay เก่า (ถ้ามี)
+  document.querySelectorAll('.search-overlay').forEach(el => el.remove());
+
+  const trips = filterAvailableTrips();
+  const seatsLabel = t('seatsAvail');
+  const tripsHtml = trips.length === 0
+    ? `<div style="text-align:center;padding:20px 0;color:var(--text-muted);font-size:13px">${t('sheetEmpty')}<br>${t('sheetEmptySub')}</div>`
+    : trips.map(tr => `
+        <div class="mini-trip" onclick="selectTrip('${tr.from}','${tr.to}','${tr.date}')">
+          <div class="avatar ${tr.av}">${tripInitials(tr)}</div>
+          <div class="mini-trip-info">
+            <div class="mini-trip-route">${tripFrom(tr)} → ${tripTo(tr)}</div>
+            <div class="mini-trip-meta">${tripDate(tr)} • ${tripDriver(tr)} • ⭐${tr.rating} • ${tr.seats}${seatsLabel}</div>
+          </div>
+          <div class="mini-trip-price">฿${tr.price}<small>${t('perPerson')}</small></div>
+        </div>
+      `).join('');
+
+  const overlay = document.createElement('div');
+  overlay.className = 'search-overlay';
+  overlay.innerHTML = `
+    <div class="search-sheet" onclick="event.stopPropagation()">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header">
+        <div class="sheet-title">${t('sheetTitle')}</div>
+        <button class="sheet-close" onclick="closeSearchSheet()">✕</button>
+      </div>
+
+      <p class="section-title">${t('sheetSelf')}</p>
+      <div class="field-group">
+        <div class="field-row">
+          <span class="field-icon">🟢</span>
+          <input id="sh-from" placeholder="${t('postFrom')}" value="${homeSearch.from}" oninput="refreshSheetTrips()"/>
+        </div>
+        <div class="field-row">
+          <span class="field-icon">🔴</span>
+          <input id="sh-to" placeholder="${t('postTo')}" value="${homeSearch.to}" oninput="refreshSheetTrips()"/>
+        </div>
+        <div class="field-row">
+          <span class="field-icon">📅</span>
+          <input id="sh-date" type="date" value="${homeSearch.date}"/>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="applySearch()">
+        ${t('sheetGo')}
+      </button>
+
+      <div class="sheet-divider">
+        <div class="line"></div>
+        <div class="text">${t('sheetOr')}</div>
+        <div class="line"></div>
+      </div>
+
+      <div class="sheet-section-title">
+        <span>${t('sheetAvailable')}</span>
+        <span class="count" id="trips-count">${trips.length}${t('sheetCount')}</span>
+      </div>
+
+      <div id="sheet-trips-list">${tripsHtml}</div>
+    </div>
+  `;
+  overlay.addEventListener('click', closeSearchSheet);
+  document.body.appendChild(overlay);
+}
+
+// อัพเดทรายการทริปใน sheet ตามที่กรอก (realtime)
+function refreshSheetTrips() {
+  const fromEl = document.getElementById('sh-from');
+  const toEl = document.getElementById('sh-to');
+  if (!fromEl || !toEl) return;
+
+  const tempSearch = { from: fromEl.value.trim(), to: toEl.value.trim() };
+  const filtered = availableTrips.filter(tr => {
+    const matchFrom = !tempSearch.from || tr.from.includes(tempSearch.from) || tempSearch.from.includes(tr.from);
+    const matchTo = !tempSearch.to || tr.to.includes(tempSearch.to) || tempSearch.to.includes(tr.to);
+    return matchFrom && matchTo;
+  });
+
+  const seatsLabel = t('seatsAvail');
+  document.getElementById('trips-count').textContent = filtered.length + t('sheetCount');
+  const list = document.getElementById('sheet-trips-list');
+  if (filtered.length === 0) {
+    list.innerHTML = `<div style="text-align:center;padding:20px 0;color:var(--text-muted);font-size:13px">${t('sheetEmpty')}<br>${t('sheetEmptySub')}</div>`;
+  } else {
+    list.innerHTML = filtered.map(tr => `
+      <div class="mini-trip" onclick="selectTrip('${tr.from}','${tr.to}','${tr.date}')">
+        <div class="avatar ${tr.av}">${tripInitials(tr)}</div>
+        <div class="mini-trip-info">
+          <div class="mini-trip-route">${tripFrom(tr)} → ${tripTo(tr)}</div>
+          <div class="mini-trip-meta">${tripDate(tr)} • ${tripDriver(tr)} • ⭐${tr.rating} • ${tr.seats}${seatsLabel}</div>
+        </div>
+        <div class="mini-trip-price">฿${tr.price}<small>${t('perPerson')}</small></div>
+      </div>
+    `).join('');
+  }
+}
+
+function selectTrip(from, to, date) {
+  homeSearch.from = from;
+  homeSearch.to = to;
+  // ไม่เซ็ตวันที่จาก mock string เพราะ format ไม่ตรง
+  closeSearchSheet();
+  updateHome();
+}
+
+function closeSearchSheet() {
+  const overlay = document.querySelector('.search-overlay');
+  if (overlay) overlay.remove();
+}
+
+function applySearch() {
+  const from = document.getElementById('sh-from').value.trim();
+  const to = document.getElementById('sh-to').value.trim();
+  const date = document.getElementById('sh-date').value;
+  homeSearch.from = from;
+  homeSearch.to = to;
+  homeSearch.date = date;
+  closeSearchSheet();
+  updateHome();
+}
+
+function clearSearch() {
+  homeSearch.from = '';
+  homeSearch.to = '';
+  homeSearch.date = '';
+  closeSearchSheet();
+  updateHome();
+}
+
+function updateHome() {
+  renderSearchPill();
+  const results = document.getElementById('home-results');
+  if (!results) return;
+
+  const from = homeSearch.from.trim();
+  const to = homeSearch.to.trim();
+
+  // กรณี 1: ยังไม่กรอกอะไรเลย → banner + จุดหมายยอดนิยม (สุ่ม 7 จาก 10 จังหวัดดัง)
+  if (!from && !to) {
+    const dests = getDefaultDestinations(7);
+    let cards = dests.map(d => `
+      <button class="photo-card" onclick="quickFill('','${d.name}')">
+        <div class="img-wrap">
+          <img src="${d.img}" alt="${d.name}" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>
+          <div class="img-overlay"></div>
+          <div class="img-name">${d.name}</div>
+        </div>
+        <div class="card-body">
+          <div class="pc-meta">${d.meta}</div>
+        </div>
+      </button>
+    `).join('');
+    results.innerHTML = `
+      <div class="promo-banner" onclick="show('post')">
+        <div class="promo-icon">
+          <svg viewBox="0 0 48 48" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
+            <!-- พวงมาลัย -->
+            <circle cx="24" cy="24" r="14" fill="none" stroke="white" stroke-width="3"/>
+            <!-- ดุมพวงมาลัย -->
+            <circle cx="24" cy="24" r="3" fill="white"/>
+            <!-- ก้านพวงมาลัย -->
+            <line x1="11" y1="24" x2="21" y2="24" stroke="white" stroke-width="2.5"/>
+            <line x1="27" y1="24" x2="37" y2="24" stroke="white" stroke-width="2.5"/>
+            <line x1="24" y1="27" x2="24" y2="37" stroke="white" stroke-width="2.5"/>
+            <!-- มือซ้ายจับ (9 นาฬิกา) -->
+            <circle cx="11" cy="24" r="4" fill="white" stroke="#007A63" stroke-width="1.4"/>
+            <!-- มือขวาจับ (3 นาฬิกา) -->
+            <circle cx="37" cy="24" r="4" fill="white" stroke="#007A63" stroke-width="1.4"/>
+          </svg>
+          <div class="promo-icon-label">${t('promoRole')}</div>
+        </div>
+        <div class="promo-content">
+          <div class="promo-title">${t('promoTitle')}</div>
+          <div class="promo-sub">${t('promoSub1')}<span class="promo-highlight">฿1.5${t('promoSub2')}</span></div>
+        </div>
+        <div class="promo-arrow">→</div>
+      </div>
+      ${renderCO2Card()}
+      <p class="section-title">${t('popularDest')}</p>
+      <div class="h-scroll">${cards}</div>
+      ${renderStarSection()}
+    `;
+    return;
+  }
+
+  // กรณี 2: กรอกแค่ต้นทาง → หาจังหวัดที่ใกล้ที่สุด 7 จังหวัด
+  if (from && !to) {
+    const suggestions = findNearbyProvinces(from, 7);
+    let cards = suggestions.map(s => `
+      <button class="photo-card" onclick="quickFill('${from}','${s.to}')">
+        <div class="img-wrap">
+          <img src="${s.img}" alt="${s.to}" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>
+          <div class="img-overlay"></div>
+          <div class="img-name">${s.to}</div>
+        </div>
+        <div class="card-body">
+          <div class="pc-meta">${s.meta}</div>
+          <div class="pc-price">฿${s.price}<small>${t('perPerson')}</small></div>
+        </div>
+      </button>
+    `).join('');
+    results.innerHTML = `
+      <div class="section-title-row">
+        <p class="section-title">${t('fromOrigin')}${from}</p>
+        <button class="section-back-btn" onclick="resetHomeSearch()">← ${t('back').replace('← ','')}</button>
+      </div>
+      <div class="h-scroll">${cards}</div>
+      <div class="hero-banner" style="background:var(--bg-soft);color:var(--text)">
+        <div class="hero-title" style="color:var(--text)">${t('pickDest')}</div>
+        <div class="hero-sub" style="color:var(--text-muted)">${t('pickDestSub')}</div>
+      </div>
+      ${renderStarSection()}
+    `;
+    return;
+  }
+
+  // กรณี 3: กรอกครบทั้งต้น-ปลาย → แสดงทริปที่มี
+  let tripCards = mockTrips.map(tr => `
+    <div class="trip-card" data-screen="detail">
+      <div class="trip-top">
+        <div>
+          <div class="trip-time">${tr.time}</div>
+          <div class="trip-route">${tr.meta}</div>
+        </div>
+        <div class="trip-price">฿${tr.price}</div>
+      </div>
+      <div class="trip-driver">
+        <div class="avatar ${tr.av}">${tr.initials}</div>
+        <div class="driver-info">
+          <div>${tr.driver} • ${tr.car}</div>
+          <div class="driver-meta">⭐ ${tr.rating} • ${tr.seats}${t('seatsAvail')}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  results.innerHTML = `
+    <div class="section-title-row">
+      <p class="section-title">${from} → ${to}${t('found')}${mockTrips.length}${t('foundTrips')}${t('closeP')}</p>
+      <button class="section-back-btn" onclick="resetHomeSearch()">← ${t('back').replace('← ','')}</button>
+    </div>
+    ${tripCards}
+    ${renderStarSection()}
+  `;
+
+  // bind click event ใหม่
+  results.querySelectorAll('[data-screen]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      show(el.dataset.screen);
+    });
+  });
+}
+
+function quickFill(from, to) {
+  if (from) homeSearch.from = from;
+  if (to) homeSearch.to = to;
+  updateHome();
+}
+
+function resetHomeSearch() {
+  homeSearch.from = '';
+  homeSearch.to = '';
+  homeSearch.date = '';
+  updateHome();
+  screenEl.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function getScreens() { return {
+  home: `
+    <h2>${t('greet')}<span style="color:var(--primary)">${t('userName')}</span></h2>
+    <p class="tagline">${t('tagline')}</p>
+    <div id="search-pill-wrap"></div>
+    <div id="home-results"></div>
+  `,
+  detail: `
+    <button class="back-btn-inline" data-screen="home">← กลับ</button>
+    <div class="driver-profile">
+      <div class="avatar av-1">สม</div>
+      <div class="driver-name">สมชาย จ.</div>
+      <div class="driver-rating">⭐ 4.8 • 124 เที่ยว</div>
+    </div>
+    <div class="route-box">
+      <div class="route-stop">
+        <span>🟢</span>
+        <div>
+          <div class="stop-name">กรุงเทพฯ • หมอชิต</div>
+          <div class="stop-time">07:00 น.</div>
+        </div>
+      </div>
+      <div class="route-line"></div>
+      <div class="route-stop">
+        <span>🔴</span>
+        <div>
+          <div class="stop-name">เชียงใหม่ • ประตูท่าแพ</div>
+          <div class="stop-time">16:00 น.</div>
+        </div>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="info-label">รถ</div>
+        <div class="info-value">Honda CR-V</div>
+      </div>
+      <div class="info-box">
+        <div class="info-label">ที่ว่าง</div>
+        <div class="info-value">2 ที่นั่ง</div>
+      </div>
+    </div>
+    <div class="price-row">
+      <span>ราคา/ที่นั่ง</span>
+      <span>฿650</span>
+    </div>
+    <button class="btn-primary" onclick="alert('จองสำเร็จ! (จำลอง)')">จองที่นั่งนี้</button>
+  `,
+  post: `
+    <h2>${t('postTitle')}</h2>
+    <p class="subtitle">${t('postSub')}</p>
+
+    <p class="section-title">${t('postRoute')}</p>
+    <div class="field-group">
+      <div class="field-row">
+        <span class="field-icon">🟢</span>
+        <input id="in-from" placeholder="${t('postFrom')}" value="กรุงเทพ"/>
+      </div>
+      <div class="field-row">
+        <span class="field-icon">🔴</span>
+        <input id="in-to" placeholder="${t('postTo')}" value="เชียงใหม่"/>
+      </div>
+    </div>
+
+    <p class="section-title">${t('postWhen')}</p>
+    <div class="field-group">
+      <div class="field-row">
+        <span class="field-icon">📅</span>
+        <input id="in-date" type="date"/>
+      </div>
+      <div class="field-row">
+        <span class="field-icon">🕐</span>
+        <input id="in-time" type="time" value="07:00"/>
+      </div>
+    </div>
+
+    <div id="form-error"></div>
+
+    <button class="btn-primary" onclick="goToMap()">${t('next')}</button>
+  `,
+  map: `
+    <div class="map-screen-wrap">
+      <button class="back-btn-map" onclick="show('post')">← กลับ</button>
+      <div id="map"></div>
+      <div class="map-loading" id="map-loading">
+        <div class="spinner"></div>
+        <span id="loading-text">กำลังค้นหาพิกัด...</span>
+      </div>
+      <div class="route-summary" id="route-summary" style="display:none">
+        <div class="route-handle"></div>
+        <div class="gps-badge">
+          <span class="gps-dot"></span>
+          <span>GPS realtime · OpenStreetMap</span>
+        </div>
+        <div class="route-row">
+          <div class="route-from-to" id="rs-route">— → —</div>
+          <div class="route-stats-pill" id="rs-when">วันนี้</div>
+        </div>
+        <div class="route-detail-grid">
+          <div class="route-detail">
+            <div class="rd-label">ระยะทาง</div>
+            <div class="rd-value primary" id="rs-distance">—</div>
+          </div>
+          <div class="route-detail">
+            <div class="rd-label">เวลาขับ</div>
+            <div class="rd-value" id="rs-duration">—</div>
+          </div>
+          <div class="route-detail">
+            <div class="rd-label">ค่าน้ำมัน~</div>
+            <div class="rd-value" id="rs-fuel">—</div>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="confirmPost()">✓ ยืนยันและลงประกาศ</button>
+      </div>
+    </div>
+  `,
+  trips: `
+    <h2>${t('tripsTitle')}</h2>
+    <p class="subtitle">${t('tripsSub')}</p>
+    <div class="tab-row">
+      <button class="tab active">${t('upcoming')}</button>
+      <button class="tab">${t('past')}</button>
+    </div>
+    <div class="my-trip">
+      <div class="trip-when">
+        <span class="trip-when-time">🕐 ${currentLang === 'TH' ? 'พรุ่งนี้ 07:00' : 'Tomorrow 07:00'}</span>
+        <span class="status-pill pill-success">${t('confirmed')}</span>
+      </div>
+      <div class="trip-name">${currentLang === 'TH' ? 'กรุงเทพฯ → เชียงใหม่' : 'Bangkok → Chiang Mai'}</div>
+      <div class="trip-sub">${t('driver')}${currentLang === 'TH' ? 'สมชาย' : 'Somchai'} • ฿650</div>
+    </div>
+    <div class="my-trip">
+      <div class="trip-when">
+        <span class="trip-when-time" style="color:var(--text-muted)">🕐 ${currentLang === 'TH' ? '28 พ.ค. 14:00' : 'May 28, 14:00'}</span>
+        <span class="status-pill pill-warning">${t('pending')}</span>
+      </div>
+      <div class="trip-name">${currentLang === 'TH' ? 'เชียงใหม่ → กรุงเทพฯ' : 'Chiang Mai → Bangkok'}</div>
+      <div class="trip-sub">${t('driver')}${currentLang === 'TH' ? 'วรพล' : 'Worapon'} • ฿700</div>
+    </div>
+  `,
+  messages: `
+    <h2>${t('messagesTitle')}</h2>
+    <p class="subtitle">${t('messagesSub')}</p>
+    <div class="chat-item" data-screen="chat">
+      <div class="avatar av-1">${currentLang === 'TH' ? 'สม' : 'SM'}</div>
+      <div class="chat-body">
+        <div class="chat-top">
+          <div class="chat-name">${currentLang === 'TH' ? 'สมชาย จ.' : 'Somchai J.'}</div>
+          <div class="chat-time">10:24</div>
+        </div>
+        <div class="chat-last">${currentLang === 'TH' ? 'ครับ เจอกันที่หมอชิต 06:50 นะครับ' : 'OK, see you at Mo Chit at 06:50'}</div>
+      </div>
+      <span class="badge">2</span>
+    </div>
+    <div class="chat-item" data-screen="chat">
+      <div class="avatar av-3">${currentLang === 'TH' ? 'วร' : 'WP'}</div>
+      <div class="chat-body">
+        <div class="chat-top">
+          <div class="chat-name">${currentLang === 'TH' ? 'วรพล ส.' : 'Worapon S.'}</div>
+          <div class="chat-time">${currentLang === 'TH' ? 'เมื่อวาน' : 'Yesterday'}</div>
+        </div>
+        <div class="chat-last">${currentLang === 'TH' ? 'ที่นั่งยังว่างอยู่ไหมครับ?' : 'Are there still seats available?'}</div>
+      </div>
+    </div>
+    <div class="chat-item" data-screen="chat">
+      <div class="avatar av-2">${currentLang === 'TH' ? 'นภ' : 'NP'}</div>
+      <div class="chat-body">
+        <div class="chat-top">
+          <div class="chat-name">${currentLang === 'TH' ? 'นภัทร ป.' : 'Napat P.'}</div>
+          <div class="chat-time">${currentLang === 'TH' ? '2 วันก่อน' : '2 days ago'}</div>
+        </div>
+        <div class="chat-last">${currentLang === 'TH' ? 'ขอบคุณสำหรับทริปที่ดีนะครับ ⭐' : 'Thanks for the great trip ⭐'}</div>
+      </div>
+    </div>
+  `,
+  chat: `
+    <button class="back-btn-inline" data-screen="messages">${t('back')}</button>
+    <div class="chat-header">
+      <div class="avatar av-1">${currentLang === 'TH' ? 'สม' : 'SM'}</div>
+      <div>
+        <div class="chat-name-block">${currentLang === 'TH' ? 'สมชาย จ.' : 'Somchai J.'}</div>
+        <div class="chat-status">${t('online')}</div>
+      </div>
+    </div>
+    <div class="chat-feed">
+      <div class="bubble them">${currentLang === 'TH' ? 'สวัสดีครับ พรุ่งนี้เจอกันที่หมอชิตนะครับ' : 'Hi, see you at Mo Chit tomorrow'}</div>
+      <div class="bubble me">${currentLang === 'TH' ? 'ครับ ออกกี่โมงครับ?' : 'OK, what time?'}</div>
+      <div class="bubble them">${currentLang === 'TH' ? '07:00 ตรงครับ ขอเจอกัน 06:50' : '07:00 sharp, meet at 06:50'}</div>
+      <div class="bubble them">${currentLang === 'TH' ? 'ผมจะจอดตรงทางออก 2 นะครับ รถ Honda CR-V สีเทา' : "I'll park at exit 2, grey Honda CR-V"}</div>
+      <div class="bubble me">${currentLang === 'TH' ? 'รับทราบครับ ผมจะเอากระเป๋าใบใหญ่มาด้วย ไหวไหมครับ?' : 'Got it. I have a big bag, is that OK?'}</div>
+      <div class="bubble them">${currentLang === 'TH' ? 'ครับ เจอกันที่หมอชิต 06:50 นะครับ' : 'Sure, see you at Mo Chit at 06:50'}</div>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-input" placeholder="${t('typeMsg')}"/>
+      <button class="send-btn">➤</button>
+    </div>
+  `,
+  profile: `
+    <h2>โปรไฟล์</h2>
+    <p class="subtitle">บัญชีและการตั้งค่า</p>
+    <div class="profile-head">
+      <div class="avatar">วี</div>
+      <div class="profile-name">วีรนุช</div>
+      <div class="profile-rating">⭐ 5.0 • สมาชิกใหม่</div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-num">0</div>
+        <div class="stat-label">เที่ยวที่ขับ</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">2</div>
+        <div class="stat-label">เที่ยวที่นั่ง</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">฿0</div>
+        <div class="stat-label">ประหยัด</div>
+      </div>
+    </div>
+    <button class="menu-item">
+      <div class="left"><div class="icon-bg">👤</div><span>แก้ไขโปรไฟล์</span></div>
+      <span class="chevron">›</span>
+    </button>
+    <button class="menu-item">
+      <div class="left"><div class="icon-bg">🚗</div><span>เพิ่มรถของฉัน</span></div>
+      <span class="chevron">›</span>
+    </button>
+    <button class="menu-item">
+      <div class="left"><div class="icon-bg">🛡️</div><span>ยืนยันตัวตน</span></div>
+      <span class="chevron">›</span>
+    </button>
+    <button class="menu-item">
+      <div class="left"><div class="icon-bg">⚙️</div><span>ตั้งค่า</span></div>
+      <span class="chevron">›</span>
+    </button>
+  `
+}; }
+
+const screenEl = document.getElementById('screen');
+const navBtns = document.querySelectorAll('.nav-btn');
+const headerEl = document.getElementById('app-header');
+const navEl = document.getElementById('app-nav');
+let map = null;
+
+function show(name) {
+  // หน้าแผนที่: ซ่อน header + nav, ใช้พื้นที่เต็ม
+  const isMapScreen = (name === 'map');
+  const wrap = document.querySelector('.header-wrap');
+  if (wrap) wrap.style.display = isMapScreen ? 'none' : 'block';
+  headerEl.style.display = isMapScreen ? 'none' : 'flex';
+  navEl.style.display = isMapScreen ? 'none' : 'grid';
+  screenEl.classList.toggle('no-pad', isMapScreen);
+
+  const S = getScreens();
+  screenEl.innerHTML = S[name] || S.home;
+  screenEl.scrollTop = 0;
+
+  const navName = (name === 'detail') ? 'home'
+                : (name === 'chat') ? 'messages'
+                : (name === 'map') ? 'post'
+                : name;
+  navBtns.forEach(b => b.classList.toggle('active', b.dataset.screen === navName));
+
+  // หน้า post: ตั้งวันที่ default = พรุ่งนี้, คงค่าที่เคยกรอกไว้
+  if (name === 'post') {
+    const dateInput = document.getElementById('in-date');
+    if (tripData.date) {
+      dateInput.value = tripData.date;
+    } else {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      dateInput.value = tomorrow.toISOString().split('T')[0];
+    }
+    if (tripData.from) document.getElementById('in-from').value = tripData.from;
+    if (tripData.to) document.getElementById('in-to').value = tripData.to;
+    if (tripData.time) document.getElementById('in-time').value = tripData.time;
+  }
+
+  if (name === 'map') {
+    setTimeout(initMap, 100);
+  }
+
+  if (name === 'home') {
+    updateHome();
+  }
+
+  screenEl.querySelectorAll('[data-screen]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      show(el.dataset.screen);
+    });
+  });
+}
+
+function goToMap() {
+  const from = document.getElementById('in-from').value.trim();
+  const to = document.getElementById('in-to').value.trim();
+  const date = document.getElementById('in-date').value;
+  const time = document.getElementById('in-time').value;
+  const err = document.getElementById('form-error');
+
+  if (!from || !to) {
+    err.innerHTML = '<div class="error-msg">กรุณากรอกต้นทางและปลายทาง</div>';
+    return;
+  }
+  if (!date || !time) {
+    err.innerHTML = '<div class="error-msg">กรุณาเลือกวันที่และเวลา</div>';
+    return;
+  }
+  err.innerHTML = '';
+
+  tripData.from = from;
+  tripData.to = to;
+  tripData.date = date;
+  tripData.time = time;
+
+  show('map');
+}
+
+function confirmPost() {
+  const info = window._routeInfo || {};
+  alert('ลงประกาศสำเร็จ! (จำลอง)\n\n' +
+        '• ' + tripData.from + ' → ' + tripData.to + '\n' +
+        '• ' + tripData.date + ' เวลา ' + tripData.time + '\n' +
+        '• ระยะทาง: ' + (info.distance || '—') + '\n' +
+        '• เวลาขับ: ' + (info.duration || '—'));
+  show('trips');
+}
+
+// Geocoding via Nominatim (OSM) — แปลงชื่อสถานที่เป็นพิกัด GPS
+async function geocode(name) {
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(name + ', Thailand')}&limit=1`;
+  const res = await fetch(url, { headers: { 'Accept-Language': 'th' } });
+  const data = await res.json();
+  if (!data || data.length === 0) throw new Error('ไม่พบสถานที่: ' + name);
+  return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+}
+
+// Routing via OSRM — คำนวณเส้นทางขับรถจากพิกัด GPS
+async function getRoute(from, to) {
+  const url = `https://router.project-osrm.org/route/v1/driving/${from.lng},${from.lat};${to.lng},${to.lat}?overview=full&geometries=geojson`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (!data.routes || data.routes.length === 0) throw new Error('ไม่พบเส้นทาง');
+  return data.routes[0];
+}
+
+async function initMap() {
+  const loading = document.getElementById('map-loading');
+  const loadingText = document.getElementById('loading-text');
+  const summary = document.getElementById('route-summary');
+
+  map = L.map('map', { zoomControl: false, attributionControl: false }).setView([15.87, 100.99], 6);
+  L.control.zoom({ position: 'bottomleft' }).addTo(map);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  try {
+    loadingText.textContent = 'กำลังหาพิกัด ' + tripData.from + '...';
+    const fromPt = await geocode(tripData.from);
+
+    loadingText.textContent = 'กำลังหาพิกัด ' + tripData.to + '...';
+    const toPt = await geocode(tripData.to);
+
+    loadingText.textContent = 'กำลังคำนวณเส้นทาง...';
+    const route = await getRoute(fromPt, toPt);
+
+    const greenIcon = L.divIcon({
+      className: 'cp-marker',
+      html: '<div style="background:#00A082;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,160,130,0.5)"></div>',
+      iconSize: [18, 18], iconAnchor: [9, 9]
+    });
+    const redIcon = L.divIcon({
+      className: 'cp-marker',
+      html: '<div style="background:#DC2626;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(220,38,38,0.5)"></div>',
+      iconSize: [18, 18], iconAnchor: [9, 9]
+    });
+    L.marker([fromPt.lat, fromPt.lng], { icon: greenIcon }).addTo(map).bindPopup('🟢 ' + tripData.from);
+    L.marker([toPt.lat, toPt.lng], { icon: redIcon }).addTo(map).bindPopup('🔴 ' + tripData.to);
+
+    const coords = route.geometry.coordinates.map(c => [c[1], c[0]]);
+    const routeLine = L.polyline(coords, {
+      color: '#00A082', weight: 5, opacity: 0.85,
+      lineCap: 'round', lineJoin: 'round'
+    }).addTo(map);
+
+    map.fitBounds(routeLine.getBounds(), { padding: [40, 40], maxZoom: 8 });
+
+    const distKm = (route.distance / 1000).toFixed(0);
+    const durHr = Math.floor(route.duration / 3600);
+    const durMin = Math.round((route.duration % 3600) / 60);
+    const durText = durHr > 0 ? durHr + ' ชม. ' + durMin + ' น.' : durMin + ' น.';
+    const fuelCost = Math.round((route.distance / 1000) * 2.5);
+
+    window._routeInfo = { distance: distKm + ' กม.', duration: durText, fuel: '฿' + fuelCost };
+
+    document.getElementById('rs-route').textContent = tripData.from + ' → ' + tripData.to;
+    const dt = new Date(tripData.date);
+    const dateStr = dt.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
+    document.getElementById('rs-when').textContent = dateStr + ' • ' + tripData.time;
+    document.getElementById('rs-distance').textContent = distKm + ' กม.';
+    document.getElementById('rs-duration').textContent = durText;
+    document.getElementById('rs-fuel').textContent = '฿' + fuelCost;
+
+    loading.style.display = 'none';
+    summary.style.display = 'block';
+    setTimeout(() => map.invalidateSize(), 100);
+
+  } catch (e) {
+    loadingText.textContent = '❌ ' + e.message;
+    loading.style.background = '#FEF2F2';
+    loading.style.color = '#991B1B';
+    loading.querySelector('.spinner').style.display = 'none';
+  }
+}
+
+navBtns.forEach(b => b.addEventListener('click', () => show(b.dataset.screen)));
+show('home');
+</script>
+</body>
+</html>
