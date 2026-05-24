@@ -2727,6 +2727,18 @@ const i18n = {
   yourPrice: { TH: 'ราคาของคุณ', EN: 'Your price' },
   bookPickup: { TH: '🚗 จองจาก ', EN: '🚗 Book from ' },
 
+  // Pickup editor (driver)
+  pickupEditor: { TH: 'เลือกจุดรับผู้โดยสาร', EN: 'Choose pickup stops' },
+  pickupEditorHint: { TH: 'แตะที่จุดสีฟ้าเพื่อเลือก (สูงสุด 6 จุด)', EN: 'Tap blue dots to select (max 6)' },
+  suggested: { TH: 'แนะนำ', EN: 'Suggested' },
+  selected: { TH: 'เลือกแล้ว', EN: 'Selected' },
+  customPin: { TH: 'จุดที่ปักเอง', EN: 'Custom pin' },
+  addCustomPin: { TH: '➕ ปักจุดเอง (กดบนแผนที่)', EN: '➕ Add custom pin (tap on map)' },
+  maxSelected: { TH: 'เลือกครบ 6 จุดแล้ว — ยกเลิกบางจุดก่อน', EN: 'Max 6 reached — deselect first' },
+  tapMapHint: { TH: 'แตะบนแผนที่เพื่อปักจุดเพิ่ม', EN: 'Tap on map to add a pin' },
+  cancelPin: { TH: 'ยกเลิก', EN: 'Cancel' },
+  loadingLandmarks: { TH: 'กำลังหาจุดแนะนำ...', EN: 'Finding landmarks...' },
+
   // Quick locations
   quickLoc: { TH: 'เลือกเร็ว', EN: 'Quick pick' },
   setAs: { TH: 'ใส่ใน:', EN: 'Set as:' },
@@ -4510,7 +4522,8 @@ function updatePriceSlider() {
   const price = parseFloat(slider.value);
   tripData.pricePerKm = price;
 
-  document.getElementById('price-val').textContent = price.toFixed(1);
+  const priceVal = document.getElementById('price-val');
+  if (priceVal) priceVal.textContent = price.toFixed(1);
 
   // เลือกสี + feedback ตามช่วงราคา
   let color, feedbackClass, feedbackKey;
@@ -4920,14 +4933,14 @@ async function initMap() {
       income: '฿' + incomePerPassenger
     };
 
-    document.getElementById('rs-route').textContent = tripData.from + ' → ' + tripData.to;
+    document.getElementById('rs-route') && (document.getElementById('rs-route').textContent = tripData.from + ' → ' + tripData.to);
     const dt = new Date(tripData.date);
     const locale = currentLang === 'EN' ? 'en-US' : 'th-TH';
     const dateStr = dt.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
-    document.getElementById('rs-when').textContent = dateStr + ' • ' + tripData.time;
-    document.getElementById('rs-distance').textContent = distKm + ' กม.';
-    document.getElementById('rs-duration').textContent = durText;
-    document.getElementById('rs-income').textContent = '฿' + incomePerPassenger;
+    document.getElementById('rs-when') && (document.getElementById('rs-when').textContent = dateStr + ' • ' + tripData.time);
+    document.getElementById('rs-distance') && (document.getElementById('rs-distance').textContent = distKm + ' กม.');
+    document.getElementById('rs-duration') && (document.getElementById('rs-duration').textContent = durText);
+    document.getElementById('rs-income') && (document.getElementById('rs-income').textContent = '฿' + incomePerPassenger);
 
     // ====== Generate Pickup Points ======
     // คัด pickup จุดตามจุด waypoints บนเส้นทาง (4 จุดระหว่างต้นทาง-ปลายทาง)
