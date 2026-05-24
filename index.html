@@ -693,6 +693,82 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.06);
   }
 
+  /* main tab — ผู้โดยสาร/ผู้ขับ */
+  .role-tab-row {
+    display: flex;
+    gap: 0;
+    margin-bottom: 14px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    padding: 4px;
+    border-radius: 14px;
+  }
+  .role-tab {
+    flex: 1;
+    padding: 12px 10px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    color: var(--text-muted);
+    font-weight: 700;
+    transition: all 0.2s;
+    letter-spacing: -0.2px;
+  }
+  .role-tab.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 3px 10px rgba(0, 160, 130, 0.3);
+  }
+
+  /* sub tab — จะมาถึง/ผ่านมาแล้ว (เล็กกว่า) */
+  .sub-tab-row {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 14px;
+  }
+  .sub-tab {
+    padding: 7px 14px;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    border-radius: 999px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--text-muted);
+    font-weight: 700;
+    transition: all 0.15s;
+  }
+  .sub-tab.active {
+    background: var(--text);
+    color: white;
+    border-color: var(--text);
+  }
+  .sub-tab .badge-num {
+    display: inline-block;
+    background: rgba(0,0,0,0.1);
+    color: inherit;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    margin-left: 4px;
+  }
+  .sub-tab.active .badge-num {
+    background: rgba(255,255,255,0.25);
+  }
+
+  /* empty state */
+  .trips-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .trips-empty-emoji { font-size: 48px; margin-bottom: 12px; }
+
   .status-pill {
     font-size: 11px;
     padding: 4px 10px;
@@ -702,6 +778,7 @@
   }
   .pill-success { background: var(--success-bg); color: var(--success); }
   .pill-warning { background: var(--warning-bg); color: var(--warning); }
+  .pill-neutral { background: var(--bg-soft); color: var(--text-muted); }
   .my-trip {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -2819,11 +2896,17 @@ const i18n = {
   // trips screen
   tripsTitle: { TH: 'การเดินทาง', EN: 'My Trips' },
   tripsSub: { TH: 'ทริปทั้งหมดของคุณ', EN: 'All your trips' },
+  asPassenger: { TH: '🧍 ผู้โดยสาร', EN: '🧍 As Passenger' },
+  asDriver: { TH: '🚗 ผู้ขับ', EN: '🚗 As Driver' },
   upcoming: { TH: 'จะมาถึง', EN: 'Upcoming' },
   past: { TH: 'ผ่านมาแล้ว', EN: 'Past' },
   confirmed: { TH: 'ยืนยันแล้ว', EN: 'Confirmed' },
   pending: { TH: 'รอตอบรับ', EN: 'Pending' },
+  completed: { TH: 'เสร็จสิ้น', EN: 'Completed' },
   driver: { TH: 'คนขับ: ', EN: 'Driver: ' },
+  passenger: { TH: 'ผู้โดยสาร: ', EN: 'Passenger: ' },
+  noUpcoming: { TH: 'ยังไม่มีทริปที่กำลังจะมาถึง', EN: 'No upcoming trips yet' },
+  noPast: { TH: 'ยังไม่มีประวัติการเดินทาง', EN: 'No past trips' },
 
   // messages
   messagesTitle: { TH: 'ข้อความ', EN: 'Messages' },
@@ -2923,6 +3006,109 @@ function applyLang() {
     setTimeout(() => { if (screenEl) screenEl.scrollTop = scrollPos; }, 50);
   }
 }
+
+// state ของหน้าทริป
+const tripsView = { role: 'passenger', tab: 'upcoming' };
+
+// ทริปของผู้ใช้ (mock)
+const myTrips = {
+  passenger: {
+    upcoming: [
+      { time: 'พรุ่งนี้ 07:00', timeEN: 'Tomorrow 07:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'เชียงใหม่', toEN: 'Chiang Mai', other: 'สมชาย', otherEN: 'Somchai', price: 650, status: 'confirmed' },
+      { time: '28 พ.ค. 14:00', timeEN: 'May 28, 14:00', from: 'เชียงใหม่', fromEN: 'Chiang Mai', to: 'กรุงเทพฯ', toEN: 'Bangkok', other: 'วรพล', otherEN: 'Worapon', price: 700, status: 'pending' }
+    ],
+    past: [
+      { time: '15 พ.ค. 09:00', timeEN: 'May 15, 09:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'พัทยา', toEN: 'Pattaya', other: 'นภัทร', otherEN: 'Napat', price: 250, status: 'completed' },
+      { time: '5 พ.ค. 16:00', timeEN: 'May 5, 16:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'หัวหิน', toEN: 'Hua Hin', other: 'พลอย', otherEN: 'Ploy', price: 350, status: 'completed' }
+    ]
+  },
+  driver: {
+    upcoming: [
+      { time: '30 พ.ค. 06:00', timeEN: 'May 30, 06:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'เชียงใหม่', toEN: 'Chiang Mai', other: 'ผู้โดยสาร 3 คน', otherEN: '3 passengers', price: 2400, status: 'confirmed' }
+    ],
+    past: [
+      { time: '10 พ.ค. 08:00', timeEN: 'May 10, 08:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'อยุธยา', toEN: 'Ayutthaya', other: 'ผู้โดยสาร 2 คน', otherEN: '2 passengers', price: 320, status: 'completed' }
+    ]
+  }
+};
+
+function setTripsRole(role) {
+  tripsView.role = role;
+  show('trips');
+}
+
+function setTripsTab(tab) {
+  tripsView.tab = tab;
+  show('trips');
+}
+
+function renderTripsScreen() {
+  const role = tripsView.role;
+  const tab = tripsView.tab;
+  const trips = (myTrips[role] && myTrips[role][tab]) || [];
+
+  const upcomingCount = (myTrips[role] && myTrips[role].upcoming || []).length;
+  const pastCount = (myTrips[role] && myTrips[role].past || []).length;
+
+  const otherLabel = role === 'driver' ? t('passenger') : t('driver');
+
+  let tripsHtml;
+  if (trips.length === 0) {
+    tripsHtml = `
+      <div class="trips-empty">
+        <div class="trips-empty-emoji">${tab === 'upcoming' ? '🗓️' : '📭'}</div>
+        ${tab === 'upcoming' ? t('noUpcoming') : t('noPast')}
+      </div>
+    `;
+  } else {
+    tripsHtml = trips.map(tr => {
+      const timeStr = currentLang === 'EN' ? (tr.timeEN || tr.time) : tr.time;
+      const fromStr = currentLang === 'EN' ? (tr.fromEN || tr.from) : tr.from;
+      const toStr = currentLang === 'EN' ? (tr.toEN || tr.to) : tr.to;
+      const otherStr = currentLang === 'EN' ? (tr.otherEN || tr.other) : tr.other;
+
+      let pillClass, pillText;
+      if (tr.status === 'confirmed') { pillClass = 'pill-success'; pillText = t('confirmed'); }
+      else if (tr.status === 'pending') { pillClass = 'pill-warning'; pillText = t('pending'); }
+      else { pillClass = 'pill-neutral'; pillText = t('completed'); }
+
+      const isPast = tab === 'past';
+      return `
+        <div class="my-trip">
+          <div class="trip-when">
+            <span class="trip-when-time" style="${isPast ? 'color:var(--text-muted)' : ''}">🕐 ${timeStr}</span>
+            <span class="status-pill ${pillClass}">${pillText}</span>
+          </div>
+          <div class="trip-name">${fromStr} → ${toStr}</div>
+          <div class="trip-sub">${otherLabel}${otherStr} • ฿${tr.price.toLocaleString()}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  return `
+    <h2>${t('tripsTitle')}</h2>
+    <p class="subtitle">${t('tripsSub')}</p>
+
+    <div class="role-tab-row">
+      <button class="role-tab ${role === 'passenger' ? 'active' : ''}" onclick="setTripsRole('passenger')">${t('asPassenger')}</button>
+      <button class="role-tab ${role === 'driver' ? 'active' : ''}" onclick="setTripsRole('driver')">${t('asDriver')}</button>
+    </div>
+
+    <div class="sub-tab-row">
+      <button class="sub-tab ${tab === 'upcoming' ? 'active' : ''}" onclick="setTripsTab('upcoming')">
+        ${t('upcoming')}<span class="badge-num">${upcomingCount}</span>
+      </button>
+      <button class="sub-tab ${tab === 'past' ? 'active' : ''}" onclick="setTripsTab('past')">
+        ${t('past')}<span class="badge-num">${pastCount}</span>
+      </button>
+    </div>
+
+    ${tripsHtml}
+  `;
+}
+
+// state ของหน้าทริป end
 
 const tripData = { from: '', to: '', date: '', time: '', pricePerKm: 1.5, distanceKm: null };
 
@@ -4208,30 +4394,7 @@ function getScreens() { return {
       </div>
     </div>
   `,
-  trips: `
-    <h2>${t('tripsTitle')}</h2>
-    <p class="subtitle">${t('tripsSub')}</p>
-    <div class="tab-row">
-      <button class="tab active">${t('upcoming')}</button>
-      <button class="tab">${t('past')}</button>
-    </div>
-    <div class="my-trip">
-      <div class="trip-when">
-        <span class="trip-when-time">🕐 ${currentLang === 'TH' ? 'พรุ่งนี้ 07:00' : 'Tomorrow 07:00'}</span>
-        <span class="status-pill pill-success">${t('confirmed')}</span>
-      </div>
-      <div class="trip-name">${currentLang === 'TH' ? 'กรุงเทพฯ → เชียงใหม่' : 'Bangkok → Chiang Mai'}</div>
-      <div class="trip-sub">${t('driver')}${currentLang === 'TH' ? 'สมชาย' : 'Somchai'} • ฿650</div>
-    </div>
-    <div class="my-trip">
-      <div class="trip-when">
-        <span class="trip-when-time" style="color:var(--text-muted)">🕐 ${currentLang === 'TH' ? '28 พ.ค. 14:00' : 'May 28, 14:00'}</span>
-        <span class="status-pill pill-warning">${t('pending')}</span>
-      </div>
-      <div class="trip-name">${currentLang === 'TH' ? 'เชียงใหม่ → กรุงเทพฯ' : 'Chiang Mai → Bangkok'}</div>
-      <div class="trip-sub">${t('driver')}${currentLang === 'TH' ? 'วรพล' : 'Worapon'} • ฿700</div>
-    </div>
-  `,
+  trips: `${renderTripsScreen()}`,
   messages: `
     <h2>${t('messagesTitle')}</h2>
     <p class="subtitle">${t('messagesSub')}</p>
