@@ -1853,6 +1853,66 @@
   .pickup-sum-row.total .pickup-sum-label { font-size: 14px; color: var(--text); font-weight: 700; }
   .pickup-sum-row.total .pickup-sum-val { font-size: 24px; color: var(--primary); letter-spacing: -0.5px; }
 
+  /* Pickup multi-select counter */
+  .pickup-counter-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--primary-light);
+    border-radius: 12px;
+    margin-bottom: 6px;
+  }
+  .pickup-counter-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--primary-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .pickup-counter-val {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'Manrope', sans-serif;
+  }
+  .pickup-hint-small {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 10px;
+    padding: 0 4px;
+    transition: all 0.2s;
+  }
+  .pickup-hint-small.warning {
+    color: #DC2626;
+    background: #FEE2E2;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 700;
+  }
+  /* selected pickup item */
+  .pickup-item.picked {
+    background: var(--primary-light);
+    border: 1.5px solid var(--primary);
+    margin: -1.5px 0;
+  }
+  .pickup-item.picked .pickup-dot {
+    background: var(--primary);
+    border-color: var(--primary);
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pickup-check {
+    color: white;
+    font-size: 13px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
   /* Map pickup marker tooltip */
   .pickup-tooltip {
     background: var(--text) !important;
@@ -4325,6 +4385,8 @@ function show(name) {
   }
 
   if (name === 'map') {
+    // ล้างจุดที่เลือกไว้
+    selectedPickups.clear();
     setTimeout(initMap, 100);
   }
 
@@ -4957,22 +5019,24 @@ async function initMap() {
       cumDist.push(cumDist[i-1] + segDist);
     }
 
-    // สุ่มตัวอย่างจุดทุก ~50 กม. (ไม่เกิน 8 จุดตัวอย่าง เพื่อไม่ยิง API เยอะ)
-    const sampleInterval = Math.max(50, distKmNum / 8); // อย่างน้อย 50 กม. ต่อจุด
+    // สุ่มตัวอย่างจุดทุก ~30 กม. (ไม่เกิน 14 จุดตัวอย่าง)
+    const sampleInterval = Math.max(30, distKmNum / 14); // อย่างน้อย 30 กม. ต่อจุด
     const sampleIndices = [];
     let nextDist = sampleInterval;
-    for (let i = 0; i < cumDist.length && nextDist < distKmNum - 30; i++) {
+    for (let i = 0; i < cumDist.length && nextDist < distKmNum - 20; i++) {
       if (cumDist[i] >= nextDist) {
         sampleIndices.push(i);
         nextDist += sampleInterval;
       }
     }
 
-    // ถ้าเส้นทางสั้น (<100 กม.) แสดงเฉพาะจุดกลาง 1-2 จุด
-    if (distKmNum < 100) {
+    // ถ้าเส้นทางสั้น (<80 กม.) แสดงจุดกลาง 2-3 จุด
+    if (distKmNum < 80) {
       sampleIndices.length = 0;
-      const midIdx = Math.floor(routeCoords.length / 2);
-      sampleIndices.push(midIdx);
+      for (let k = 1; k <= 3; k++) {
+        const idx = Math.floor(routeCoords.length * k / 4);
+        if (routeCoords[idx]) sampleIndices.push(idx);
+      }
     }
 
     loadingText.textContent = currentLang === 'EN' ? 'Finding cities along route...' : 'กำลังหาเมืองที่ผ่าน...';
@@ -5012,13 +5076,13 @@ async function initMap() {
       }
     }
 
-    // กรองจังหวัดซ้ำ — เก็บอันแรกของแต่ละจังหวัด
-    const seenProvinces = new Set();
+    // กรองชื่อซ้ำ (ใช้ name ไม่ใช่ province) — เก็บสูงสุด 10 จุด
+    const seenNames = new Set();
     const uniquePoints = [];
     for (const pt of candidatePoints) {
-      const key = pt.province || pt.name;
-      if (!seenProvinces.has(key) && uniquePoints.length < 4) {
-        seenProvinces.add(key);
+      const key = (pt.name || '').toLowerCase();
+      if (key && !seenNames.has(key) && uniquePoints.length < 10) {
+        seenNames.add(key);
         uniquePoints.push(pt);
       }
     }
@@ -5069,6 +5133,10 @@ async function initMap() {
 }
 
 // render pickup points list
+// state เก็บ index ของ pickup ที่ถูกเลือก (สำหรับ driver)
+const selectedPickups = new Set();
+const MAX_PICKUPS = 6;
+
 function renderPickupPoints(points, totalKm, pricePerKm) {
   const list = document.getElementById('pickup-list');
   if (!list) return;
@@ -5076,27 +5144,44 @@ function renderPickupPoints(points, totalKm, pricePerKm) {
   const pickupAt = currentLang === 'EN' ? 'Pickup at' : 'ขึ้นที่';
   const kmLabel = currentLang === 'EN' ? ' km' : ' กม.';
 
-  list.innerHTML = points.map((pt, idx) => {
-    // ราคาคิดจาก pickup → ปลายทาง
+  // หัวข้อแสดงจำนวนที่เลือก
+  const headerHtml = `
+    <div class="pickup-counter-row">
+      <div class="pickup-counter-label">
+        <span>✓ ${currentLang === 'EN' ? 'Selected' : 'เลือกแล้ว'}</span>
+      </div>
+      <div class="pickup-counter-val">
+        <span id="pickup-count">${selectedPickups.size}</span><span style="color:var(--text-muted)">/${MAX_PICKUPS}</span>
+      </div>
+    </div>
+    <div class="pickup-hint-small" id="pickup-hint-small">
+      ${currentLang === 'EN' ? 'Tap dots to select stops you can offer' : 'แตะจุดที่คุณรับผู้โดยสารได้ (สูงสุด ' + MAX_PICKUPS + ' จุด)'}
+    </div>
+  `;
+
+  const itemsHtml = points.map((pt, idx) => {
     const remainKm = totalKm - pt.distFromStart;
     const price = pt.isEnd ? 0 : Math.round(remainKm * pricePerKm);
     const km = remainKm.toFixed(0);
 
     const startClass = pt.isStart ? 'start' : '';
     const endClass = pt.isEnd ? 'end' : '';
+    const isSelected = selectedPickups.has(idx);
+    const selectedClass = isSelected ? 'picked' : '';
+    const isMiddle = !pt.isStart && !pt.isEnd;
 
     return `
-      <div class="pickup-item ${startClass} ${endClass}" data-pickup-idx="${idx}"
-           ${!pt.isEnd ? `onclick="selectPickup(${idx}, ${remainKm}, ${pricePerKm})"` : ''}>
+      <div class="pickup-item ${startClass} ${endClass} ${selectedClass}" data-pickup-idx="${idx}"
+           ${isMiddle ? `onclick="togglePickup(${idx})"` : ''}>
         ${idx > 0 ? '<div class="pickup-line" style="bottom:50%;top:-50%"></div>' : ''}
         ${idx < points.length - 1 ? '<div class="pickup-line" style="top:50%"></div>' : ''}
         <div class="pickup-dot-wrap">
-          <div class="pickup-dot"></div>
+          <div class="pickup-dot">${isSelected ? '<span class="pickup-check">✓</span>' : ''}</div>
         </div>
         <div class="pickup-content">
           <div class="pickup-name">${pt.name}</div>
-          <div class="pickup-meta">${pt.isStart ? (currentLang === 'EN' ? 'Starting point' : 'จุดเริ่มต้น') :
-                                    pt.isEnd ? (currentLang === 'EN' ? 'Destination' : 'ปลายทาง') :
+          <div class="pickup-meta">${pt.isStart ? (currentLang === 'EN' ? 'Starting point (auto)' : 'จุดเริ่มต้น (auto)') :
+                                    pt.isEnd ? (currentLang === 'EN' ? 'Destination (auto)' : 'ปลายทาง (auto)') :
                                     pickupAt + ' • ' + (totalKm - remainKm).toFixed(0) + kmLabel + ' ' + (currentLang === 'EN' ? 'in' : 'จากต้นทาง')}</div>
         </div>
         ${!pt.isEnd ? `
@@ -5108,12 +5193,43 @@ function renderPickupPoints(points, totalKm, pricePerKm) {
       </div>
     `;
   }).join('');
+
+  list.innerHTML = headerHtml + itemsHtml;
+
+  // เก็บข้อมูล points ไว้ใน window สำหรับใช้งานต่อ
+  window._currentPickups = points;
+  window._currentTotalKm = totalKm;
+  window._currentPricePerKm = pricePerKm;
 }
 
-function selectPickup(idx, remainKm, pricePerKm) {
-  document.querySelectorAll('.pickup-item').forEach(el => el.classList.remove('active'));
-  const item = document.querySelector(`[data-pickup-idx="${idx}"]`);
-  if (item) item.classList.add('active');
+function togglePickup(idx) {
+  if (selectedPickups.has(idx)) {
+    selectedPickups.delete(idx);
+  } else {
+    if (selectedPickups.size >= MAX_PICKUPS) {
+      // เด้ง warning เด่นๆ
+      const hint = document.getElementById('pickup-hint-small');
+      if (hint) {
+        hint.textContent = currentLang === 'EN'
+          ? `⚠️ Max ${MAX_PICKUPS} stops reached — deselect one first`
+          : `⚠️ เลือกครบ ${MAX_PICKUPS} จุดแล้ว — ยกเลิกจุดอื่นก่อน`;
+        hint.classList.add('warning');
+        setTimeout(() => {
+          if (hint) {
+            hint.classList.remove('warning');
+            hint.textContent = currentLang === 'EN' ? 'Tap dots to select stops you can offer' : 'แตะจุดที่คุณรับผู้โดยสารได้ (สูงสุด ' + MAX_PICKUPS + ' จุด)';
+          }
+        }, 2500);
+      }
+      return;
+    }
+    selectedPickups.add(idx);
+  }
+
+  // re-render
+  if (window._currentPickups) {
+    renderPickupPoints(window._currentPickups, window._currentTotalKm, window._currentPricePerKm);
+  }
 }
 
 navBtns.forEach(b => b.addEventListener('click', () => show(b.dataset.screen)));
