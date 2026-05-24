@@ -505,6 +505,156 @@
   }
   .field-row input::placeholder { color: var(--text-light); font-weight: 400; }
 
+  /* Autocomplete dropdown */
+  .ac-list {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin: -8px 0 8px;
+    max-height: 220px;
+    overflow-y: auto;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    display: none;
+  }
+  .ac-list.show { display: block; }
+  .ac-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  .ac-item:last-child { border-bottom: none; }
+  .ac-item:hover, .ac-item.active { background: var(--primary-light); }
+  .ac-icon {
+    color: var(--primary);
+    font-size: 14px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .ac-text { flex: 1; min-width: 0; }
+  .ac-main {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    color: var(--text);
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ac-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ac-loading {
+    padding: 14px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* Quick location buttons (current location + saved places) */
+  .quick-locations {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    margin: -6px 0 12px;
+    padding: 4px 0 6px;
+    scrollbar-width: none;
+  }
+  .quick-locations::-webkit-scrollbar { display: none; }
+  .quick-loc-btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 13px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .quick-loc-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+  }
+  .quick-loc-btn.gps {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+  }
+  .quick-loc-btn.loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .quick-loc-btn .ql-icon { font-size: 13px; }
+
+  /* mini spinner สำหรับ GPS loading */
+  .mini-spinner {
+    width: 11px;
+    height: 11px;
+    border: 1.8px solid var(--primary-light);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+  }
+
+  /* For/To target picker (เลือกว่าจะใส่ใน from หรือ to) */
+  .ql-section {
+    margin-top: 4px;
+    margin-bottom: 6px;
+  }
+  .ql-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .ql-target {
+    display: inline-flex;
+    background: var(--bg-soft);
+    border-radius: 999px;
+    padding: 2px;
+    gap: 0;
+  }
+  .ql-target-btn {
+    padding: 3px 10px;
+    background: transparent;
+    border: none;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--text-muted);
+    transition: all 0.15s;
+  }
+  .ql-target-btn.active {
+    background: var(--primary);
+    color: white;
+  }
+
   .error-msg {
     background: #FEF2F2;
     border: 1px solid #FECACA;
@@ -1818,6 +1968,19 @@ const i18n = {
   postTo: { TH: 'ปลายทาง', EN: 'Destination' },
   next: { TH: 'ถัดไป →', EN: 'Next →' },
 
+  // Quick locations
+  quickLoc: { TH: 'เลือกเร็ว', EN: 'Quick pick' },
+  setAs: { TH: 'ใส่ใน:', EN: 'Set as:' },
+  asFrom: { TH: 'ต้นทาง', EN: 'Origin' },
+  asTo: { TH: 'ปลายทาง', EN: 'Destination' },
+  myLocation: { TH: 'ตำแหน่งปัจจุบัน', EN: 'My location' },
+  home: { TH: 'บ้าน', EN: 'Home' },
+  work: { TH: 'ที่ทำงาน', EN: 'Work' },
+  gettingLocation: { TH: 'กำลังหาตำแหน่ง...', EN: 'Locating...' },
+  locationError: { TH: 'หาตำแหน่งไม่ได้ กรุณาอนุญาต GPS', EN: 'Location unavailable. Please allow GPS' },
+  setHome: { TH: 'ตั้งบ้าน', EN: 'Set home' },
+  setWork: { TH: 'ตั้งที่ทำงาน', EN: 'Set work' },
+
   // trips screen
   tripsTitle: { TH: 'การเดินทาง', EN: 'My Trips' },
   tripsSub: { TH: 'ทริปทั้งหมดของคุณ', EN: 'All your trips' },
@@ -1904,9 +2067,74 @@ function applyLang() {
 
 const tripData = { from: '', to: '', date: '', time: '' };
 
-// ฟังก์ชันช่วยสร้าง URL รูปจาก Unsplash (ฟรี ไม่ต้องใช้ API key)
+// รูปจริงของจังหวัด (จาก Wikipedia/Unsplash CDN ที่ใช้งานได้)
+const provinceImages = {
+  'เชียงใหม่': 'https://images.unsplash.com/photo-1598935898639-81586f7d2129?w=400&q=80',
+  'เชียงราย': 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=400&q=80',
+  'ปาย': 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&q=80',
+  'แม่ฮ่องสอน': 'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&q=80',
+  'ลำปาง': 'https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?w=400&q=80',
+  'น่าน': 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80',
+  'กรุงเทพ': 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400&q=80',
+  'อยุธยา': 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80',
+  'นครปฐม': 'https://images.unsplash.com/photo-1552550049-db097c9480d1?w=400&q=80',
+  'กาญจนบุรี': 'https://images.unsplash.com/photo-1582553081818-8fbeaffc6abf?w=400&q=80',
+  'สมุทรสงคราม': 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&q=80',
+  'พัทยา': 'https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=400&q=80',
+  'ระยอง': 'https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&q=80',
+  'จันทบุรี': 'https://images.unsplash.com/photo-1591118144108-1d641b50e5b9?w=400&q=80',
+  'ตราด': 'https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=400&q=80',
+  'หัวหิน': 'https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&q=80',
+  'ประจวบคีรีขันธ์': 'https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=400&q=80',
+  'ชุมพร': 'https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&q=80',
+  'เขาใหญ่': 'https://images.unsplash.com/photo-1591118144108-1d641b50e5b9?w=400&q=80',
+  'นครราชสีมา': 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80',
+  'บุรีรัมย์': 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80',
+  'ภูเก็ต': 'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=400&q=80',
+  'กระบี่': 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&q=80',
+  'พังงา': 'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=400&q=80',
+  'สุราษฎร์ธานี': 'https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&q=80',
+  'ตรัง': 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&q=80',
+  'นครศรีธรรมราช': 'https://images.unsplash.com/photo-1591118144108-1d641b50e5b9?w=400&q=80',
+  'สงขลา': 'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=400&q=80',
+  'อุดรธานี': 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80',
+  'ขอนแก่น': 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80',
+  'อุบลราชธานี': 'https://images.unsplash.com/photo-1591118144108-1d641b50e5b9?w=400&q=80',
+  'เลย': 'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&q=80',
+  'เกาะช้าง': 'https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=400&q=80',
+  'สมุย': 'https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&q=80'
+};
+
+// ฟังก์ชันช่วยดึง URL รูป — fallback เป็น Picsum random ถ้าไม่เจอ
 function img(keyword) {
-  return `https://source.unsplash.com/300x220/?${encodeURIComponent(keyword)}`;
+  // เช็คว่า keyword มีชื่อจังหวัดไทยอยู่ในนั้นไหม
+  for (const province in provinceImages) {
+    if (keyword.includes(province) || province.includes(keyword)) {
+      return provinceImages[province];
+    }
+  }
+  // เช็คชื่อภาษาอังกฤษ
+  const enMap = {
+    'chiang mai': 'เชียงใหม่', 'phuket': 'ภูเก็ต', 'krabi': 'กระบี่',
+    'pai': 'ปาย', 'pattaya': 'พัทยา', 'ayutthaya': 'อยุธยา',
+    'hua hin': 'หัวหิน', 'khao yai': 'เขาใหญ่', 'bangkok': 'กรุงเทพ',
+    'koh chang': 'เกาะช้าง', 'koh samui': 'สมุย', 'chiang rai': 'เชียงราย',
+    'mae hong son': 'แม่ฮ่องสอน', 'kanchanaburi': 'กาญจนบุรี',
+    'phang nga': 'พังงา', 'koh samet': 'ระยอง', 'phu kradueng': 'เลย',
+    'nan': 'น่าน', 'lampang': 'ลำปาง', 'udon thani': 'อุดรธานี',
+    'erawan': 'กาญจนบุรี', 'trang': 'ตรัง', 'phanom rung': 'บุรีรัมย์',
+    'chanthaburi': 'จันทบุรี', 'nakhon pathom': 'นครปฐม',
+    'pang oung': 'แม่ฮ่องสอน'
+  };
+  const lower = keyword.toLowerCase();
+  for (const en in enMap) {
+    if (lower.includes(en)) {
+      return provinceImages[enMap[en]];
+    }
+  }
+  // fallback: รูปสุ่มจาก Picsum (ใช้ keyword เป็น seed ให้รูปเดิมเสมอ)
+  const seed = keyword.replace(/[^a-zA-Z0-9]/g, '').substring(0, 20) || 'travel';
+  return `https://picsum.photos/seed/${seed}/400/300`;
 }
 
 // ฐานข้อมูลจังหวัด (พิกัด GPS จริง + รูป + แปล EN)
@@ -2814,12 +3042,29 @@ function getScreens() { return {
     <div class="field-group">
       <div class="field-row">
         <span class="field-icon">🟢</span>
-        <input id="in-from" placeholder="${t('postFrom')}" value="กรุงเทพ"/>
+        <input id="in-from" placeholder="${t('postFrom')}" value="กรุงเทพ" autocomplete="off"
+               oninput="onPlaceInput('from')" onfocus="onPlaceInput('from')" onblur="hideAutocomplete('from')"/>
       </div>
+      <div id="ac-from" class="ac-list"></div>
       <div class="field-row">
         <span class="field-icon">🔴</span>
-        <input id="in-to" placeholder="${t('postTo')}" value="เชียงใหม่"/>
+        <input id="in-to" placeholder="${t('postTo')}" value="เชียงใหม่" autocomplete="off"
+               oninput="onPlaceInput('to')" onfocus="onPlaceInput('to')" onblur="hideAutocomplete('to')"/>
       </div>
+      <div id="ac-to" class="ac-list"></div>
+    </div>
+
+    <!-- Quick location chips -->
+    <div class="ql-section">
+      <div class="ql-label">
+        <span>⚡ ${t('quickLoc')}</span>
+        <span style="color:var(--text-light);font-weight:500;text-transform:none;letter-spacing:0;margin-left:2px;">${t('setAs')}</span>
+        <div class="ql-target">
+          <button class="ql-target-btn active" id="ql-target-from" onclick="setQLTarget('from')">🟢 ${t('asFrom')}</button>
+          <button class="ql-target-btn" id="ql-target-to" onclick="setQLTarget('to')">🔴 ${t('asTo')}</button>
+        </div>
+      </div>
+      <div class="quick-locations" id="quick-locations"></div>
     </div>
 
     <p class="section-title">${t('postWhen')}</p>
@@ -3034,6 +3279,8 @@ function show(name) {
     if (tripData.from) document.getElementById('in-from').value = tripData.from;
     if (tripData.to) document.getElementById('in-to').value = tripData.to;
     if (tripData.time) document.getElementById('in-time').value = tripData.time;
+    // render ปุ่ม quick locations
+    renderQuickLocations();
   }
 
   if (name === 'map') {
@@ -3050,6 +3297,280 @@ function show(name) {
       show(el.dataset.screen);
     });
   });
+}
+
+// ====== Quick Locations (GPS + Saved places) ======
+// saved places — localStorage (อยู่กับ browser ไม่หาย)
+function getSavedPlaces() {
+  try {
+    return JSON.parse(localStorage.getItem('coolpar_places') || '{}');
+  } catch (e) { return {}; }
+}
+function savePlaces(obj) {
+  try { localStorage.setItem('coolpar_places', JSON.stringify(obj)); } catch (e) {}
+}
+
+let qlTarget = 'from'; // จะใส่ค่าลง 'from' หรือ 'to'
+
+function setQLTarget(which) {
+  qlTarget = which;
+  document.getElementById('ql-target-from').classList.toggle('active', which === 'from');
+  document.getElementById('ql-target-to').classList.toggle('active', which === 'to');
+}
+
+function renderQuickLocations() {
+  const container = document.getElementById('quick-locations');
+  if (!container) return;
+
+  const saved = getSavedPlaces();
+  let html = '';
+
+  // ปุ่มตำแหน่งปัจจุบัน (GPS)
+  html += `<button class="quick-loc-btn gps" id="ql-gps" onclick="useCurrentLocation()">
+    <span class="ql-icon">📍</span>
+    <span>${t('myLocation')}</span>
+  </button>`;
+
+  // ปุ่มบ้าน
+  if (saved.home) {
+    html += `<button class="quick-loc-btn" onclick="useSavedPlace('home')">
+      <span class="ql-icon">🏠</span>
+      <span>${t('home')}</span>
+    </button>`;
+  } else {
+    html += `<button class="quick-loc-btn" onclick="setSavedPlace('home')" style="border-style:dashed;color:var(--text-muted)">
+      <span class="ql-icon">🏠</span>
+      <span>+ ${t('setHome')}</span>
+    </button>`;
+  }
+
+  // ปุ่มที่ทำงาน
+  if (saved.work) {
+    html += `<button class="quick-loc-btn" onclick="useSavedPlace('work')">
+      <span class="ql-icon">💼</span>
+      <span>${t('work')}</span>
+    </button>`;
+  } else {
+    html += `<button class="quick-loc-btn" onclick="setSavedPlace('work')" style="border-style:dashed;color:var(--text-muted)">
+      <span class="ql-icon">💼</span>
+      <span>+ ${t('setWork')}</span>
+    </button>`;
+  }
+
+  container.innerHTML = html;
+}
+
+// ใช้ตำแหน่งปัจจุบันจาก GPS
+function useCurrentLocation() {
+  if (!navigator.geolocation) {
+    alert(t('locationError'));
+    return;
+  }
+
+  const btn = document.getElementById('ql-gps');
+  if (btn) {
+    btn.classList.add('loading');
+    btn.innerHTML = `<span class="mini-spinner"></span><span>${t('gettingLocation')}</span>`;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+
+      // reverse geocode เพื่อหาชื่อสถานที่
+      try {
+        const lang = currentLang === 'EN' ? 'en' : 'th';
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=${lang}&zoom=16`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const parts = (data.display_name || '').split(',').map(s => s.trim());
+        const name = parts[0] || (currentLang === 'EN' ? 'My location' : 'ตำแหน่งของฉัน');
+
+        fillLocation(qlTarget, name, lat, lng);
+      } catch (e) {
+        // ถ้า reverse geocode ไม่ได้ ใช้พิกัดเลย
+        fillLocation(qlTarget, currentLang === 'EN' ? 'My location' : 'ตำแหน่งของฉัน', lat, lng);
+      }
+
+      if (btn) {
+        btn.classList.remove('loading');
+        btn.innerHTML = `<span class="ql-icon">📍</span><span>${t('myLocation')}</span>`;
+      }
+    },
+    (err) => {
+      alert(t('locationError'));
+      if (btn) {
+        btn.classList.remove('loading');
+        btn.innerHTML = `<span class="ql-icon">📍</span><span>${t('myLocation')}</span>`;
+      }
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+  );
+}
+
+// บันทึกตำแหน่งปัจจุบันเป็นบ้าน/ที่ทำงาน
+function setSavedPlace(key) {
+  if (!navigator.geolocation) {
+    alert(t('locationError'));
+    return;
+  }
+
+  const label = key === 'home' ? t('home') : t('work');
+  const confirmMsg = currentLang === 'EN'
+    ? `Use current location as ${label}?`
+    : `ใช้ตำแหน่งปัจจุบันเป็น${label}?`;
+  if (!confirm(confirmMsg)) return;
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      try {
+        const lang = currentLang === 'EN' ? 'en' : 'th';
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=${lang}&zoom=16`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const parts = (data.display_name || '').split(',').map(s => s.trim());
+        const name = parts[0] || label;
+
+        const saved = getSavedPlaces();
+        saved[key] = { name, lat, lng };
+        savePlaces(saved);
+        renderQuickLocations();
+      } catch (e) {
+        const saved = getSavedPlaces();
+        saved[key] = { name: label, lat, lng };
+        savePlaces(saved);
+        renderQuickLocations();
+      }
+    },
+    () => alert(t('locationError')),
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+}
+
+// ใช้สถานที่ที่บันทึกไว้
+function useSavedPlace(key) {
+  const saved = getSavedPlaces();
+  const place = saved[key];
+  if (!place) return;
+  fillLocation(qlTarget, place.name, place.lat, place.lng);
+}
+
+// ใส่ค่าและพิกัดลงในช่อง from/to
+function fillLocation(which, name, lat, lng) {
+  const input = document.getElementById('in-' + which);
+  if (input) input.value = name;
+  const list = document.getElementById('ac-' + which);
+  if (list) list.classList.remove('show');
+
+  if (which === 'from') {
+    tripData.fromCoords = { lat: parseFloat(lat), lng: parseFloat(lng) };
+  } else {
+    tripData.toCoords = { lat: parseFloat(lat), lng: parseFloat(lng) };
+  }
+
+  // หลังใส่ from แล้ว → สลับ target ไป to โดยอัตโนมัติ
+  if (which === 'from') {
+    setQLTarget('to');
+  }
+}
+
+// ====== Autocomplete สถานที่ (Nominatim) ======
+const acCache = {}; // cache ผลลัพธ์ ไม่ต้อง fetch ซ้ำ
+const acTimers = {}; // debounce timer ของแต่ละ input
+
+async function onPlaceInput(which) {
+  const input = document.getElementById('in-' + which);
+  const list = document.getElementById('ac-' + which);
+  if (!input || !list) return;
+
+  // ล้างพิกัดเดิม เพราะผู้ใช้แก้ค่า → ยังไม่ได้เลือกจาก list
+  if (which === 'from') tripData.fromCoords = null;
+  else tripData.toCoords = null;
+
+  const q = input.value.trim();
+  if (q.length < 2) {
+    list.classList.remove('show');
+    return;
+  }
+
+  // debounce 350ms — กันไม่ให้ยิง API ทุกตัวอักษร
+  clearTimeout(acTimers[which]);
+  acTimers[which] = setTimeout(async () => {
+    // cache
+    if (acCache[q]) {
+      renderAutocomplete(which, acCache[q]);
+      return;
+    }
+
+    list.innerHTML = `<div class="ac-loading">🔍 ${currentLang === 'EN' ? 'Searching...' : 'กำลังค้นหา...'}</div>`;
+    list.classList.add('show');
+
+    try {
+      const lang = currentLang === 'EN' ? 'en' : 'th';
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&countrycodes=th&limit=6&accept-language=${lang}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      acCache[q] = data;
+      renderAutocomplete(which, data);
+    } catch (e) {
+      list.innerHTML = `<div class="ac-loading">❌ ${currentLang === 'EN' ? 'Search failed' : 'ค้นหาไม่ได้'}</div>`;
+    }
+  }, 350);
+}
+
+function renderAutocomplete(which, results) {
+  const list = document.getElementById('ac-' + which);
+  if (!list) return;
+
+  if (!results || results.length === 0) {
+    list.innerHTML = `<div class="ac-loading">${currentLang === 'EN' ? 'No places found' : 'ไม่พบสถานที่'}</div>`;
+    list.classList.add('show');
+    return;
+  }
+
+  list.innerHTML = results.map(r => {
+    // แยกชื่อหลัก + รายละเอียด
+    const parts = r.display_name.split(',').map(s => s.trim());
+    const main = parts[0];
+    const sub = parts.slice(1, 4).join(', ');
+    // ใช้ JSON.stringify เพื่อ escape quotes ในชื่อ
+    const dataStr = JSON.stringify({ name: main, full: r.display_name, lat: r.lat, lng: r.lon }).replace(/"/g, '&quot;');
+    return `
+      <div class="ac-item" onmousedown="selectPlace('${which}', ${dataStr})">
+        <span class="ac-icon">📍</span>
+        <div class="ac-text">
+          <div class="ac-main">${main}</div>
+          <div class="ac-sub">${sub}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  list.classList.add('show');
+}
+
+function selectPlace(which, place) {
+  const input = document.getElementById('in-' + which);
+  const list = document.getElementById('ac-' + which);
+  if (input) input.value = place.name;
+  if (list) list.classList.remove('show');
+  // เก็บพิกัดไว้ใช้ตอนคำนวณแผนที่
+  if (which === 'from') {
+    tripData.fromCoords = { lat: parseFloat(place.lat), lng: parseFloat(place.lng) };
+  } else {
+    tripData.toCoords = { lat: parseFloat(place.lat), lng: parseFloat(place.lng) };
+  }
+}
+
+function hideAutocomplete(which) {
+  // delay เพื่อให้ onmousedown ที่ ac-item ทำงานก่อน
+  setTimeout(() => {
+    const list = document.getElementById('ac-' + which);
+    if (list) list.classList.remove('show');
+  }, 200);
 }
 
 function goToMap() {
@@ -3118,13 +3639,26 @@ async function initMap() {
   }).addTo(map);
 
   try {
-    loadingText.textContent = 'กำลังหาพิกัด ' + tripData.from + '...';
-    const fromPt = await geocode(tripData.from);
+    const findingLabel = currentLang === 'EN' ? 'Finding ' : 'กำลังหาพิกัด ';
+    const ellipsis = '...';
 
-    loadingText.textContent = 'กำลังหาพิกัด ' + tripData.to + '...';
-    const toPt = await geocode(tripData.to);
+    let fromPt, toPt;
+    // ใช้พิกัดที่เลือกจาก autocomplete ก่อน — เร็วกว่า
+    if (tripData.fromCoords) {
+      fromPt = tripData.fromCoords;
+    } else {
+      loadingText.textContent = findingLabel + tripData.from + ellipsis;
+      fromPt = await geocode(tripData.from);
+    }
 
-    loadingText.textContent = 'กำลังคำนวณเส้นทาง...';
+    if (tripData.toCoords) {
+      toPt = tripData.toCoords;
+    } else {
+      loadingText.textContent = findingLabel + tripData.to + ellipsis;
+      toPt = await geocode(tripData.to);
+    }
+
+    loadingText.textContent = currentLang === 'EN' ? 'Calculating route...' : 'กำลังคำนวณเส้นทาง...';
     const route = await getRoute(fromPt, toPt);
 
     const greenIcon = L.divIcon({
