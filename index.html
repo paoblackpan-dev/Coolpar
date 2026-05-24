@@ -1990,6 +1990,104 @@
     line-height: 1;
   }
 
+  /* mini map preview ในหน้า trip detail (passenger view) */
+  .detail-map-box {
+    margin: 0 -22px 18px;
+    background: var(--bg-soft);
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+  }
+  #detail-map {
+    width: 100%;
+    height: 100%;
+  }
+  .detail-map-overlay {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    color: var(--text);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    z-index: 1000;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  .detail-map-loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--bg-soft);
+    z-index: 999;
+  }
+
+  /* รายการจุดขึ้นรถสำหรับคนนั่ง */
+  .passenger-pickup-section {
+    margin: 0 0 18px;
+  }
+  .passenger-pickup-info {
+    background: var(--primary-light);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: var(--primary-dark);
+    font-weight: 600;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .selected-pickup-summary {
+    background: var(--bg);
+    border: 1.5px solid var(--primary);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 3px 10px rgba(0, 160, 130, 0.15);
+  }
+  .sps-info { flex: 1; min-width: 0; }
+  .sps-label {
+    font-size: 10px;
+    color: var(--primary);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+  .sps-name {
+    font-size: 14px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+  }
+  .sps-price {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .sps-price-val {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.5px;
+  }
+  .sps-price-km {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 1px;
+  }
+
   /* Map pickup marker tooltip */
   .pickup-tooltip {
     background: var(--text) !important;
@@ -2318,6 +2416,30 @@
   .search-pill .pill-arrow {
     color: var(--text-light);
     font-size: 18px;
+  }
+  /* X button ใน search pill เมื่อมีค่ากรอกแล้ว */
+  .pill-clear-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .pill-clear-btn:hover {
+    background: #FEE2E2;
+    border-color: #FCA5A5;
+    color: #DC2626;
+    transform: scale(1.05);
   }
 
   /* full search overlay (เปิดเมื่อกด pill) */
@@ -3941,7 +4063,7 @@ function renderSearchPill() {
           <div class="pill-main">${mainText}</div>
           <div class="pill-sub">${subText}</div>
         </div>
-        <div class="pill-arrow">→</div>
+        <button class="pill-clear-btn" onclick="event.stopPropagation();resetHomeSearch()">✕</button>
       </div>
     `;
   }
@@ -4234,44 +4356,57 @@ function getScreens() { return {
     <div id="home-results"></div>
   `,
   detail: `
-    <button class="back-btn-inline" data-screen="home">← กลับ</button>
+    <button class="back-btn-inline" data-screen="home">← ${currentLang === 'EN' ? 'Back' : 'กลับ'}</button>
     <div class="driver-profile">
-      <div class="avatar av-1">สม</div>
-      <div class="driver-name">สมชาย จ.</div>
-      <div class="driver-rating">⭐ 4.8 • 124 เที่ยว</div>
+      <div class="avatar av-1">${currentLang === 'EN' ? 'SC' : 'สม'}</div>
+      <div class="driver-name">${currentLang === 'EN' ? 'Somchai J.' : 'สมชาย จ.'}</div>
+      <div class="driver-rating">⭐ 4.8 • 124 ${currentLang === 'EN' ? 'trips' : 'เที่ยว'}</div>
     </div>
-    <div class="route-box">
-      <div class="route-stop">
-        <span>🟢</span>
-        <div>
-          <div class="stop-name">กรุงเทพฯ • หมอชิต</div>
-          <div class="stop-time">07:00 น.</div>
-        </div>
+
+    <div class="detail-map-box">
+      <div class="detail-map-loading" id="detail-map-loading">
+        <span class="spinner" style="width:18px;height:18px;border-width:2px;margin-right:8px"></span>
+        ${currentLang === 'EN' ? 'Loading route...' : 'กำลังโหลดเส้นทาง...'}
       </div>
-      <div class="route-line"></div>
-      <div class="route-stop">
-        <span>🔴</span>
-        <div>
-          <div class="stop-name">เชียงใหม่ • ประตูท่าแพ</div>
-          <div class="stop-time">16:00 น.</div>
-        </div>
+      <div id="detail-map"></div>
+      <div class="detail-map-overlay" id="detail-map-overlay" style="display:none">
+        📏 <span id="detail-map-dist">—</span>
       </div>
     </div>
+
     <div class="info-grid">
       <div class="info-box">
-        <div class="info-label">รถ</div>
+        <div class="info-label">${currentLang === 'EN' ? 'Car' : 'รถ'}</div>
         <div class="info-value">Honda CR-V</div>
       </div>
       <div class="info-box">
-        <div class="info-label">ที่ว่าง</div>
-        <div class="info-value">2 ที่นั่ง</div>
+        <div class="info-label">${currentLang === 'EN' ? 'Seats left' : 'ที่ว่าง'}</div>
+        <div class="info-value">2 ${currentLang === 'EN' ? 'seats' : 'ที่นั่ง'}</div>
       </div>
     </div>
-    <div class="price-row">
-      <span>ราคา/ที่นั่ง</span>
-      <span>฿650</span>
+
+    <div class="passenger-pickup-section">
+      <div class="passenger-pickup-info">
+        <span>💡</span>
+        <span>${currentLang === 'EN' ? 'Tap any green dot — pay only for the distance you travel' : 'แตะจุดสีเขียวที่ต้องการขึ้น — จ่ายตามระยะที่นั่งจริง'}</span>
+      </div>
+
+      <div class="selected-pickup-summary" id="selected-pickup-summary" style="display:none">
+        <div class="sps-info">
+          <div class="sps-label">📍 ${currentLang === 'EN' ? 'Boarding at' : 'ขึ้นรถที่'}</div>
+          <div class="sps-name" id="sps-name">—</div>
+        </div>
+        <div class="sps-price">
+          <div class="sps-price-val">฿<span id="sps-price">—</span></div>
+          <div class="sps-price-km" id="sps-km">— ${currentLang === 'EN' ? 'km' : 'กม.'}</div>
+        </div>
+      </div>
+
+      <p class="section-title">${currentLang === 'EN' ? 'Pickup stops' : 'จุดขึ้นรถ'}</p>
+      <div class="pickup-list" id="passenger-pickup-list"></div>
     </div>
-    <button class="btn-primary" onclick="alert('จองสำเร็จ! (จำลอง)')">จองที่นั่งนี้</button>
+
+    <button class="btn-primary" id="book-btn" onclick="bookSeat()">${currentLang === 'EN' ? '🚗 Book this seat' : '🚗 จองที่นั่งนี้'}</button>
   `,
   post: `
     <h2>${t('postTitle')}</h2>
@@ -4555,6 +4690,10 @@ function show(name) {
 
   if (name === 'home') {
     updateHome();
+  }
+
+  if (name === 'detail') {
+    setTimeout(initDetailMap, 100);
   }
 
   screenEl.querySelectorAll('[data-screen]').forEach(el => {
@@ -5393,6 +5532,231 @@ function togglePickup(idx) {
   if (window._currentPickups) {
     renderPickupPoints(window._currentPickups, window._currentTotalKm, window._currentPricePerKm);
   }
+}
+
+// ====== Trip Detail Map (Passenger View) ======
+// state: เก็บ pickup ที่ผู้โดยสารเลือก (สำหรับคำนวณราคา)
+let passengerSelectedPickup = null;
+let detailMap = null;
+let detailPickupPoints = null;
+let detailTotalKm = null;
+let detailPricePerKm = 1.0; // สมมุติคนขับตั้งราคา ฿1.0/กม.
+
+async function initDetailMap() {
+  // mock: สมมุติทริปคือ กรุงเทพ → เชียงใหม่ ราคา ฿650 ทั้งเส้น
+  const mockTripFrom = currentLang === 'EN' ? 'Bangkok' : 'กรุงเทพ';
+  const mockTripTo = currentLang === 'EN' ? 'Chiang Mai' : 'เชียงใหม่';
+
+  const loadingEl = document.getElementById('detail-map-loading');
+  const overlay = document.getElementById('detail-map-overlay');
+  const mapDiv = document.getElementById('detail-map');
+  if (!mapDiv) return;
+
+  // ลบ map เก่า ถ้ามี
+  if (detailMap) {
+    detailMap.remove();
+    detailMap = null;
+  }
+
+  // สร้าง map
+  detailMap = L.map('detail-map', { zoomControl: false, attributionControl: false, scrollWheelZoom: false, dragging: true }).setView([15.87, 100.99], 6);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(detailMap);
+
+  try {
+    const fromPt = await geocode(mockTripFrom);
+    const toPt = await geocode(mockTripTo);
+    const route = await getRoute(fromPt, toPt);
+
+    const routeCoords = route.geometry.coordinates;
+    const polylineCoords = routeCoords.map(c => [c[1], c[0]]);
+    const distKmNum = route.distance / 1000;
+    detailTotalKm = distKmNum;
+
+    // วาดเส้นทาง
+    const polyline = L.polyline(polylineCoords, {
+      color: '#00A082',
+      weight: 4,
+      opacity: 0.85
+    }).addTo(detailMap);
+    detailMap.fitBounds(polyline.getBounds(), { padding: [20, 20] });
+
+    // marker ต้นทาง/ปลายทาง
+    const greenIcon = L.divIcon({
+      className: 'cp-marker',
+      html: '<div style="background:#00A082;width:14px;height:14px;border-radius:50%;border:2.5px solid white;box-shadow:0 2px 6px rgba(0,160,130,0.5)"></div>',
+      iconSize: [14, 14], iconAnchor: [7, 7]
+    });
+    const redIcon = L.divIcon({
+      className: 'cp-marker',
+      html: '<div style="background:#DC2626;width:14px;height:14px;border-radius:50%;border:2.5px solid white;box-shadow:0 2px 6px rgba(220,38,38,0.5)"></div>',
+      iconSize: [14, 14], iconAnchor: [7, 7]
+    });
+    L.marker([fromPt.lat, fromPt.lng], { icon: greenIcon }).addTo(detailMap);
+    L.marker([toPt.lat, toPt.lng], { icon: redIcon }).addTo(detailMap);
+
+    // คำนวณจุดจอด — สมมุติคนขับเลือกไว้ 4 จุด (mockup)
+    // ใน production จริงจะดึงจาก server
+    const cumDist = [0];
+    for (let i = 1; i < routeCoords.length; i++) {
+      const [lng1, lat1] = routeCoords[i-1];
+      const [lng2, lat2] = routeCoords[i];
+      cumDist.push(cumDist[i-1] + distanceKm({lat: lat1, lng: lng1}, {lat: lat2, lng: lng2}));
+    }
+
+    // จุดจอด 4 จุดที่คนขับเลือก (สมมุติทุก ~140 กม.)
+    const driverStops = [];
+    const stopDistances = [140, 290, 450, 580]; // กม. จากต้นทาง
+    for (const d of stopDistances) {
+      if (d < distKmNum) {
+        // หา index ที่ระยะใกล้ที่สุด
+        let nearestIdx = 0;
+        let minDiff = Infinity;
+        for (let i = 0; i < cumDist.length; i++) {
+          const diff = Math.abs(cumDist[i] - d);
+          if (diff < minDiff) { minDiff = diff; nearestIdx = i; }
+        }
+        driverStops.push({
+          lat: routeCoords[nearestIdx][1],
+          lng: routeCoords[nearestIdx][0],
+          distFromStart: cumDist[nearestIdx]
+        });
+      }
+    }
+
+    // เก็บข้อมูลสำหรับ render list
+    const pickupPoints = [
+      { name: mockTripFrom, distFromStart: 0, isStart: true }
+    ];
+
+    // reverse geocode ทุกจุด (ใน parallel ก็ได้)
+    for (let i = 0; i < driverStops.length; i++) {
+      const stop = driverStops[i];
+      let name = currentLang === 'EN' ? `Stop ${i+1}` : `จุดที่ ${i+1}`;
+      try {
+        const lang = currentLang === 'EN' ? 'en' : 'th';
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${stop.lat}&lon=${stop.lng}&accept-language=${lang}&zoom=10`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const addr = data.address || {};
+        name = addr.city || addr.town || addr.suburb || addr.county || addr.state || name;
+      } catch (e) {}
+      pickupPoints.push({ name, lat: stop.lat, lng: stop.lng, distFromStart: stop.distFromStart });
+
+      // วาด marker
+      const stopIcon = L.divIcon({
+        className: 'cp-marker',
+        html: `<div style="background:#FFA630;color:white;width:22px;height:22px;border-radius:50%;border:2.5px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;font-family:'Manrope',sans-serif">${i+1}</div>`,
+        iconSize: [22, 22], iconAnchor: [11, 11]
+      });
+      L.marker([stop.lat, stop.lng], { icon: stopIcon }).addTo(detailMap).bindTooltip(name, { direction: 'top', offset: [0, -8], className: 'pickup-tooltip' });
+    }
+    pickupPoints.push({ name: mockTripTo, distFromStart: distKmNum, isEnd: true });
+
+    detailPickupPoints = pickupPoints;
+    // คำนวณ price per km จากราคาทั้งเส้น (mock: ฿650 / ระยะรวม)
+    detailPricePerKm = 650 / distKmNum;
+
+    renderPassengerPickupList(pickupPoints, distKmNum, detailPricePerKm);
+
+    // แสดง overlay ระยะทาง
+    if (overlay) {
+      overlay.style.display = 'block';
+      const distEl = document.getElementById('detail-map-dist');
+      if (distEl) distEl.textContent = Math.round(distKmNum) + (currentLang === 'EN' ? ' km' : ' กม.');
+    }
+    if (loadingEl) loadingEl.style.display = 'none';
+    setTimeout(() => detailMap && detailMap.invalidateSize(), 100);
+
+  } catch (e) {
+    if (loadingEl) loadingEl.textContent = '❌ ' + e.message;
+  }
+}
+
+function renderPassengerPickupList(points, totalKm, pricePerKm) {
+  const list = document.getElementById('passenger-pickup-list');
+  if (!list) return;
+
+  const pickupAt = currentLang === 'EN' ? 'Pickup at' : 'ขึ้นที่';
+  const kmLabel = currentLang === 'EN' ? ' km' : ' กม.';
+  passengerSelectedPickup = null;
+
+  list.innerHTML = points.map((pt, idx) => {
+    const remainKm = totalKm - pt.distFromStart;
+    const price = pt.isEnd ? 0 : Math.round(remainKm * pricePerKm);
+    const km = remainKm.toFixed(0);
+    const startClass = pt.isStart ? 'start' : '';
+    const endClass = pt.isEnd ? 'end' : '';
+    const isMiddle = !pt.isStart && !pt.isEnd;
+    const isStart = pt.isStart;
+
+    return `
+      <div class="pickup-item ${startClass} ${endClass}" data-passenger-pickup-idx="${idx}"
+           ${!pt.isEnd ? `onclick="selectPassengerPickup(${idx}, ${remainKm.toFixed(2)}, ${pricePerKm}, ${JSON.stringify(pt.name).replace(/"/g, '&quot;')})"` : ''}>
+        ${idx > 0 ? '<div class="pickup-line" style="bottom:50%;top:-50%"></div>' : ''}
+        ${idx < points.length - 1 ? '<div class="pickup-line" style="top:50%"></div>' : ''}
+        <div class="pickup-dot-wrap">
+          <div class="pickup-dot"></div>
+        </div>
+        <div class="pickup-content">
+          <div class="pickup-name">${pt.name}</div>
+          <div class="pickup-meta">${pt.isStart ? (currentLang === 'EN' ? 'Starting point' : 'จุดเริ่มต้น') :
+                                    pt.isEnd ? (currentLang === 'EN' ? 'Destination' : 'ปลายทาง') :
+                                    pickupAt + ' • ' + (totalKm - remainKm).toFixed(0) + kmLabel + ' ' + (currentLang === 'EN' ? 'in' : 'จากต้นทาง')}</div>
+        </div>
+        ${!pt.isEnd ? `
+          <div class="pickup-price-tag">
+            <div class="ppt-price">฿${price}</div>
+            <div class="ppt-km">${km}${kmLabel}</div>
+          </div>
+        ` : `<div class="pickup-price-tag"><div class="ppt-km">${currentLang === 'EN' ? 'End' : 'สิ้นสุด'}</div></div>`}
+      </div>
+    `;
+  }).join('');
+
+  // เลือกจุดเริ่มต้น default
+  selectPassengerPickup(0, totalKm.toFixed(2), pricePerKm, points[0].name);
+}
+
+function selectPassengerPickup(idx, remainKm, pricePerKm, name) {
+  passengerSelectedPickup = { idx, remainKm: parseFloat(remainKm), price: Math.round(parseFloat(remainKm) * pricePerKm), name };
+
+  // อัปเดต UI: active state
+  document.querySelectorAll('[data-passenger-pickup-idx]').forEach(el => el.classList.remove('picked'));
+  const item = document.querySelector(`[data-passenger-pickup-idx="${idx}"]`);
+  if (item) item.classList.add('picked');
+
+  // แสดง summary บอกราคาจากจุดที่เลือก
+  const summary = document.getElementById('selected-pickup-summary');
+  if (summary) {
+    summary.style.display = 'flex';
+    document.getElementById('sps-name').textContent = name;
+    document.getElementById('sps-price').textContent = passengerSelectedPickup.price.toLocaleString();
+    document.getElementById('sps-km').textContent = parseFloat(remainKm).toFixed(0) + (currentLang === 'EN' ? ' km' : ' กม.');
+  }
+
+  // เปลี่ยน text ของปุ่ม
+  const btn = document.getElementById('book-btn');
+  if (btn) {
+    if (idx === 0) {
+      btn.textContent = currentLang === 'EN' ? '🚗 Book this seat (full route)' : '🚗 จองที่นั่งนี้ (เต็มเส้นทาง)';
+    } else {
+      btn.textContent = currentLang === 'EN' ? `🚗 Book from ${name}` : `🚗 จองจาก ${name}`;
+    }
+  }
+}
+
+function bookSeat() {
+  if (!passengerSelectedPickup) {
+    alert(t('bookSuccess'));
+    return;
+  }
+  const msg = currentLang === 'EN'
+    ? `✓ Booked!\n\nBoarding at: ${passengerSelectedPickup.name}\nDistance: ${passengerSelectedPickup.remainKm.toFixed(0)} km\nTotal: ฿${passengerSelectedPickup.price}`
+    : `✓ จองสำเร็จ!\n\nขึ้นที่: ${passengerSelectedPickup.name}\nระยะ: ${passengerSelectedPickup.remainKm.toFixed(0)} กม.\nยอดรวม: ฿${passengerSelectedPickup.price}`;
+  alert(msg);
+  show('trips');
 }
 
 navBtns.forEach(b => b.addEventListener('click', () => show(b.dataset.screen)));
