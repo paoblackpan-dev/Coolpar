@@ -1853,6 +1853,20 @@
   .pickup-sum-row.total .pickup-sum-label { font-size: 14px; color: var(--text); font-weight: 700; }
   .pickup-sum-row.total .pickup-sum-val { font-size: 24px; color: var(--primary); letter-spacing: -0.5px; }
 
+  /* Map pickup marker tooltip */
+  .pickup-tooltip {
+    background: var(--text) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 5px 10px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25) !important;
+  }
+  .pickup-tooltip::before { border-top-color: var(--text) !important; }
+
   /* ====== Return Trip Dialog ====== */
   .return-overlay {
     position: fixed;
@@ -2580,16 +2594,6 @@
 
 <div>
 <div class="phone">
-  <div class="status-bar">
-    <span class="status-time">9:41</span>
-    <div class="dynamic-island"></div>
-    <div class="status-icons">
-      <span class="signal">●●●●</span>
-      <span class="wifi">📶</span>
-      <span class="battery"></span>
-    </div>
-  </div>
-
   <div class="header-wrap">
     <div class="header" id="app-header">
       <div class="brand">Cool<span>par</span></div>
@@ -2860,7 +2864,7 @@ function applyLang() {
   }
 }
 
-const tripData = { from: '', to: '', date: '', time: '', pricePerKm: 2.0, distanceKm: null };
+const tripData = { from: '', to: '', date: '', time: '', pricePerKm: 1.5, distanceKm: null };
 
 // รูปจริงของจังหวัด (จาก Wikipedia/Unsplash CDN ที่ใช้งานได้)
 const provinceImages = {
@@ -3511,24 +3515,24 @@ function scrollHomeToTop() {
 // ทริปจริง (mock) เมื่อกรอกครบทั้งต้น-ปลาย — มี pricePerKm สำหรับจัดอันดับ
 const mockTrips = [
   {
-    time: '09:30 → 19:00', meta: '9.5 ชม.', price: 580, pricePerKm: 1.6, distance: 696,
+    time: '09:30 → 19:00', meta: '9.5 ชม.', price: 800, pricePerKm: 1.1, distance: 696,
     driver: 'นภัทร', initials: 'นภ', car: 'Toyota Camry', rating: 4.9, seats: 3, av: 'av-2'
   },
   {
-    time: '07:00 → 16:00', meta: '9 ชม.', price: 650, pricePerKm: 1.9, distance: 696,
+    time: '07:00 → 16:00', meta: '9 ชม.', price: 950, pricePerKm: 1.4, distance: 696,
     driver: 'สมชาย', initials: 'สม', car: 'Honda CR-V', rating: 4.8, seats: 2, av: 'av-1'
   },
   {
-    time: '14:00 → 23:30', meta: '9.5 ชม.', price: 700, pricePerKm: 2.0, distance: 696,
+    time: '14:00 → 23:30', meta: '9.5 ชม.', price: 1200, pricePerKm: 1.7, distance: 696,
     driver: 'วรพล', initials: 'วร', car: 'Mazda CX-5', rating: 4.7, seats: 1, av: 'av-3'
   }
 ];
 
 // คะแนนรวมสำหรับจัดอันดับ — ราคาถูก+เรตติ้งสูง = คะแนนสูง = อยู่บนสุด
-// ราคาถูก (1.5) = 50 คะแนน, ราคาแพง (2.5) = 0 คะแนน
+// ราคาถูก (1.0) = 50 คะแนน, ราคาแพง (2.0) = 0 คะแนน
 // rating 5.0 = 50 คะแนน, rating 4.0 = 0 คะแนน
 function getTripScore(tr) {
-  const priceScore = (2.5 - tr.pricePerKm) / (2.5 - 1.5) * 50;
+  const priceScore = (2.0 - tr.pricePerKm) / (2.0 - 1.0) * 50;
   const ratingScore = (tr.rating - 4.0) / (5.0 - 4.0) * 50;
   return priceScore + ratingScore;
 }
@@ -4077,11 +4081,11 @@ function getScreens() { return {
         </div>
       </div>
       <input type="range" id="price-slider" class="price-slider-input"
-             min="1.5" max="2.5" step="0.1" value="2.0"
+             min="1.0" max="2.0" step="0.1" value="1.5"
              oninput="updatePriceSlider()"/>
       <div class="price-slider-range">
-        <span>💸 ฿1.5 • ${t('priceLow')}</span>
-        <span>${t('priceHigh')} • ฿2.5 💎</span>
+        <span>💸 ฿1.0 • ${t('priceLow')}</span>
+        <span>${t('priceHigh')} • ฿2.0 💎</span>
       </div>
       <div class="price-income-box">
         <div class="pib-info">
@@ -4314,7 +4318,7 @@ function show(name) {
     setTimeout(() => {
       const slider = document.getElementById('price-slider');
       if (slider) {
-        slider.value = tripData.pricePerKm || 2.0;
+        slider.value = tripData.pricePerKm || 1.5;
         updatePriceSlider();
       }
     }, 0);
@@ -4525,21 +4529,21 @@ function updatePriceSlider() {
   const priceVal = document.getElementById('price-val');
   if (priceVal) priceVal.textContent = price.toFixed(1);
 
-  // เลือกสี + feedback ตามช่วงราคา
+  // เลือกสี + feedback ตามช่วงราคา (฿1.0 - ฿2.0)
   let color, feedbackClass, feedbackKey;
-  if (price <= 1.7) {
+  if (price <= 1.2) {
     color = '#00A082';        // เขียวเข้ม
     feedbackClass = 'fb-1';
     feedbackKey = 'priceFb1';
-  } else if (price <= 1.9) {
+  } else if (price <= 1.4) {
     color = '#43A047';        // เขียว
     feedbackClass = 'fb-2';
     feedbackKey = 'priceFb2';
-  } else if (price <= 2.1) {
+  } else if (price <= 1.6) {
     color = '#FFA630';        // เหลือง/ส้ม
     feedbackClass = 'fb-3';
     feedbackKey = 'priceFb3';
-  } else if (price <= 2.3) {
+  } else if (price <= 1.8) {
     color = '#FF6B00';        // ส้มเข้ม
     feedbackClass = 'fb-4';
     feedbackKey = 'priceFb4';
@@ -4550,9 +4554,8 @@ function updatePriceSlider() {
   }
 
   // สี track + thumb
-  const percent = ((price - 1.5) / (2.5 - 1.5)) * 100;
+  const percent = ((price - 1.0) / (2.0 - 1.0)) * 100;
   slider.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${percent}%, var(--border) ${percent}%, var(--border) 100%)`;
-  // เปลี่ยนสี thumb border ด้วย CSS variable
   slider.style.setProperty('--thumb-color', color);
 
   // เปลี่ยนสีตัวเลขราคา + ฿ ใหญ่ด้านบน
@@ -4924,7 +4927,7 @@ async function initMap() {
 
     // เก็บระยะทางไว้สำหรับคำนวณราคา
     tripData.distanceKm = distKmNum;
-    const pricePerKm = tripData.pricePerKm || 2.0;
+    const pricePerKm = tripData.pricePerKm || 1.5;
     const incomePerPassenger = Math.round(distKmNum * pricePerKm);
 
     window._routeInfo = {
@@ -4942,56 +4945,115 @@ async function initMap() {
     document.getElementById('rs-duration') && (document.getElementById('rs-duration').textContent = durText);
     document.getElementById('rs-income') && (document.getElementById('rs-income').textContent = '฿' + incomePerPassenger);
 
-    // ====== Generate Pickup Points ======
-    // คัด pickup จุดตามจุด waypoints บนเส้นทาง (4 จุดระหว่างต้นทาง-ปลายทาง)
+    // ====== Generate Smart Pickup Points (หาจังหวัดที่ผ่านจริง) ======
     const routeCoords = route.geometry.coordinates; // [lng, lat]
-    const numPickups = 4; // จุดระหว่างทาง
-    const pickupCoords = [];
-    for (let i = 1; i <= numPickups; i++) {
-      const idx = Math.floor(routeCoords.length * i / (numPickups + 1));
-      if (routeCoords[idx]) pickupCoords.push(routeCoords[idx]);
+
+    // คำนวณระยะสะสมของแต่ละจุดบนเส้นทาง
+    const cumDist = [0];
+    for (let i = 1; i < routeCoords.length; i++) {
+      const [lng1, lat1] = routeCoords[i-1];
+      const [lng2, lat2] = routeCoords[i];
+      const segDist = distanceKm({lat: lat1, lng: lng1}, {lat: lat2, lng: lng2});
+      cumDist.push(cumDist[i-1] + segDist);
     }
 
-    // reverse geocode pickup points (async — ไม่รอจบก็ render ก่อน)
+    // สุ่มตัวอย่างจุดทุก ~50 กม. (ไม่เกิน 8 จุดตัวอย่าง เพื่อไม่ยิง API เยอะ)
+    const sampleInterval = Math.max(50, distKmNum / 8); // อย่างน้อย 50 กม. ต่อจุด
+    const sampleIndices = [];
+    let nextDist = sampleInterval;
+    for (let i = 0; i < cumDist.length && nextDist < distKmNum - 30; i++) {
+      if (cumDist[i] >= nextDist) {
+        sampleIndices.push(i);
+        nextDist += sampleInterval;
+      }
+    }
+
+    // ถ้าเส้นทางสั้น (<100 กม.) แสดงเฉพาะจุดกลาง 1-2 จุด
+    if (distKmNum < 100) {
+      sampleIndices.length = 0;
+      const midIdx = Math.floor(routeCoords.length / 2);
+      sampleIndices.push(midIdx);
+    }
+
+    loadingText.textContent = currentLang === 'EN' ? 'Finding cities along route...' : 'กำลังหาเมืองที่ผ่าน...';
+
+    // Reverse geocode แต่ละจุด — เอาชื่อจังหวัดมา
+    const candidatePoints = [];
+    for (const idx of sampleIndices) {
+      const [lng, lat] = routeCoords[idx];
+      try {
+        const lang = currentLang === 'EN' ? 'en' : 'th';
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=${lang}&zoom=10`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const addr = data.address || {};
+        // เอาชื่อจังหวัด/เมืองหลัก
+        const province = addr.state || addr.province || addr.county || '';
+        const city = addr.city || addr.town || addr.municipality || addr.suburb || '';
+        const district = addr.county || addr.district || '';
+        const displayName = city || district || province || (currentLang === 'EN' ? 'Stop' : 'จุดพัก');
+
+        candidatePoints.push({
+          name: displayName,
+          province: province,
+          lat: lat,
+          lng: lng,
+          distFromStart: cumDist[idx]
+        });
+      } catch (e) {
+        // ถ้า fail ใส่จุดเปล่าไว้
+        candidatePoints.push({
+          name: currentLang === 'EN' ? 'Stop' : 'จุดพัก',
+          province: '',
+          lat: lat,
+          lng: lng,
+          distFromStart: cumDist[idx]
+        });
+      }
+    }
+
+    // กรองจังหวัดซ้ำ — เก็บอันแรกของแต่ละจังหวัด
+    const seenProvinces = new Set();
+    const uniquePoints = [];
+    for (const pt of candidatePoints) {
+      const key = pt.province || pt.name;
+      if (!seenProvinces.has(key) && uniquePoints.length < 4) {
+        seenProvinces.add(key);
+        uniquePoints.push(pt);
+      }
+    }
+
+    // สร้าง pickup list
     const pickupPoints = [
       { name: tripData.from, distFromStart: 0, isStart: true }
     ];
-    pickupCoords.forEach((c, i) => {
-      const distFraction = (i + 1) / (numPickups + 1);
+    uniquePoints.forEach((pt) => {
       pickupPoints.push({
-        name: currentLang === 'EN' ? `Stop ${i + 1}` : `จุดที่ ${i + 1}`,
-        distFromStart: distKmNum * distFraction,
-        lat: c[1], lng: c[0]
+        name: pt.name + (pt.province && pt.name !== pt.province ? ' · ' + pt.province : ''),
+        distFromStart: pt.distFromStart,
+        lat: pt.lat,
+        lng: pt.lng
       });
     });
     pickupPoints.push({ name: tripData.to, distFromStart: distKmNum, isEnd: true });
 
     renderPickupPoints(pickupPoints, distKmNum, pricePerKm);
 
-    // วาด marker pickup บนแผนที่
-    pickupCoords.forEach((c, i) => {
+    // วาด marker pickup บนแผนที่ — ใช้สีและขนาดแตกต่างให้ดูเป็นจุดสำคัญ
+    uniquePoints.forEach((pt, i) => {
       const stopIcon = L.divIcon({
         className: 'cp-marker',
-        html: `<div style="background:#FFA630;color:white;width:24px;height:24px;border-radius:50%;border:2.5px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;font-family:'Manrope',sans-serif">${i + 1}</div>`,
-        iconSize: [24, 24], iconAnchor: [12, 12]
+        html: `<div style="background:#FFA630;color:white;width:28px;height:28px;border-radius:50%;border:3px solid white;box-shadow:0 3px 10px rgba(255,166,48,0.5);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;font-family:'Manrope',sans-serif">${i + 1}</div>`,
+        iconSize: [28, 28], iconAnchor: [14, 14]
       });
-      L.marker([c[1], c[0]], { icon: stopIcon }).addTo(map);
-    });
-
-    // async reverse geocode pickup names (เปลี่ยนชื่อ "จุดที่ N" เป็นชื่อจริง)
-    pickupCoords.forEach(async (c, i) => {
-      try {
-        const lang = currentLang === 'EN' ? 'en' : 'th';
-        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${c[1]}&lon=${c[0]}&accept-language=${lang}&zoom=12`;
-        const res = await fetch(url);
-        const data = await res.json();
-        const parts = (data.display_name || '').split(',').map(s => s.trim());
-        const realName = parts[0] || parts[1];
-        if (realName) {
-          const el = document.querySelector(`[data-pickup-idx="${i + 1}"] .pickup-name`);
-          if (el) el.textContent = realName;
-        }
-      } catch (e) {}
+      const marker = L.marker([pt.lat, pt.lng], { icon: stopIcon }).addTo(map);
+      // tooltip บอกชื่อ
+      marker.bindTooltip(pt.name, {
+        permanent: false,
+        direction: 'top',
+        offset: [0, -10],
+        className: 'pickup-tooltip'
+      });
     });
 
     loading.style.display = 'none';
