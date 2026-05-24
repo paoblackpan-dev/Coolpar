@@ -619,8 +619,7 @@
   .ql-section {
     margin-top: 4px;
     margin-bottom: 6px;
-  }
-  .ql-label {
+  }  .ql-label {
     font-size: 11px;
     color: var(--text-muted);
     font-weight: 600;
@@ -1356,6 +1355,460 @@
   }
   .post-stat.liked { color: #DC2626; }
 
+  /* ====== Post Detail Screen ====== */
+  .post-detail {
+    margin: 0 -22px;
+    padding-bottom: 20px;
+  }
+  .post-detail-back {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 10;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border: none;
+    padding: 9px 14px 9px 11px;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: inherit;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
+  .post-hero {
+    width: 100%;
+    height: 260px;
+    overflow: hidden;
+    position: relative;
+    background: var(--bg-soft);
+  }
+  .post-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .post-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, transparent 30%, transparent 60%, rgba(0,0,0,0.6) 100%);
+  }
+  .post-hero-province {
+    position: absolute;
+    bottom: 18px;
+    left: 22px;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    background: rgba(0,160,130,0.95);
+    padding: 5px 13px;
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
+    font-family: 'Manrope', sans-serif;
+  }
+  .post-detail-body {
+    padding: 18px 22px 0;
+  }
+  .post-detail-title {
+    font-size: 22px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.5px;
+    line-height: 1.3;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+  .post-detail-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 18px;
+  }
+  .post-detail-author .avatar {
+    width: 42px;
+    height: 42px;
+    font-size: 14px;
+  }
+  .pda-info { flex: 1; min-width: 0; }
+  .pda-name {
+    font-size: 15px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+  }
+  .pda-followers {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .pda-follow-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    flex-shrink: 0;
+  }
+  .pda-follow-btn:hover { background: var(--primary-dark); }
+  .post-stats-bar {
+    display: flex;
+    gap: 18px;
+    padding: 12px 14px;
+    background: var(--bg-soft);
+    border-radius: 14px;
+    margin-bottom: 20px;
+  }
+  .pst-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  .pst-item:hover { transform: scale(1.05); }
+  .pst-icon {
+    font-size: 18px;
+    margin-bottom: 3px;
+  }
+  .pst-val {
+    font-size: 13px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    color: var(--text);
+  }
+  .pst-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 1px;
+  }
+  .pst-item.liked .pst-val { color: #DC2626; }
+  .post-content {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text);
+    font-weight: 400;
+    margin-bottom: 22px;
+  }
+  .post-content p { margin-bottom: 14px; }
+  .post-content .highlight {
+    background: var(--primary-light);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    color: var(--primary-dark);
+  }
+  .post-content h3 {
+    font-size: 17px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    margin: 22px 0 10px;
+    color: var(--text);
+  }
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 22px;
+  }
+  .post-tag {
+    background: var(--bg-soft);
+    color: var(--text-muted);
+    padding: 5px 11px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .post-actions {
+    display: flex;
+    gap: 10px;
+    padding: 14px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 18px;
+  }
+  .post-action-btn {
+    flex: 1;
+    padding: 11px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.15s;
+  }
+  .post-action-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+  }
+  .post-action-btn.active {
+    background: #FEE2E2;
+    border-color: #FCA5A5;
+    color: #DC2626;
+  }
+  .post-related-title {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+
+  /* ========== Price Slider (Driver) ========== */
+  .price-slider-card {
+    background: var(--bg);
+    border: 1.5px solid var(--primary);
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  .price-slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 14px;
+  }
+  .price-slider-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .price-slider-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.5px;
+  }
+  .price-slider-value .unit {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-left: 2px;
+  }
+  .price-slider-input {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(to right, var(--primary) 0%, var(--primary) 50%, var(--border) 50%, var(--border) 100%);
+    border-radius: 999px;
+    outline: none;
+    margin: 6px 0 4px;
+  }
+  .price-slider-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border: 3px solid var(--primary);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(0,160,130,0.4);
+  }
+  .price-slider-input::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    background: white;
+    border: 3px solid var(--primary);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(0,160,130,0.4);
+  }
+  .price-slider-range {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .price-income-box {
+    background: var(--primary-light);
+    border-radius: 12px;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .pib-info { display: flex; flex-direction: column; gap: 2px; }
+  .pib-label {
+    font-size: 11px;
+    color: var(--primary-dark);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .pib-sub { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+  .pib-value {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.4px;
+  }
+
+  /* ========== Pickup Points (Passenger) ========== */
+  .pickup-info-bar {
+    background: var(--primary-light);
+    border-radius: 12px;
+    padding: 11px 14px;
+    margin-bottom: 14px;
+    font-size: 12px;
+    color: var(--primary-dark);
+    font-weight: 600;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .pickup-info-bar .ico { font-size: 16px; flex-shrink: 0; }
+
+  .pickup-list {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .pickup-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.15s;
+    border-radius: 12px;
+    padding-left: 12px;
+    padding-right: 14px;
+  }
+  .pickup-item:hover { background: var(--bg-soft); }
+  .pickup-item.active {
+    background: var(--primary-light);
+    border: 1.5px solid var(--primary);
+    margin: -1.5px 0;
+  }
+  /* เส้นเชื่อมจุด pickup */
+  .pickup-dot-wrap {
+    position: relative;
+    width: 24px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-self: stretch;
+    align-items: center;
+  }
+  .pickup-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 3px solid var(--text-light);
+    z-index: 2;
+    transition: all 0.2s;
+  }
+  .pickup-item.active .pickup-dot {
+    border-color: var(--primary);
+    background: var(--primary);
+    transform: scale(1.2);
+  }
+  .pickup-item.start .pickup-dot { border-color: #00A082; }
+  .pickup-item.end .pickup-dot { border-color: #DC2626; background: #DC2626; }
+  .pickup-line {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 100%;
+    background: var(--border-strong);
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+  .pickup-item:first-child .pickup-line { top: 50%; height: 50%; }
+  .pickup-item:last-child .pickup-line { height: 50%; }
+  .pickup-content { flex: 1; min-width: 0; }
+  .pickup-name {
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.2px;
+  }
+  .pickup-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .pickup-price-tag {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .ppt-price {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.3px;
+  }
+  .ppt-km {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .pickup-summary {
+    background: var(--bg-soft);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .pickup-sum-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+  }
+  .pickup-sum-row + .pickup-sum-row {
+    border-top: 1px dashed var(--border);
+  }
+  .pickup-sum-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+  .pickup-sum-val {
+    font-size: 14px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+  }
+  .pickup-sum-row.total .pickup-sum-label { font-size: 14px; color: var(--text); font-weight: 700; }
+  .pickup-sum-row.total .pickup-sum-val { font-size: 24px; color: var(--primary); letter-spacing: -0.5px; }
+
   /* reset / load more */
   .end-marker {
     text-align: center;
@@ -1968,6 +2421,22 @@ const i18n = {
   postTo: { TH: 'ปลายทาง', EN: 'Destination' },
   next: { TH: 'ถัดไป →', EN: 'Next →' },
 
+  // Price slider (driver)
+  setPrice: { TH: 'ตั้งราคาต่อกิโลเมตร', EN: 'Price per kilometer' },
+  priceLow: { TH: 'ประหยัด', EN: 'Cheap' },
+  priceHigh: { TH: 'พรีเมียม', EN: 'Premium' },
+  estIncome: { TH: 'รายได้ประมาณ', EN: 'Est. income' },
+  fullRoute: { TH: 'เส้นทางเต็ม', EN: 'Full route' },
+  perPassenger: { TH: '/คน', EN: '/passenger' },
+
+  // Pickup points (passenger)
+  pickupPoints: { TH: 'เลือกจุดขึ้นรถ', EN: 'Choose pickup point' },
+  pickupHint: { TH: 'นั่งจากไหนก็ได้ตามเส้นทาง — ราคาคิดตามระยะที่นั่งจริง', EN: 'Hop on anywhere along the route — pay only for the distance you travel' },
+  pickupAt: { TH: 'ขึ้นที่', EN: 'Pickup at' },
+  distance: { TH: 'ระยะ', EN: 'Distance' },
+  yourPrice: { TH: 'ราคาของคุณ', EN: 'Your price' },
+  bookPickup: { TH: '🚗 จองจาก ', EN: '🚗 Book from ' },
+
   // Quick locations
   quickLoc: { TH: 'เลือกเร็ว', EN: 'Quick pick' },
   setAs: { TH: 'ใส่ใน:', EN: 'Set as:' },
@@ -2025,7 +2494,19 @@ const i18n = {
   bookSuccess: { TH: 'จองสำเร็จ! (จำลอง)', EN: 'Booked successfully! (demo)' },
   postSuccess: { TH: 'ลงประกาศสำเร็จ! (จำลอง)', EN: 'Posted successfully! (demo)' },
   createGuide: { TH: 'สร้างบทความรีวิวของคุณ (จำลอง)', EN: 'Create your travel guide (demo)' },
-  openPost: { TH: 'เปิดบทความรีวิว: ', EN: 'Open post: ' }
+  openPost: { TH: 'เปิดบทความรีวิว: ', EN: 'Open post: ' },
+
+  // post detail
+  pdFollow: { TH: 'ติดตาม', EN: 'Follow' },
+  pdLikes: { TH: 'ไลค์', EN: 'Likes' },
+  pdComments: { TH: 'คอมเมนต์', EN: 'Comments' },
+  pdShares: { TH: 'แชร์', EN: 'Shares' },
+  pdLike: { TH: '♥ ถูกใจ', EN: '♥ Like' },
+  pdLiked: { TH: '♥ ถูกใจแล้ว', EN: '♥ Liked' },
+  pdComment: { TH: '💬 คอมเมนต์', EN: '💬 Comment' },
+  pdShare: { TH: '↗ แชร์', EN: '↗ Share' },
+  pdSave: { TH: '🔖 บันทึก', EN: '🔖 Save' },
+  pdRelated: { TH: 'รีวิวอื่นที่เกี่ยวข้อง', EN: 'Related reviews' }
 };
 
 function t(key) {
@@ -2065,7 +2546,7 @@ function applyLang() {
   }
 }
 
-const tripData = { from: '', to: '', date: '', time: '' };
+const tripData = { from: '', to: '', date: '', time: '', pricePerKm: 2.0, distanceKm: null };
 
 // รูปจริงของจังหวัด (จาก Wikipedia/Unsplash CDN ที่ใช้งานได้)
 const provinceImages = {
@@ -2365,6 +2846,179 @@ function postAvatar(p) { return currentLang === 'EN' ? (p.avatarEN || p.avatar) 
 function postProvince(p) { return currentLang === 'EN' ? p.provinceEN : p.provinceTH; }
 function postTitle(p) { return currentLang === 'EN' ? p.titleEN : p.titleTH; }
 
+// ====== Post Detail Page ======
+let currentPostIndex = null;
+
+function openPostDetail(index) {
+  currentPostIndex = index;
+  show('postDetail');
+}
+
+// gen เนื้อหาอัตโนมัติจากข้อมูลโพส (สมมุติ ตัวอย่าง)
+function generatePostContent(p) {
+  const province = postProvince(p);
+  if (currentLang === 'EN') {
+    return `
+      <p>I just got back from <span class="highlight">${province}</span> and I have to say — this trip exceeded all my expectations! Let me share everything I learned.</p>
+
+      <h3>📅 Best time to visit</h3>
+      <p>The weather is amazing from <span class="highlight">November to February</span>. Cool, dry, and perfect for outdoor activities. If you can avoid the rainy season (June-October), do it.</p>
+
+      <h3>🚗 How to get there</h3>
+      <p>I carpooled with <strong>${postAuthor(p)}</strong> through Coolpar — saved about ฿1,200 vs flying! The drive was scenic and we made several stops along the way for coffee and food.</p>
+
+      <h3>💰 Budget breakdown</h3>
+      <p>For 3 days 2 nights:</p>
+      <p>• Transport: ฿650<br>• Accommodation: ฿1,500/night<br>• Food: ~฿500/day<br>• Activities: ฿800<br><strong>Total: ~฿5,500 per person</strong></p>
+
+      <h3>📍 Must-visit spots</h3>
+      <p>The viewpoints in ${province} are absolutely stunning, especially during sunrise. Bring a camera and arrive early — the morning light is magical.</p>
+
+      <h3>🍜 Where to eat</h3>
+      <p>Local street food is incredible. Try the night market — everything is fresh and inexpensive. Don't miss the local specialties unique to this region.</p>
+
+      <h3>💡 Tips & tricks</h3>
+      <p>1. Book accommodation 2-3 weeks ahead during peak season<br>2. Cash is king — many small shops don't accept cards<br>3. Download offline maps before leaving<br>4. Pack light layers — weather changes fast in the mountains</p>
+
+      <p>Overall, this was one of the best trips I've taken this year. ${province} has so much to offer beyond the typical tourist spots. Happy travels!</p>
+    `;
+  }
+  return `
+    <p>เพิ่งกลับจาก <span class="highlight">${province}</span> มาครับ ทริปนี้เกินคาดมากๆ ขอแชร์ทุกอย่างที่ได้เรียนรู้ให้ฟังกัน</p>
+
+    <h3>📅 ช่วงไหนไปดีที่สุด</h3>
+    <p>อากาศกำลังดีช่วง <span class="highlight">พฤศจิกายน - กุมภาพันธ์</span> เย็นสบาย แห้ง ทำกิจกรรมกลางแจ้งได้สบาย ถ้าเลี่ยงหน้าฝน (มิ.ย.-ต.ค.) ได้จะดีมาก</p>
+
+    <h3>🚗 ไปยังไง</h3>
+    <p>ผมแชร์รถกับ <strong>${postAuthor(p)}</strong> ผ่าน Coolpar ประหยัดไปประมาณ ฿1,200 เทียบกับนั่งเครื่อง วิวระหว่างทางสวยมาก แวะถ่ายรูป กินกาแฟกันเรื่อยๆ</p>
+
+    <h3>💰 งบประมาณ</h3>
+    <p>สำหรับทริป 3 วัน 2 คืน:</p>
+    <p>• ค่าเดินทาง: ฿650<br>• ที่พัก: ฿1,500/คืน<br>• อาหาร: ประมาณ ฿500/วัน<br>• กิจกรรม: ฿800<br><strong>รวม: ประมาณ ฿5,500/คน</strong></p>
+
+    <h3>📍 จุดต้องไป</h3>
+    <p>จุดชมวิวที่ ${province} สวยมากๆ โดยเฉพาะตอนพระอาทิตย์ขึ้น เอากล้องไปด้วย และไปให้เช้าหน่อย แสงเช้าสวยที่สุด</p>
+
+    <h3>🍜 กินที่ไหนดี</h3>
+    <p>street food ดีมาก ลองไปตลาดกลางคืนสิ ทุกอย่างสด ราคาไม่แพง อย่าพลาดอาหารพื้นเมืองของแต่ละจังหวัด รสชาติเฉพาะตัว</p>
+
+    <h3>💡 ทริค & เคล็ดลับ</h3>
+    <p>1. จองที่พักล่วงหน้า 2-3 สัปดาห์ในช่วง high season<br>2. พกเงินสดเยอะหน่อย ร้านเล็กๆ ไม่รับบัตร<br>3. โหลด offline map ก่อนไป<br>4. ใส่เสื้อแบบเลเยอร์ อากาศบนเขาเปลี่ยนเร็ว</p>
+
+    <p>โดยรวมเป็นทริปที่ดีที่สุดของปีนี้เลย ${province} มีอะไรน่าสนใจมากกว่าที่คิด หวังว่าจะเป็นประโยชน์นะครับ! 🌍</p>
+  `;
+}
+
+function renderPostDetail() {
+  if (currentPostIndex === null) return '';
+  const p = travelPosts[currentPostIndex];
+  if (!p) return '';
+
+  const content = generatePostContent(p);
+  const tags = currentLang === 'EN'
+    ? [postProvince(p), 'Thailand', 'Travel', 'Road trip', 'Photography']
+    : [postProvince(p), 'ประเทศไทย', 'ท่องเที่ยว', 'โรดทริป', 'ถ่ายรูป'];
+
+  // related posts (3 อันถัดไป ที่ไม่ใช่ตัวเอง)
+  const related = travelPosts
+    .filter((_, i) => i !== currentPostIndex)
+    .slice(0, 3);
+
+  const relatedHtml = related.map((rp, i) => {
+    const realIdx = travelPosts.indexOf(rp);
+    return `
+      <div class="post-card" onclick="openPostDetail(${realIdx})">
+        <div class="post-cover">
+          <img src="${rp.img}" alt="${postProvince(rp)}" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>
+          <div class="post-province-tag">📍 ${postProvince(rp)}</div>
+        </div>
+        <div class="post-body">
+          <div class="post-author">
+            <div class="avatar ${rp.avClass}">${postAvatar(rp)}</div>
+            <div class="post-author-info">
+              <div class="post-author-name">${postAuthor(rp)}</div>
+            </div>
+          </div>
+          <div class="post-title">${postTitle(rp)}</div>
+          <div class="post-stats">
+            <span class="post-stat liked">♥ ${formatLikes(rp.likes)}</span>
+            <span class="post-stat">💬 ${rp.comments}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="post-detail">
+      <div style="position:relative">
+        <button class="post-detail-back" onclick="show('home')">← ${t('back').replace('← ','')}</button>
+        <div class="post-hero">
+          <img src="${p.img}" alt="${postProvince(p)}" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>
+          <div class="post-hero-overlay"></div>
+          <div class="post-hero-province">📍 ${postProvince(p)}</div>
+        </div>
+      </div>
+
+      <div class="post-detail-body">
+        <h1 class="post-detail-title">${postTitle(p)}</h1>
+
+        <div class="post-detail-author">
+          <div class="avatar ${p.avClass}">${postAvatar(p)}</div>
+          <div class="pda-info">
+            <div class="pda-name">${postAuthor(p)}</div>
+            <div class="pda-followers">${p.followers}</div>
+          </div>
+          <button class="pda-follow-btn" onclick="event.stopPropagation();this.textContent=this.textContent==='${t('pdFollow')}'?'✓':'${t('pdFollow')}'">${t('pdFollow')}</button>
+        </div>
+
+        <div class="post-stats-bar">
+          <div class="pst-item liked">
+            <div class="pst-icon">♥</div>
+            <div class="pst-val">${formatLikes(p.likes)}</div>
+            <div class="pst-label">${t('pdLikes')}</div>
+          </div>
+          <div class="pst-item">
+            <div class="pst-icon">💬</div>
+            <div class="pst-val">${p.comments}</div>
+            <div class="pst-label">${t('pdComments')}</div>
+          </div>
+          <div class="pst-item">
+            <div class="pst-icon">↗</div>
+            <div class="pst-val">${Math.round(p.likes / 12)}</div>
+            <div class="pst-label">${t('pdShares')}</div>
+          </div>
+        </div>
+
+        <div class="post-content">${content}</div>
+
+        <div class="post-tags">
+          ${tags.map(tag => `<span class="post-tag">#${tag}</span>`).join('')}
+        </div>
+
+        <div class="post-actions">
+          <button class="post-action-btn" id="like-btn" onclick="toggleLike(this)">${t('pdLike')}</button>
+          <button class="post-action-btn">${t('pdComment')}</button>
+          <button class="post-action-btn">${t('pdShare')}</button>
+        </div>
+
+        <div class="post-related-title">${t('pdRelated')}</div>
+        <div class="posts-grid">${relatedHtml}</div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleLike(btn) {
+  if (btn.classList.contains('active')) {
+    btn.classList.remove('active');
+    btn.textContent = t('pdLike');
+  } else {
+    btn.classList.add('active');
+    btn.textContent = t('pdLiked');
+  }
+}
+
 function formatLikes(n) {
   if (n >= 1000) return (n / 1000).toFixed(1).replace('.0','') + 'k';
   return n;
@@ -2434,8 +3088,10 @@ function renderStarSection() {
       </div>
     `;
   } else {
-    postsHtml = `<div class="posts-grid">` + filteredPosts.map((p, i) => `
-      <div class="post-card" onclick="alert(${JSON.stringify(t('openPost'))} + ${JSON.stringify(postTitle(p))})">
+    postsHtml = `<div class="posts-grid">` + filteredPosts.map((p, i) => {
+      const realIdx = travelPosts.indexOf(p);
+      return `
+      <div class="post-card" onclick="openPostDetail(${realIdx})">
         <div class="post-cover">
           <img src="${p.img}" alt="${postProvince(p)}" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>
           <div class="post-rank ${i < 3 && !postSearch.query && postSearch.activeChip === 'all' ? 'top' : ''}">${i < 3 && !postSearch.query && postSearch.activeChip === 'all' ? '👑' : '#'}${i + 1}</div>
@@ -2455,7 +3111,7 @@ function renderStarSection() {
           </div>
         </div>
       </div>
-    `).join('') + `</div>`;
+    `;}).join('') + `</div>`;
   }
 
   return `
@@ -3079,6 +3735,30 @@ function getScreens() { return {
       </div>
     </div>
 
+    <p class="section-title">${t('setPrice')}</p>
+    <div class="price-slider-card">
+      <div class="price-slider-header">
+        <div class="price-slider-label">${t('setPrice')}</div>
+        <div class="price-slider-value">
+          ฿<span id="price-val">2.0</span><span class="unit">/${currentLang === 'EN' ? 'km' : 'กม.'}</span>
+        </div>
+      </div>
+      <input type="range" id="price-slider" class="price-slider-input"
+             min="1.5" max="2.5" step="0.1" value="2.0"
+             oninput="updatePriceSlider()"/>
+      <div class="price-slider-range">
+        <span>💸 ฿1.5 • ${t('priceLow')}</span>
+        <span>${t('priceHigh')} • ฿2.5 💎</span>
+      </div>
+      <div class="price-income-box">
+        <div class="pib-info">
+          <span class="pib-label">${t('estIncome')}</span>
+          <span class="pib-sub" id="price-sub">${t('fullRoute')}${t('perPassenger')}</span>
+        </div>
+        <span class="pib-value">฿<span id="price-total">—</span></span>
+      </div>
+    </div>
+
     <div id="form-error"></div>
 
     <button class="btn-primary" onclick="goToMap()">${t('next')}</button>
@@ -3111,10 +3791,19 @@ function getScreens() { return {
             <div class="rd-value" id="rs-duration">—</div>
           </div>
           <div class="route-detail">
-            <div class="rd-label">ค่าน้ำมัน~</div>
-            <div class="rd-value" id="rs-fuel">—</div>
+            <div class="rd-label">รายได้/คน</div>
+            <div class="rd-value primary" id="rs-income">—</div>
           </div>
         </div>
+
+        <div class="pickup-info-bar">
+          <span class="ico">💡</span>
+          <span>${t('pickupHint')}</span>
+        </div>
+
+        <p class="section-title" style="margin-top:4px">${t('pickupPoints')}</p>
+        <div class="pickup-list" id="pickup-list"></div>
+
         <button class="btn-primary" onclick="confirmPost()">✓ ยืนยันและลงประกาศ</button>
       </div>
     </div>
@@ -3200,6 +3889,7 @@ function getScreens() { return {
       <button class="send-btn">➤</button>
     </div>
   `,
+  postDetail: `${renderPostDetail()}`,
   profile: `
     <h2>โปรไฟล์</h2>
     <p class="subtitle">บัญชีและการตั้งค่า</p>
@@ -3248,13 +3938,15 @@ const navEl = document.getElementById('app-nav');
 let map = null;
 
 function show(name) {
-  // หน้าแผนที่: ซ่อน header + nav, ใช้พื้นที่เต็ม
+  // หน้าแผนที่ + post detail: ซ่อน header + nav, ใช้พื้นที่เต็ม
   const isMapScreen = (name === 'map');
+  const isPostDetail = (name === 'postDetail');
+  const isFullScreen = isMapScreen || isPostDetail;
   const wrap = document.querySelector('.header-wrap');
-  if (wrap) wrap.style.display = isMapScreen ? 'none' : 'block';
-  headerEl.style.display = isMapScreen ? 'none' : 'flex';
+  if (wrap) wrap.style.display = isFullScreen ? 'none' : 'block';
+  headerEl.style.display = isFullScreen ? 'none' : 'flex';
   navEl.style.display = isMapScreen ? 'none' : 'grid';
-  screenEl.classList.toggle('no-pad', isMapScreen);
+  screenEl.classList.toggle('no-pad', isFullScreen);
 
   const S = getScreens();
   screenEl.innerHTML = S[name] || S.home;
@@ -3263,6 +3955,7 @@ function show(name) {
   const navName = (name === 'detail') ? 'home'
                 : (name === 'chat') ? 'messages'
                 : (name === 'map') ? 'post'
+                : (name === 'postDetail') ? 'home'
                 : name;
   navBtns.forEach(b => b.classList.toggle('active', b.dataset.screen === navName));
 
@@ -3281,6 +3974,14 @@ function show(name) {
     if (tripData.time) document.getElementById('in-time').value = tripData.time;
     // render ปุ่ม quick locations
     renderQuickLocations();
+    // initial price slider
+    setTimeout(() => {
+      const slider = document.getElementById('price-slider');
+      if (slider) {
+        slider.value = tripData.pricePerKm || 2.0;
+        updatePriceSlider();
+      }
+    }, 0);
   }
 
   if (name === 'map') {
@@ -3475,6 +4176,38 @@ function fillLocation(which, name, lat, lng) {
   // หลังใส่ from แล้ว → สลับ target ไป to โดยอัตโนมัติ
   if (which === 'from') {
     setQLTarget('to');
+  }
+}
+
+// ====== Price Slider (Driver) ======
+function updatePriceSlider() {
+  const slider = document.getElementById('price-slider');
+  if (!slider) return;
+  const price = parseFloat(slider.value);
+  tripData.pricePerKm = price;
+
+  document.getElementById('price-val').textContent = price.toFixed(1);
+
+  // สีเขียวบน track ตาม value
+  const percent = ((price - 1.5) / (2.5 - 1.5)) * 100;
+  slider.style.background = `linear-gradient(to right, var(--primary) 0%, var(--primary) ${percent}%, var(--border) ${percent}%, var(--border) 100%)`;
+
+  // คำนวณรายได้ประมาณ (ถ้ามีระยะทางจากที่แล้ว)
+  const totalEl = document.getElementById('price-total');
+  if (totalEl) {
+    if (tripData.distanceKm) {
+      const total = Math.round(tripData.distanceKm * price);
+      totalEl.textContent = total.toLocaleString();
+    } else {
+      // ประมาณจากเส้นตรง (ถ้ามีพิกัด)
+      if (tripData.fromCoords && tripData.toCoords) {
+        const approxKm = distanceKm(tripData.fromCoords, tripData.toCoords) * 1.3; // *1.3 เผื่อทาง
+        const total = Math.round(approxKm * price);
+        totalEl.textContent = '~' + total.toLocaleString();
+      } else {
+        totalEl.textContent = '—';
+      }
+    }
   }
 }
 
