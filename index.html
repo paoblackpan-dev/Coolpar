@@ -2088,6 +2088,363 @@
     margin-top: 1px;
   }
 
+  /* ====== User Profile (view another user) ====== */
+  .up-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0 14px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .up-hero .avatar { margin-bottom: 12px; }
+  .up-name {
+    font-size: 22px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .up-verified {
+    background: var(--primary);
+    color: white;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 900;
+  }
+  .up-rating {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-top: 4px;
+  }
+  .up-online {
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+  .up-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .up-stat {
+    background: var(--bg-soft);
+    border-radius: 14px;
+    padding: 14px 8px;
+    text-align: center;
+  }
+  .up-stat-val {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.4px;
+  }
+  .up-stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .up-bio {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+    background: var(--bg-soft);
+    padding: 12px 14px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    font-weight: 500;
+  }
+  .user-review {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  .user-review-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .user-review-stars {
+    font-size: 12px;
+  }
+  .user-review-from {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+  .user-review-text {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* ====== Profile Screen (BlaBlaCar style) ====== */
+  .profile-tabs {
+    display: flex;
+    border-bottom: 1.5px solid var(--border);
+    margin: -16px -22px 18px;
+  }
+  .profile-tab {
+    flex: 1;
+    padding: 14px 8px;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    position: relative;
+    letter-spacing: -0.2px;
+  }
+  .profile-tab.active {
+    color: var(--primary);
+  }
+  .profile-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1.5px;
+    left: 20%;
+    right: 20%;
+    height: 2.5px;
+    background: var(--primary);
+    border-radius: 2px;
+  }
+
+  /* user header */
+  .my-profile-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 4px 0 18px;
+    cursor: pointer;
+  }
+  .mp-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--bg-soft);
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: var(--text-light);
+    flex-shrink: 0;
+  }
+  .mp-name-block { flex: 1; min-width: 0; }
+  .mp-name {
+    font-size: 22px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+  .mp-tag {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .mp-chevron {
+    color: var(--text-light);
+    font-size: 22px;
+  }
+
+  /* completion card */
+  .completion-card {
+    background: var(--bg-soft);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 18px;
+  }
+  .completion-title {
+    font-size: 17px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.3px;
+    margin-bottom: 6px;
+  }
+  .completion-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  .completion-count {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .completion-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+  .completion-bar-seg {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+  }
+  .completion-bar-seg.done { background: var(--primary); }
+  .completion-link {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  /* section heading */
+  .profile-section-title {
+    font-size: 18px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.3px;
+    margin: 22px 0 10px;
+  }
+  .profile-edit-link {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--primary);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 12px 0;
+    font-family: inherit;
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+  .profile-edit-link:hover { color: var(--primary-dark); }
+
+  /* trust item */
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 0;
+  }
+  .trust-item-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--primary-light);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .trust-item-text {
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* verification + list items */
+  .profile-list-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 0;
+    background: none;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    color: var(--primary);
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .profile-list-item .pli-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1.5px solid var(--primary);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* account menu rows */
+  .account-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0;
+    border: none;
+    background: none;
+    width: 100%;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+  .account-row:hover { color: var(--primary); }
+  .account-row .chev {
+    color: var(--text-light);
+    font-size: 18px;
+  }
+  .account-group {
+    margin-bottom: 4px;
+  }
+  .account-group + .account-group {
+    margin-top: 18px;
+  }
+  .account-divider {
+    height: 6px;
+    background: var(--bg-soft);
+    margin: 18px -22px;
+  }
+  .account-danger {
+    color: #2563EB !important;
+  }
+
+  /* bubble time stamp */
+  .bubble {
+    position: relative;
+  }
+  .bubble-time {
+    font-size: 9px;
+    opacity: 0.6;
+    margin-top: 3px;
+    font-weight: 500;
+  }
+  .bubble.me .bubble-time { text-align: right; color: rgba(255,255,255,0.8); }
+  .bubble.them .bubble-time { color: var(--text-muted); }
+
   /* Map pickup marker tooltip */
   .pickup-tooltip {
     background: var(--text) !important;
@@ -3079,6 +3436,56 @@ const i18n = {
   createGuide: { TH: 'สร้างบทความรีวิวของคุณ (จำลอง)', EN: 'Create your travel guide (demo)' },
   openPost: { TH: 'เปิดบทความรีวิว: ', EN: 'Open post: ' },
 
+  // User profile (view another user)
+  userProfileTitle: { TH: 'โปรไฟล์ผู้ใช้', EN: 'User Profile' },
+  reviewsCount: { TH: 'รีวิว', EN: 'Reviews' },
+  yearsActive: { TH: 'ปีที่ใช้งาน', EN: 'Years' },
+  sendMsg: { TH: '💬 ส่งข้อความ', EN: '💬 Send message' },
+  viewProfile: { TH: 'ดูโปรไฟล์', EN: 'View profile' },
+  aboutMe: { TH: 'เกี่ยวกับ', EN: 'About' },
+  vehicleInfo: { TH: 'ข้อมูลรถ', EN: 'Vehicle' },
+  recentReviews: { TH: 'รีวิวล่าสุด', EN: 'Recent reviews' },
+  verified: { TH: 'ยืนยันแล้ว', EN: 'Verified' },
+
+  // My profile (BlaBlaCar style)
+  myProfile: { TH: 'โปรไฟล์', EN: 'Profile' },
+  profileAbout: { TH: 'เกี่ยวกับคุณ', EN: 'About you' },
+  profileAccount: { TH: 'บัญชี', EN: 'Account' },
+  profileNewbie: { TH: 'หน้าใหม่', EN: 'Newcomer' },
+  completeProfile: { TH: 'กรอกโปรไฟล์ให้ครบถ้วน', EN: 'Complete your profile' },
+  completeProfileSub: { TH: 'สิ่งนี้ช่วยสร้างความไว้วางใจและกระตุ้นให้สมาชิกมาร่วมเดินทางกับคุณ', EN: 'This helps build trust and encourages members to ride with you' },
+  stepsComplete: { TH: '{n} จาก 6 ขั้นตอนเสร็จสมบูรณ์', EN: '{n} of 6 steps completed' },
+  addProfilePhoto: { TH: 'เพิ่มรูปถ่ายโปรไฟล์', EN: 'Add a profile photo' },
+  editPersonal: { TH: 'แก้ไขรายละเอียดส่วนตัว', EN: 'Edit personal details' },
+  trustHeading: { TH: 'ความน่าเชื่อถือในการคาร์พูลของคุณ', EN: 'Your carpool trust' },
+  trustNoCancel: { TH: 'ไม่เคยยกเลิกการจองในฐานะผู้โดยสาร', EN: 'Never canceled as a passenger' },
+  verifyProfile: { TH: 'ยืนยันโปรไฟล์ของคุณ', EN: 'Verify your profile' },
+  verifyId: { TH: 'ยืนยันตัวตน', EN: 'Verify ID' },
+  verifyEmail: { TH: 'ยืนยันอีเมล', EN: 'Verify email' },
+  verifyPhone: { TH: 'ยืนยันเบอร์โทรศัพท์', EN: 'Verify phone' },
+  aboutYouHeading: { TH: 'เกี่ยวกับคุณ', EN: 'About you' },
+  addBio: { TH: 'เพิ่มประวัติย่อ', EN: 'Add bio' },
+  editPreferences: { TH: 'แก้ไขความชอบในการเดินทาง', EN: 'Edit travel preferences' },
+  vehicleHeading: { TH: 'รถยนต์', EN: 'Vehicle' },
+  addVehicle: { TH: 'เพิ่มรถยนต์', EN: 'Add a vehicle' },
+
+  // Account tab
+  accPassword: { TH: 'รหัสผ่าน', EN: 'Password' },
+  accAddress: { TH: 'ที่อยู่ทางไปรษณีย์', EN: 'Postal address' },
+  accReceive: { TH: 'วิธีรับรายรับ', EN: 'How to receive payments' },
+  accIncome: { TH: 'รายรับ', EN: 'Income' },
+  accPayment: { TH: 'วิธีชำระเงิน', EN: 'Payment methods' },
+  accPayHistory: { TH: 'การชำระเงินและการคืนเงิน', EN: 'Payments & refunds' },
+  accRateApp: { TH: 'ให้คะแนนแอป', EN: 'Rate the app' },
+  accHelp: { TH: 'ความช่วยเหลือ', EN: 'Help' },
+  accTerms: { TH: 'ข้อกำหนดและเงื่อนไข', EN: 'Terms & conditions' },
+  accPrivacy: { TH: 'การคุ้มครองข้อมูล', EN: 'Data protection' },
+  accSavedPassengers: { TH: 'ผู้โดยสารที่บันทึกไว้', EN: 'Saved passengers' },
+  accCommunication: { TH: 'การตั้งค่าการสื่อสาร', EN: 'Communication settings' },
+  accDarkMode: { TH: 'โหมดมืด', EN: 'Dark mode' },
+  accLogout: { TH: 'ออกจากระบบ', EN: 'Log out' },
+  accDelete: { TH: 'ปิดบัญชีของฉัน', EN: 'Delete my account' },
+
   // post detail
   pdFollow: { TH: 'ติดตาม', EN: 'Follow' },
   pdLikes: { TH: 'ไลค์', EN: 'Likes' },
@@ -3231,6 +3638,484 @@ function renderTripsScreen() {
 }
 
 // state ของหน้าทริป end
+
+// ====== Chat & User System (mock) ======
+const mockUsers = {
+  somchai: {
+    id: 'somchai', nameTH: 'สมชาย จ.', nameEN: 'Somchai J.',
+    avTH: 'สม', avEN: 'SC', avClass: 'av-1',
+    rating: 4.8, totalTrips: 124, reviewsCount: 89, yearsActive: 3,
+    online: true, verified: true,
+    bioTH: 'ขับมาตั้งแต่ปี 2566 ชอบฟังเพลงเก่าระหว่างทาง ไม่สูบบุหรี่ในรถ',
+    bioEN: 'Driving since 2023. Love listening to oldies on the road. No smoking in car.',
+    car: 'Honda CR-V 2022 · สีเทา',
+    carEN: 'Honda CR-V 2022 · Grey',
+    reviewsTH: [
+      { from: 'นัท ก.', rating: 5, text: 'ขับขี่ปลอดภัย คุยสนุก แนะนำเลย' },
+      { from: 'มิ้น พ.', rating: 5, text: 'ตรงเวลา เปิดแอร์เย็น น่ารักมาก' },
+      { from: 'บอย ร.', rating: 4, text: 'ดีมาก แต่หาที่จอดยากนิดหน่อย' }
+    ],
+    reviewsEN: [
+      { from: 'Nat K.', rating: 5, text: 'Safe driver, great conversation, highly recommended' },
+      { from: 'Min P.', rating: 5, text: 'On time, comfortable AC, very nice person' },
+      { from: 'Boy R.', rating: 4, text: 'Great trip, but parking was a bit tricky' }
+    ]
+  },
+  worapon: {
+    id: 'worapon', nameTH: 'วรพล ส.', nameEN: 'Worapon S.',
+    avTH: 'วร', avEN: 'WP', avClass: 'av-3',
+    rating: 4.7, totalTrips: 67, reviewsCount: 52, yearsActive: 2,
+    online: false, verified: true,
+    bioTH: 'นักศึกษาขับ part-time ไปมหาวิทยาลัย ชอบขับเย็นๆ ไม่รีบ',
+    bioEN: 'Part-time university student driver. Prefer relaxed pace, no rush.',
+    car: 'Mazda CX-5 2021 · สีขาว',
+    carEN: 'Mazda CX-5 2021 · White',
+    reviewsTH: [
+      { from: 'เอม ป.', rating: 5, text: 'ใจดี ขับนิ่งมาก' },
+      { from: 'แอน จ.', rating: 4, text: 'โอเคครับ มาตรงเวลา' }
+    ],
+    reviewsEN: [
+      { from: 'Aim P.', rating: 5, text: 'Kind and very steady driver' },
+      { from: 'Ann J.', rating: 4, text: 'Good, arrived on time' }
+    ]
+  },
+  napat: {
+    id: 'napat', nameTH: 'นภัทร ป.', nameEN: 'Napat P.',
+    avTH: 'นภ', avEN: 'NP', avClass: 'av-2',
+    rating: 4.9, totalTrips: 201, reviewsCount: 156, yearsActive: 4,
+    online: true, verified: true,
+    bioTH: 'ขับรถ carpool มา 4 ปี ชอบช่วยคนประหยัด คุยสนุก รับฟังเพลย์ลิสต์ของลูกค้า',
+    bioEN: '4 years of carpooling. Love helping people save money. Happy to play your playlist!',
+    car: 'Toyota Camry 2023 · สีน้ำเงิน',
+    carEN: 'Toyota Camry 2023 · Blue',
+    reviewsTH: [
+      { from: 'พลอย ส.', rating: 5, text: 'สุดยอด! ขับนิ่ม ปลอดภัย คุยถูกคอ' },
+      { from: 'จูน ก.', rating: 5, text: 'เป็นทริปที่ดีที่สุดที่เคยใช้' },
+      { from: 'นิว ส.', rating: 5, text: 'รถใหม่ สะอาด คนขับสุภาพมาก' }
+    ],
+    reviewsEN: [
+      { from: 'Ploy S.', rating: 5, text: 'Amazing! Smooth, safe, great chat' },
+      { from: 'June K.', rating: 5, text: 'Best trip experience ever' },
+      { from: 'New S.', rating: 5, text: 'New, clean car, very polite driver' }
+    ]
+  }
+};
+
+const chatRooms = {
+  somchai: {
+    userId: 'somchai', unread: 2,
+    lastTimeTH: '10:24', lastTimeEN: '10:24',
+    lastMsgTH: 'ครับ เจอกันที่หมอชิต 06:50 นะครับ',
+    lastMsgEN: 'OK, see you at Mo Chit at 06:50',
+    messagesTH: [
+      { from: 'them', text: 'สวัสดีครับ พรุ่งนี้เจอกันที่หมอชิตนะครับ', time: '09:15' },
+      { from: 'me', text: 'ครับ ออกกี่โมงครับ?', time: '09:18' },
+      { from: 'them', text: '07:00 ตรงครับ ขอเจอกัน 06:50', time: '09:20' },
+      { from: 'them', text: 'ผมจะจอดตรงทางออก 2 นะครับ รถ Honda CR-V สีเทา', time: '09:21' },
+      { from: 'me', text: 'รับทราบครับ ผมจะเอากระเป๋าใบใหญ่มาด้วย ไหวไหมครับ?', time: '10:20' },
+      { from: 'them', text: 'ครับ เจอกันที่หมอชิต 06:50 นะครับ', time: '10:24' }
+    ],
+    messagesEN: [
+      { from: 'them', text: 'Hi, see you at Mo Chit tomorrow', time: '09:15' },
+      { from: 'me', text: 'OK, what time?', time: '09:18' },
+      { from: 'them', text: '07:00 sharp, meet at 06:50', time: '09:20' },
+      { from: 'them', text: "I'll park at exit 2, grey Honda CR-V", time: '09:21' },
+      { from: 'me', text: 'Got it. I have a big bag, is that OK?', time: '10:20' },
+      { from: 'them', text: 'Sure, see you at Mo Chit at 06:50', time: '10:24' }
+    ]
+  },
+  worapon: {
+    userId: 'worapon', unread: 0,
+    lastTimeTH: 'เมื่อวาน', lastTimeEN: 'Yesterday',
+    lastMsgTH: 'ที่นั่งยังว่างอยู่ไหมครับ?',
+    lastMsgEN: 'Are there still seats available?',
+    messagesTH: [
+      { from: 'them', text: 'สวัสดีครับ', time: 'เมื่อวาน 14:00' },
+      { from: 'them', text: 'ที่นั่งยังว่างอยู่ไหมครับ?', time: 'เมื่อวาน 14:01' }
+    ],
+    messagesEN: [
+      { from: 'them', text: 'Hello', time: 'Yesterday 14:00' },
+      { from: 'them', text: 'Are there still seats available?', time: 'Yesterday 14:01' }
+    ]
+  },
+  napat: {
+    userId: 'napat', unread: 0,
+    lastTimeTH: '2 วันก่อน', lastTimeEN: '2 days ago',
+    lastMsgTH: 'ขอบคุณสำหรับทริปที่ดีนะครับ ⭐',
+    lastMsgEN: 'Thanks for the great trip ⭐',
+    messagesTH: [
+      { from: 'me', text: 'ขอบคุณสำหรับทริปที่ดีนะครับ ⭐', time: '2 วันก่อน 18:30' },
+      { from: 'them', text: 'ขอบคุณเช่นกันครับ แล้วเจอกันใหม่ครับ', time: '2 วันก่อน 18:35' }
+    ],
+    messagesEN: [
+      { from: 'me', text: 'Thanks for the great trip ⭐', time: '2 days ago 18:30' },
+      { from: 'them', text: 'Thanks too! See you next time', time: '2 days ago 18:35' }
+    ]
+  }
+};
+
+let activeChatRoom = null;
+let viewingUser = null;
+
+function openChat(userId) {
+  activeChatRoom = userId;
+  if (chatRooms[userId]) chatRooms[userId].unread = 0;
+  show('chat');
+}
+
+function openUserProfile(userId) {
+  viewingUser = userId;
+  show('userProfile');
+}
+
+function renderMessagesList() {
+  const userKeys = Object.keys(chatRooms);
+  if (userKeys.length === 0) {
+    return `
+      <h2>${t('messagesTitle')}</h2>
+      <p class="subtitle">${t('messagesSub')}</p>
+      <div class="trips-empty">
+        <div class="trips-empty-emoji">💬</div>
+        ${currentLang === 'EN' ? 'No messages yet' : 'ยังไม่มีข้อความ'}
+      </div>
+    `;
+  }
+
+  const items = userKeys.map(uid => {
+    const room = chatRooms[uid];
+    const user = mockUsers[uid];
+    if (!user) return '';
+    const name = currentLang === 'EN' ? user.nameEN : user.nameTH;
+    const av = currentLang === 'EN' ? user.avEN : user.avTH;
+    const lastMsg = currentLang === 'EN' ? room.lastMsgEN : room.lastMsgTH;
+    const lastTime = currentLang === 'EN' ? room.lastTimeEN : room.lastTimeTH;
+
+    return `
+      <div class="chat-item" onclick="openChat('${uid}')">
+        <div class="avatar ${user.avClass}" onclick="event.stopPropagation();openUserProfile('${uid}')">${av}</div>
+        <div class="chat-body">
+          <div class="chat-top">
+            <div class="chat-name">${name}${user.verified ? ' <span style="color:var(--primary);font-size:11px">✓</span>' : ''}</div>
+            <div class="chat-time">${lastTime}</div>
+          </div>
+          <div class="chat-last">${lastMsg}</div>
+        </div>
+        ${room.unread > 0 ? `<span class="badge">${room.unread}</span>` : ''}
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <h2>${t('messagesTitle')}</h2>
+    <p class="subtitle">${t('messagesSub')}</p>
+    ${items}
+  `;
+}
+
+function renderChatScreen() {
+  if (!activeChatRoom) activeChatRoom = 'somchai';
+  const room = chatRooms[activeChatRoom];
+  const user = mockUsers[activeChatRoom];
+  if (!user || !room) return `<div>Error</div>`;
+
+  const name = currentLang === 'EN' ? user.nameEN : user.nameTH;
+  const av = currentLang === 'EN' ? user.avEN : user.avTH;
+  const msgs = currentLang === 'EN' ? room.messagesEN : room.messagesTH;
+
+  const bubblesHtml = msgs.map(m => `
+    <div class="bubble ${m.from}">
+      ${m.text}
+      ${m.time ? `<div class="bubble-time">${m.time}</div>` : ''}
+    </div>
+  `).join('');
+
+  const onlineText = user.online
+    ? (currentLang === 'EN' ? '● Online' : '● ออนไลน์')
+    : (currentLang === 'EN' ? '○ Offline' : '○ ออฟไลน์');
+
+  return `
+    <button class="back-btn-inline" data-screen="messages">${t('back')}</button>
+    <div class="chat-header" onclick="openUserProfile('${activeChatRoom}')" style="cursor:pointer">
+      <div class="avatar ${user.avClass}">${av}</div>
+      <div style="flex:1">
+        <div class="chat-name-block">${name}${user.verified ? ' <span style="color:var(--primary);font-size:13px">✓</span>' : ''}</div>
+        <div class="chat-status" style="color:${user.online ? 'var(--primary)' : 'var(--text-muted)'}">${onlineText}</div>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);font-weight:600">
+        ${t('viewProfile')} →
+      </div>
+    </div>
+    <div class="chat-feed" id="chat-feed">${bubblesHtml}</div>
+    <div class="chat-input-row">
+      <input class="chat-input" id="chat-input" placeholder="${t('typeMsg')}"
+             onkeydown="if(event.key==='Enter')sendMessage()"/>
+      <button class="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+  `;
+}
+
+function sendMessage() {
+  const input = document.getElementById('chat-input');
+  if (!input || !activeChatRoom) return;
+  const text = input.value.trim();
+  if (!text) return;
+
+  const room = chatRooms[activeChatRoom];
+  const now = new Date();
+  const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+
+  room.messagesTH.push({ from: 'me', text, time: timeStr });
+  room.messagesEN.push({ from: 'me', text, time: timeStr });
+  room.lastMsgTH = text;
+  room.lastMsgEN = text;
+  room.lastTimeTH = timeStr;
+  room.lastTimeEN = timeStr;
+
+  input.value = '';
+  const feed = document.getElementById('chat-feed');
+  if (feed) {
+    feed.innerHTML += `<div class="bubble me">${text}<div class="bubble-time">${timeStr}</div></div>`;
+    feed.scrollTop = feed.scrollHeight;
+  }
+
+  // จำลองคนตอบกลับ
+  setTimeout(() => {
+    const replies = currentLang === 'EN'
+      ? ['Got it 👍', 'OK!', 'Thanks!', 'Sure thing', 'Sounds good']
+      : ['รับทราบครับ 👍', 'โอเคครับ', 'ขอบคุณครับ', 'ครับผม', 'ไม่มีปัญหาครับ'];
+    const reply = replies[Math.floor(Math.random() * replies.length)];
+    const replyTime = new Date();
+    const replyTimeStr = replyTime.getHours().toString().padStart(2,'0') + ':' + replyTime.getMinutes().toString().padStart(2,'0');
+
+    if (!chatRooms[activeChatRoom]) return;
+    chatRooms[activeChatRoom].messagesTH.push({ from: 'them', text: reply, time: replyTimeStr });
+    chatRooms[activeChatRoom].messagesEN.push({ from: 'them', text: reply, time: replyTimeStr });
+    chatRooms[activeChatRoom].lastMsgTH = reply;
+    chatRooms[activeChatRoom].lastMsgEN = reply;
+
+    const feed2 = document.getElementById('chat-feed');
+    if (feed2) {
+      feed2.innerHTML += `<div class="bubble them">${reply}<div class="bubble-time">${replyTimeStr}</div></div>`;
+      feed2.scrollTop = feed2.scrollHeight;
+    }
+  }, 1500 + Math.random() * 1500);
+}
+
+function renderUserProfile() {
+  if (!viewingUser) return '<div>No user</div>';
+  const user = mockUsers[viewingUser];
+  if (!user) return '<div>User not found</div>';
+
+  const name = currentLang === 'EN' ? user.nameEN : user.nameTH;
+  const av = currentLang === 'EN' ? user.avEN : user.avTH;
+  const bio = currentLang === 'EN' ? user.bioEN : user.bioTH;
+  const car = currentLang === 'EN' ? user.carEN : user.car;
+  const reviews = currentLang === 'EN' ? user.reviewsEN : user.reviewsTH;
+
+  const reviewsHtml = reviews.map(r => `
+    <div class="user-review">
+      <div class="user-review-head">
+        <div class="user-review-stars">${'⭐'.repeat(r.rating)}</div>
+        <div class="user-review-from">${r.from}</div>
+      </div>
+      <div class="user-review-text">${r.text}</div>
+    </div>
+  `).join('');
+
+  return `
+    <button class="back-btn-inline" onclick="show('messages')">${t('back')}</button>
+
+    <div class="up-hero">
+      <div class="avatar ${user.avClass}" style="width:88px;height:88px;font-size:24px">${av}</div>
+      <div class="up-name">
+        ${name}
+        ${user.verified ? `<span class="up-verified" title="${t('verified')}">✓</span>` : ''}
+      </div>
+      <div class="up-rating">⭐ ${user.rating} · ${user.totalTrips} ${t('trips')}</div>
+      <div class="up-online" style="color:${user.online ? 'var(--primary)' : 'var(--text-muted)'}">
+        ${user.online ? (currentLang === 'EN' ? '● Online now' : '● ออนไลน์ตอนนี้') : (currentLang === 'EN' ? '○ Offline' : '○ ออฟไลน์')}
+      </div>
+    </div>
+
+    <div class="up-stats-grid">
+      <div class="up-stat">
+        <div class="up-stat-val">${user.totalTrips}</div>
+        <div class="up-stat-label">${t('trips')}</div>
+      </div>
+      <div class="up-stat">
+        <div class="up-stat-val">${user.reviewsCount}</div>
+        <div class="up-stat-label">${t('reviewsCount')}</div>
+      </div>
+      <div class="up-stat">
+        <div class="up-stat-val">${user.yearsActive}</div>
+        <div class="up-stat-label">${t('yearsActive')}</div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="openChat('${user.id}')">${t('sendMsg')}</button>
+
+    <p class="section-title" style="margin-top:24px">${t('aboutMe')}</p>
+    <div class="up-bio">${bio}</div>
+
+    <p class="section-title">${t('vehicleInfo')}</p>
+    <div class="up-bio">🚗 ${car}</div>
+
+    <p class="section-title">${t('recentReviews')} (${reviews.length})</p>
+    ${reviewsHtml}
+  `;
+}
+// ====== Chat & User System end ======
+
+// ====== My Profile Screen (BlaBlaCar-style) ======
+const profileState = { tab: 'about' }; // 'about' | 'account'
+const userProfile = {
+  name: 'Warinthorn',
+  tag: 'newbie', // 'newbie' หรือคะแนน
+  photo: null,
+  email: 'paoblackpan@gmail.com',
+  phone: '+66955951222',
+  bio: '',
+  car: null,
+  stepsCompleted: 0,
+  totalSteps: 6
+};
+
+function setProfileTab(tab) {
+  profileState.tab = tab;
+  show('profile');
+}
+
+function renderProfileScreen() {
+  const tab = profileState.tab;
+  return `
+    <div class="profile-tabs">
+      <button class="profile-tab ${tab === 'about' ? 'active' : ''}" onclick="setProfileTab('about')">${t('profileAbout')}</button>
+      <button class="profile-tab ${tab === 'account' ? 'active' : ''}" onclick="setProfileTab('account')">${t('profileAccount')}</button>
+    </div>
+    ${tab === 'about' ? renderProfileAbout() : renderProfileAccount()}
+  `;
+}
+
+function renderProfileAbout() {
+  const done = userProfile.stepsCompleted;
+  const total = userProfile.totalSteps;
+
+  const barSegs = Array.from({ length: total }, (_, i) =>
+    `<div class="completion-bar-seg ${i < done ? 'done' : ''}"></div>`
+  ).join('');
+
+  const stepsText = t('stepsComplete').replace('{n}', done);
+  const newbieText = userProfile.tag === 'newbie' ? t('profileNewbie') : userProfile.tag;
+
+  return `
+    <div class="my-profile-head" onclick="alert(${JSON.stringify(currentLang === 'EN' ? 'Edit profile (demo)' : 'แก้ไขโปรไฟล์ (จำลอง)')})">
+      <div class="mp-avatar">👤</div>
+      <div class="mp-name-block">
+        <div class="mp-name">${userProfile.name}</div>
+        <div class="mp-tag">${newbieText}</div>
+      </div>
+      <span class="mp-chevron">›</span>
+    </div>
+
+    <div class="completion-card">
+      <div class="completion-title">${t('completeProfile')}</div>
+      <div class="completion-sub">${t('completeProfileSub')}</div>
+      <div class="completion-count">${stepsText}</div>
+      <div class="completion-bar">${barSegs}</div>
+      <button class="completion-link" onclick="incrementStep()">${t('addProfilePhoto')}</button>
+    </div>
+
+    <button class="profile-edit-link" onclick="incrementStep()">${t('editPersonal')}</button>
+
+    <div class="profile-section-title">${t('trustHeading')}</div>
+    <div class="trust-item">
+      <div class="trust-item-icon">✓</div>
+      <div class="trust-item-text">${t('trustNoCancel')}</div>
+    </div>
+
+    <div class="profile-section-title">${t('verifyProfile')}</div>
+    <button class="profile-list-item" onclick="incrementStep()">
+      <span class="pli-icon">+</span>
+      <span>${t('verifyId')}</span>
+    </button>
+    <button class="profile-list-item" onclick="incrementStep()">
+      <span class="pli-icon">+</span>
+      <span>${t('verifyEmail')} ${userProfile.email}</span>
+    </button>
+    <button class="profile-list-item" onclick="incrementStep()">
+      <span class="pli-icon">+</span>
+      <span>${t('verifyPhone')} ${userProfile.phone}</span>
+    </button>
+
+    <div class="profile-section-title">${t('aboutYouHeading')}</div>
+    <button class="profile-list-item" onclick="incrementStep()">
+      <span class="pli-icon">+</span>
+      <span>${t('addBio')}</span>
+    </button>
+    <button class="profile-list-item" onclick="alert(${JSON.stringify(currentLang === 'EN' ? 'Edit preferences (demo)' : 'แก้ไขความชอบ (จำลอง)')})">
+      <span class="pli-icon">+</span>
+      <span>${t('editPreferences')}</span>
+    </button>
+
+    <div class="profile-section-title">${t('vehicleHeading')}</div>
+    <button class="profile-list-item" onclick="incrementStep()">
+      <span class="pli-icon">+</span>
+      <span>${t('addVehicle')}</span>
+    </button>
+
+    <div style="height:30px"></div>
+  `;
+}
+
+function renderProfileAccount() {
+  const demoAlert = (label) => `alert(${JSON.stringify(label + (currentLang === 'EN' ? ' (demo)' : ' (จำลอง)'))})`;
+
+  return `
+    <div class="account-group">
+      <button class="account-row" onclick="${demoAlert(t('accSavedPassengers'))}">${t('accSavedPassengers')}<span class="chev">›</span></button>
+      <button class="account-row" onclick="${demoAlert(t('accCommunication'))}">${t('accCommunication')}<span class="chev">›</span></button>
+      <button class="account-row" onclick="${demoAlert(t('accDarkMode'))}">${t('accDarkMode')}<span class="chev">›</span></button>
+      <button class="account-row" onclick="${demoAlert(t('accPassword'))}">${t('accPassword')}<span class="chev">›</span></button>
+      <button class="account-row" onclick="${demoAlert(t('accAddress'))}">${t('accAddress')}<span class="chev">›</span></button>
+    </div>
+
+    <div class="account-divider"></div>
+
+    <div class="account-group">
+      <button class="account-row" onclick="${demoAlert(t('accReceive'))}">${t('accReceive')}<span class="chev">›</span></button>
+      <button class="account-row" onclick="${demoAlert(t('accIncome'))}">${t('accIncome')}<span class="chev">›</span></button>
+      <button class="account-row" onclick="${demoAlert(t('accPayment'))}">${t('accPayment')}<span class="chev">›</span></button>
+      <button class="account-row" onclick="${demoAlert(t('accPayHistory'))}">${t('accPayHistory')}<span class="chev">›</span></button>
+    </div>
+
+    <div class="account-divider"></div>
+
+    <div class="account-group">
+      <button class="account-row" onclick="${demoAlert(t('accRateApp'))}">${t('accRateApp')}<span class="chev">›</span></button>
+      <button class="account-row" onclick="${demoAlert(t('accHelp'))}">${t('accHelp')}<span class="chev">›</span></button>
+      <button class="account-row" onclick="${demoAlert(t('accTerms'))}">${t('accTerms')}<span class="chev">›</span></button>
+      <button class="account-row" onclick="${demoAlert(t('accPrivacy'))}">${t('accPrivacy')}<span class="chev">›</span></button>
+    </div>
+
+    <div class="account-divider"></div>
+
+    <div class="account-group">
+      <button class="account-row account-danger" onclick="${demoAlert(t('accLogout'))}">${t('accLogout')}</button>
+      <button class="account-row account-danger" onclick="${demoAlert(t('accDelete'))}">${t('accDelete')}</button>
+    </div>
+
+    <div style="height:30px"></div>
+  `;
+}
+
+function incrementStep() {
+  if (userProfile.stepsCompleted < userProfile.totalSteps) {
+    userProfile.stepsCompleted++;
+  }
+  show('profile');
+}
+// ====== My Profile end ======
+
 
 const tripData = { from: '', to: '', date: '', time: '', pricePerKm: 1.5, distanceKm: null };
 
@@ -4530,103 +5415,11 @@ function getScreens() { return {
     </div>
   `,
   trips: `${renderTripsScreen()}`,
-  messages: `
-    <h2>${t('messagesTitle')}</h2>
-    <p class="subtitle">${t('messagesSub')}</p>
-    <div class="chat-item" data-screen="chat">
-      <div class="avatar av-1">${currentLang === 'TH' ? 'สม' : 'SM'}</div>
-      <div class="chat-body">
-        <div class="chat-top">
-          <div class="chat-name">${currentLang === 'TH' ? 'สมชาย จ.' : 'Somchai J.'}</div>
-          <div class="chat-time">10:24</div>
-        </div>
-        <div class="chat-last">${currentLang === 'TH' ? 'ครับ เจอกันที่หมอชิต 06:50 นะครับ' : 'OK, see you at Mo Chit at 06:50'}</div>
-      </div>
-      <span class="badge">2</span>
-    </div>
-    <div class="chat-item" data-screen="chat">
-      <div class="avatar av-3">${currentLang === 'TH' ? 'วร' : 'WP'}</div>
-      <div class="chat-body">
-        <div class="chat-top">
-          <div class="chat-name">${currentLang === 'TH' ? 'วรพล ส.' : 'Worapon S.'}</div>
-          <div class="chat-time">${currentLang === 'TH' ? 'เมื่อวาน' : 'Yesterday'}</div>
-        </div>
-        <div class="chat-last">${currentLang === 'TH' ? 'ที่นั่งยังว่างอยู่ไหมครับ?' : 'Are there still seats available?'}</div>
-      </div>
-    </div>
-    <div class="chat-item" data-screen="chat">
-      <div class="avatar av-2">${currentLang === 'TH' ? 'นภ' : 'NP'}</div>
-      <div class="chat-body">
-        <div class="chat-top">
-          <div class="chat-name">${currentLang === 'TH' ? 'นภัทร ป.' : 'Napat P.'}</div>
-          <div class="chat-time">${currentLang === 'TH' ? '2 วันก่อน' : '2 days ago'}</div>
-        </div>
-        <div class="chat-last">${currentLang === 'TH' ? 'ขอบคุณสำหรับทริปที่ดีนะครับ ⭐' : 'Thanks for the great trip ⭐'}</div>
-      </div>
-    </div>
-  `,
-  chat: `
-    <button class="back-btn-inline" data-screen="messages">${t('back')}</button>
-    <div class="chat-header">
-      <div class="avatar av-1">${currentLang === 'TH' ? 'สม' : 'SM'}</div>
-      <div>
-        <div class="chat-name-block">${currentLang === 'TH' ? 'สมชาย จ.' : 'Somchai J.'}</div>
-        <div class="chat-status">${t('online')}</div>
-      </div>
-    </div>
-    <div class="chat-feed">
-      <div class="bubble them">${currentLang === 'TH' ? 'สวัสดีครับ พรุ่งนี้เจอกันที่หมอชิตนะครับ' : 'Hi, see you at Mo Chit tomorrow'}</div>
-      <div class="bubble me">${currentLang === 'TH' ? 'ครับ ออกกี่โมงครับ?' : 'OK, what time?'}</div>
-      <div class="bubble them">${currentLang === 'TH' ? '07:00 ตรงครับ ขอเจอกัน 06:50' : '07:00 sharp, meet at 06:50'}</div>
-      <div class="bubble them">${currentLang === 'TH' ? 'ผมจะจอดตรงทางออก 2 นะครับ รถ Honda CR-V สีเทา' : "I'll park at exit 2, grey Honda CR-V"}</div>
-      <div class="bubble me">${currentLang === 'TH' ? 'รับทราบครับ ผมจะเอากระเป๋าใบใหญ่มาด้วย ไหวไหมครับ?' : 'Got it. I have a big bag, is that OK?'}</div>
-      <div class="bubble them">${currentLang === 'TH' ? 'ครับ เจอกันที่หมอชิต 06:50 นะครับ' : 'Sure, see you at Mo Chit at 06:50'}</div>
-    </div>
-    <div class="chat-input-row">
-      <input class="chat-input" placeholder="${t('typeMsg')}"/>
-      <button class="send-btn">➤</button>
-    </div>
-  `,
+  messages: `${renderMessagesList()}`,
+  chat: `${renderChatScreen()}`,
+  userProfile: `${renderUserProfile()}`,
   postDetail: `${renderPostDetail()}`,
-  profile: `
-    <h2>โปรไฟล์</h2>
-    <p class="subtitle">บัญชีและการตั้งค่า</p>
-    <div class="profile-head">
-      <div class="avatar">วี</div>
-      <div class="profile-name">วีรนุช</div>
-      <div class="profile-rating">⭐ 5.0 • สมาชิกใหม่</div>
-    </div>
-    <div class="stats-grid">
-      <div class="stat">
-        <div class="stat-num">0</div>
-        <div class="stat-label">เที่ยวที่ขับ</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">2</div>
-        <div class="stat-label">เที่ยวที่นั่ง</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">฿0</div>
-        <div class="stat-label">ประหยัด</div>
-      </div>
-    </div>
-    <button class="menu-item">
-      <div class="left"><div class="icon-bg">👤</div><span>แก้ไขโปรไฟล์</span></div>
-      <span class="chevron">›</span>
-    </button>
-    <button class="menu-item">
-      <div class="left"><div class="icon-bg">🚗</div><span>เพิ่มรถของฉัน</span></div>
-      <span class="chevron">›</span>
-    </button>
-    <button class="menu-item">
-      <div class="left"><div class="icon-bg">🛡️</div><span>ยืนยันตัวตน</span></div>
-      <span class="chevron">›</span>
-    </button>
-    <button class="menu-item">
-      <div class="left"><div class="icon-bg">⚙️</div><span>ตั้งค่า</span></div>
-      <span class="chevron">›</span>
-    </button>
-  `
+  profile: `${renderProfileScreen()}`
 }; }
 
 const screenEl = document.getElementById('screen');
@@ -4652,6 +5445,7 @@ function show(name) {
 
   const navName = (name === 'detail') ? 'home'
                 : (name === 'chat') ? 'messages'
+                : (name === 'userProfile') ? 'messages'
                 : (name === 'map') ? 'post'
                 : (name === 'postDetail') ? 'home'
                 : name;
@@ -4694,6 +5488,15 @@ function show(name) {
 
   if (name === 'detail') {
     setTimeout(initDetailMap, 100);
+  }
+
+  if (name === 'chat') {
+    setTimeout(() => {
+      const feed = document.getElementById('chat-feed');
+      if (feed) feed.scrollTop = feed.scrollHeight;
+      const input = document.getElementById('chat-input');
+      if (input) input.focus();
+    }, 50);
   }
 
   screenEl.querySelectorAll('[data-screen]').forEach(el => {
