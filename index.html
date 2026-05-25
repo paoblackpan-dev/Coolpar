@@ -2248,6 +2248,9 @@
     font-size: 30px;
     color: var(--text-light);
     flex-shrink: 0;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
   }
   .mp-name-block { flex: 1; min-width: 0; }
   .mp-name {
@@ -2395,6 +2398,15 @@
     font-weight: 700;
     flex-shrink: 0;
   }
+  /* step ที่ทำเสร็จแล้ว */
+  .profile-list-item.done {
+    color: var(--text-muted);
+  }
+  .profile-list-item.done .pli-icon {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
 
   /* account menu rows */
   .account-row {
@@ -2430,6 +2442,276 @@
   }
   .account-danger {
     color: #2563EB !important;
+  }
+
+  /* ========== Search Trip Screen (full screen) ========== */
+  .search-trip-screen {
+    margin: -16px -22px 0;
+    padding: 0 22px 20px;
+    background: var(--bg-soft);
+    min-height: 100%;
+  }
+  .st-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0 10px;
+  }
+  .st-back {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: none;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    color: var(--text);
+    font-family: inherit;
+  }
+  .st-back:hover { background: var(--primary-light); color: var(--primary); }
+  .st-title {
+    font-size: 22px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+
+  /* Input card */
+  .st-input-card {
+    background: var(--bg);
+    border-radius: 18px;
+    padding: 2px 18px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    margin-bottom: 14px;
+  }
+  .st-input-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+  }
+  .st-input-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .st-icon-from { background: var(--primary-light); color: var(--primary); }
+  .st-icon-to { background: #FEE2E2; color: #DC2626; }
+  .st-icon-date { background: #FEF3C7; color: #B45309; font-size: 14px; }
+  .st-icon-time { background: #E0E7FF; color: #4338CA; font-size: 14px; }
+  .st-input-wrap { flex: 1; min-width: 0; }
+  .st-input-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 1px;
+  }
+  .st-input-field {
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    outline: none;
+    font-family: inherit;
+  }
+  .st-input-field::placeholder {
+    color: var(--text-light);
+    font-weight: 500;
+  }
+  .st-date-input {
+    font-family: inherit;
+  }
+  .st-clear {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg-soft);
+    border: none;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .st-clear:hover { background: #FEE2E2; color: #DC2626; }
+  .st-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 -18px;
+  }
+
+  /* Big CTA */
+  .st-search-cta {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.3px;
+    box-shadow: 0 6px 18px rgba(0, 160, 130, 0.35);
+    margin-bottom: 18px;
+    transition: all 0.15s;
+  }
+  .st-search-cta:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(0, 160, 130, 0.45);
+  }
+
+  /* Section title */
+  .st-section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .st-count {
+    background: var(--text);
+    color: white;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-family: 'Manrope', sans-serif;
+  }
+
+  /* Trip card สวยๆ */
+  .search-trip-card {
+    background: var(--bg);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .search-trip-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0, 160, 130, 0.15);
+  }
+  .stc-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .stc-time {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+  .stc-price {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.5px;
+  }
+  .stc-price span {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-left: 2px;
+  }
+  .stc-route {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border);
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.2px;
+  }
+  .stc-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .stc-dot.green { background: var(--primary); }
+  .stc-dot.red { background: #DC2626; }
+  .stc-arrow { color: var(--text-light); margin: 0 2px; }
+  .stc-loc { color: var(--text); }
+  .stc-driver {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .stc-driver .avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+  .stc-driver-info { flex: 1; min-width: 0; }
+  .stc-driver-name {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .stc-driver-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 1px;
+  }
+  .stc-cta {
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+  }
+
+  /* Empty state */
+  .search-empty {
+    text-align: center;
+    padding: 40px 20px;
+    background: var(--bg);
+    border-radius: 16px;
+  }
+  .search-empty-emoji {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+  .search-empty-title {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .search-empty-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
   }
 
   /* bubble time stamp */
@@ -3064,12 +3346,12 @@
   /* CO2 impact card */
   .co2-card {
     background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 16px;
+    border-radius: 28px;
     padding: 16px 18px;
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
   }
   .co2-leaf {
     position: absolute;
@@ -3082,26 +3364,67 @@
   .co2-happy-earth {
     position: absolute;
     top: 50%;
-    right: 8px;
+    right: 6px;
     transform: translateY(-50%);
-    width: 80px;
-    height: 67px;
+    width: 130px;
+    height: 76px;
     z-index: 2;
-    filter: drop-shadow(0 4px 10px rgba(0, 160, 130, 0.3));
-    animation: bounce-earth 2.5s ease-in-out infinite;
+    border-radius: 38px;
+    overflow: hidden;
   }
-  /* แขนกดไลค์ - เด้งขึ้นลง */
-  .earth-arm-left {
-    transform-origin: 22px 52px;
-    animation: like-bounce 1.2s ease-in-out infinite;
+
+  /* รถสั่นเล็กน้อยตอนวิ่ง */
+  .car-bounce {
+    animation: car-shake 0.4s ease-in-out infinite;
   }
-  @keyframes like-bounce {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-3px) rotate(-6deg); }
+  @keyframes car-shake {
+    0%, 100% { transform: translate(80px, 67px); }
+    50% { transform: translate(80px, 66px); }
   }
-  @keyframes bounce-earth {
-    0%, 100% { transform: translateY(-50%) rotate(-6deg); }
-    50% { transform: translateY(calc(-50% - 5px)) rotate(6deg); }
+
+  /* ต้นไม้ 2 ชุดวิ่งต่อเนื่อง ไม่กระโดด — ระยะ loop = 150 พอดีกับ offset ของชุดที่ 2 */
+  .trees-move {
+    animation: scroll-trees 6s linear infinite;
+  }
+  @keyframes scroll-trees {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-150px); }
+  }
+
+  /* เมฆเลื่อนช้าๆ */
+  .clouds-move {
+    animation: scroll-clouds 12s linear infinite;
+  }
+  @keyframes scroll-clouds {
+    0% { transform: translateX(20px); }
+    100% { transform: translateX(-40px); }
+  }
+
+  /* เส้นถนนเลื่อน */
+  .road-dash-move {
+    animation: scroll-road 0.5s linear infinite;
+  }
+  @keyframes scroll-road {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-20px); }
+  }
+
+  /* ล้อหมุน */
+  .wheel-spin {
+    animation: spin-wheel 0.3s linear infinite;
+  }
+  @keyframes spin-wheel {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* speed lines วาบเข้า-ออก ให้รู้สึกเร็ว */
+  .speed-lines {
+    animation: speed-flash 0.6s ease-in-out infinite;
+  }
+  @keyframes speed-flash {
+    0%, 100% { opacity: 0.3; transform: translateX(0); }
+    50% { opacity: 1; transform: translateX(-6px); }
   }
   .co2-header {
     display: flex;
@@ -3149,6 +3472,17 @@
     color: var(--primary);
     letter-spacing: -0.7px;
     font-variant-numeric: tabular-nums;
+    display: inline-block;
+    transition: transform 0.3s;
+  }
+  .co2-number.co2-pulse {
+    animation: co2Tick 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes co2Tick {
+    0%   { transform: translateY(0); opacity: 1; }
+    30%  { transform: translateY(-3px); opacity: 0.6; color: #43A047; }
+    60%  { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(0); opacity: 1; }
   }
   .co2-unit {
     font-size: 15px;
@@ -3334,7 +3668,7 @@ const i18n = {
   priceFb2: { TH: '✅ ราคาดี ได้ผู้โดยสารง่าย', EN: '✅ Good price, easy to get riders' },
   priceFb3: { TH: '👌 ราคาพอดี เหมาะสม', EN: '👌 Fair price, balanced' },
   priceFb4: { TH: '⚠️ ราคาเริ่มสูง ผู้โดยสารอาจน้อย', EN: '⚠️ Getting high, fewer riders' },
-  priceFb5: { TH: '🔥 ราคาแพงไป อาจไม่มีคนจอง', EN: '🔥 Too expensive, may get no bookings' },
+  priceFb5: { TH: '❌ ราคาแพงไป อาจไม่มีคนจอง', EN: '❌ Too expensive, may get no bookings' },
   rank: { TH: 'อันดับ', EN: 'Rank' },
   bestDeal: { TH: '🏆 ดีลที่ดีที่สุด', EN: '🏆 Best deal' },
   recommended: { TH: '⭐ แนะนำ', EN: '⭐ Recommended' },
@@ -3485,6 +3819,18 @@ const i18n = {
   accDarkMode: { TH: 'โหมดมืด', EN: 'Dark mode' },
   accLogout: { TH: 'ออกจากระบบ', EN: 'Log out' },
   accDelete: { TH: 'ปิดบัญชีของฉัน', EN: 'Delete my account' },
+
+  // Edit profile
+  editProfileTitle: { TH: 'แก้ไขโปรไฟล์', EN: 'Edit profile' },
+  fieldName: { TH: 'ชื่อ', EN: 'Name' },
+  fieldNameEN: { TH: 'ชื่อภาษาอังกฤษ', EN: 'English name' },
+  fieldEmail: { TH: 'อีเมล', EN: 'Email' },
+  fieldPhone: { TH: 'เบอร์โทรศัพท์', EN: 'Phone' },
+  fieldCar: { TH: 'รุ่นรถ', EN: 'Car model' },
+  fieldCarPH: { TH: 'เช่น Honda CR-V 2022', EN: 'e.g. Honda CR-V 2022' },
+  saveChanges: { TH: 'บันทึก', EN: 'Save changes' },
+  cancel: { TH: 'ยกเลิก', EN: 'Cancel' },
+  saved: { TH: '✓ บันทึกแล้ว', EN: '✓ Saved' },
 
   // post detail
   pdFollow: { TH: 'ติดตาม', EN: 'Follow' },
@@ -3969,16 +4315,28 @@ function renderUserProfile() {
 // ====== My Profile Screen (BlaBlaCar-style) ======
 const profileState = { tab: 'about' }; // 'about' | 'account'
 const userProfile = {
-  name: 'Warinthorn',
-  tag: 'newbie', // 'newbie' หรือคะแนน
-  photo: null,
+  name: 'วีรนุช',
+  nameEN: 'Weeranuch',
+  tag: 'newbie',
+  photo: null,        // base64 data URL ของรูปที่อัปโหลด
   email: 'paoblackpan@gmail.com',
   phone: '+66955951222',
   bio: '',
   car: null,
-  stepsCompleted: 0,
-  totalSteps: 6
+  // 5 ขั้นตอน — เก็บเป็น Set/Object ของขั้นที่ทำแล้ว
+  done: {
+    photo: false,
+    id: false,
+    email: false,
+    phone: false,
+    vehicle: false
+  },
+  totalSteps: 5
 };
+
+function getStepsCompleted() {
+  return Object.values(userProfile.done).filter(Boolean).length;
+}
 
 function setProfileTab(tab) {
   profileState.tab = tab;
@@ -3997,21 +4355,57 @@ function renderProfileScreen() {
 }
 
 function renderProfileAbout() {
-  const done = userProfile.stepsCompleted;
+  const done = getStepsCompleted();
   const total = userProfile.totalSteps;
 
   const barSegs = Array.from({ length: total }, (_, i) =>
     `<div class="completion-bar-seg ${i < done ? 'done' : ''}"></div>`
   ).join('');
 
-  const stepsText = t('stepsComplete').replace('{n}', done);
+  const stepsText = t('stepsComplete').replace('{n}', done).replace('6', total);
   const newbieText = userProfile.tag === 'newbie' ? t('profileNewbie') : userProfile.tag;
+  const displayName = currentLang === 'EN' ? userProfile.nameEN : userProfile.name;
+
+  // avatar — ถ้ามีรูปแสดงรูป ถ้าไม่มีใส่ emoji
+  const avatarHtml = userProfile.photo
+    ? `<div class="mp-avatar" style="background-image:url('${userProfile.photo}');background-size:cover;background-position:center"></div>`
+    : `<div class="mp-avatar">👤</div>`;
+
+  // ขั้นตอนถัดไป (ที่ยังไม่ทำ) สำหรับลิงก์ในกล่อง completion
+  let nextStepKey, nextStepLabel;
+  if (!userProfile.done.photo) { nextStepKey = 'photo'; nextStepLabel = t('addProfilePhoto'); }
+  else if (!userProfile.done.id) { nextStepKey = 'id'; nextStepLabel = t('verifyId'); }
+  else if (!userProfile.done.email) { nextStepKey = 'email'; nextStepLabel = t('verifyEmail'); }
+  else if (!userProfile.done.phone) { nextStepKey = 'phone'; nextStepLabel = t('verifyPhone'); }
+  else if (!userProfile.done.vehicle) { nextStepKey = 'vehicle'; nextStepLabel = t('addVehicle'); }
+  else { nextStepKey = null; }
+
+  const completionLink = nextStepKey
+    ? (nextStepKey === 'photo'
+        ? `<button class="completion-link" onclick="triggerPhotoUpload()">${nextStepLabel}</button>`
+        : `<button class="completion-link" onclick="markStepDone('${nextStepKey}')">${nextStepLabel}</button>`)
+    : `<div class="completion-link" style="color:var(--primary)">✓ ${currentLang === 'EN' ? 'All steps completed!' : 'ครบแล้ว!'}</div>`;
+
+  // helper สร้างรายการขั้นตอน
+  const stepItem = (key, label, action) => {
+    const isDone = userProfile.done[key];
+    return `
+      <button class="profile-list-item ${isDone ? 'done' : ''}" onclick="${action}">
+        <span class="pli-icon">${isDone ? '✓' : '+'}</span>
+        <span>${label}</span>
+        ${isDone ? `<span style="margin-left:auto;color:var(--primary);font-size:11px">${t('verified')}</span>` : ''}
+      </button>
+    `;
+  };
 
   return `
-    <div class="my-profile-head" onclick="alert(${JSON.stringify(currentLang === 'EN' ? 'Edit profile (demo)' : 'แก้ไขโปรไฟล์ (จำลอง)')})">
-      <div class="mp-avatar">👤</div>
+    <!-- input file ซ่อนไว้ -->
+    <input type="file" id="photo-upload-input" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)"/>
+
+    <div class="my-profile-head" onclick="show('editProfile')">
+      ${avatarHtml}
       <div class="mp-name-block">
-        <div class="mp-name">${userProfile.name}</div>
+        <div class="mp-name">${displayName}</div>
         <div class="mp-tag">${newbieText}</div>
       </div>
       <span class="mp-chevron">›</span>
@@ -4020,12 +4414,12 @@ function renderProfileAbout() {
     <div class="completion-card">
       <div class="completion-title">${t('completeProfile')}</div>
       <div class="completion-sub">${t('completeProfileSub')}</div>
-      <div class="completion-count">${stepsText}</div>
+      <div class="completion-count">${done} ${currentLang === 'EN' ? `of ${total} steps completed` : `จาก ${total} ขั้นตอนเสร็จสมบูรณ์`}</div>
       <div class="completion-bar">${barSegs}</div>
-      <button class="completion-link" onclick="incrementStep()">${t('addProfilePhoto')}</button>
+      ${completionLink}
     </div>
 
-    <button class="profile-edit-link" onclick="incrementStep()">${t('editPersonal')}</button>
+    <button class="profile-edit-link" onclick="show('editProfile')">${t('editPersonal')}</button>
 
     <div class="profile-section-title">${t('trustHeading')}</div>
     <div class="trust-item">
@@ -4034,37 +4428,40 @@ function renderProfileAbout() {
     </div>
 
     <div class="profile-section-title">${t('verifyProfile')}</div>
-    <button class="profile-list-item" onclick="incrementStep()">
-      <span class="pli-icon">+</span>
-      <span>${t('verifyId')}</span>
-    </button>
-    <button class="profile-list-item" onclick="incrementStep()">
-      <span class="pli-icon">+</span>
-      <span>${t('verifyEmail')} ${userProfile.email}</span>
-    </button>
-    <button class="profile-list-item" onclick="incrementStep()">
-      <span class="pli-icon">+</span>
-      <span>${t('verifyPhone')} ${userProfile.phone}</span>
-    </button>
-
-    <div class="profile-section-title">${t('aboutYouHeading')}</div>
-    <button class="profile-list-item" onclick="incrementStep()">
-      <span class="pli-icon">+</span>
-      <span>${t('addBio')}</span>
-    </button>
-    <button class="profile-list-item" onclick="alert(${JSON.stringify(currentLang === 'EN' ? 'Edit preferences (demo)' : 'แก้ไขความชอบ (จำลอง)')})">
-      <span class="pli-icon">+</span>
-      <span>${t('editPreferences')}</span>
-    </button>
+    ${stepItem('id', t('verifyId'), "markStepDone('id')")}
+    ${stepItem('email', `${t('verifyEmail')} ${userProfile.email}`, "markStepDone('email')")}
+    ${stepItem('phone', `${t('verifyPhone')} ${userProfile.phone}`, "markStepDone('phone')")}
 
     <div class="profile-section-title">${t('vehicleHeading')}</div>
-    <button class="profile-list-item" onclick="incrementStep()">
-      <span class="pli-icon">+</span>
-      <span>${t('addVehicle')}</span>
-    </button>
+    ${stepItem('vehicle', t('addVehicle'), "markStepDone('vehicle')")}
 
     <div style="height:30px"></div>
   `;
+}
+
+// อัปโหลดรูปโปรไฟล์ (ภายในเครื่อง)
+function triggerPhotoUpload() {
+  const input = document.getElementById('photo-upload-input');
+  if (input) input.click();
+}
+
+function handlePhotoUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    userProfile.photo = e.target.result;
+    userProfile.done.photo = true;
+    show('profile');
+  };
+  reader.readAsDataURL(file);
+}
+
+function markStepDone(key) {
+  if (userProfile.done.hasOwnProperty(key)) {
+    userProfile.done[key] = !userProfile.done[key]; // toggle เพื่อทดสอบ
+    show('profile');
+  }
 }
 
 function renderProfileAccount() {
@@ -4109,11 +4506,107 @@ function renderProfileAccount() {
 }
 
 function incrementStep() {
-  if (userProfile.stepsCompleted < userProfile.totalSteps) {
-    userProfile.stepsCompleted++;
-  }
+  // legacy — เผื่อมี caller เก่า
   show('profile');
 }
+
+// ====== Edit Profile Screen ======
+function renderEditProfile() {
+  return `
+    <input type="file" id="photo-upload-input" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)"/>
+
+    <div class="st-header">
+      <button class="st-back" onclick="show('profile')">←</button>
+      <div class="st-title">${t('editProfileTitle')}</div>
+    </div>
+
+    <!-- Avatar กดเปลี่ยนรูปได้ -->
+    <div style="display:flex;flex-direction:column;align-items:center;padding:14px 0 22px">
+      ${userProfile.photo
+        ? `<div class="mp-avatar" style="width:96px;height:96px;background-image:url('${userProfile.photo}');background-size:cover;background-position:center;cursor:pointer" onclick="triggerPhotoUpload()"></div>`
+        : `<div class="mp-avatar" style="width:96px;height:96px;font-size:38px;cursor:pointer" onclick="triggerPhotoUpload()">👤</div>`}
+      <button class="completion-link" style="margin-top:10px" onclick="triggerPhotoUpload()">
+        ${userProfile.photo ? (currentLang === 'EN' ? 'Change photo' : 'เปลี่ยนรูป') : t('addProfilePhoto')}
+      </button>
+    </div>
+
+    <!-- ฟิลด์ -->
+    <div class="st-input-card" style="padding:4px 18px">
+      <div class="st-input-row">
+        <div class="st-input-icon st-icon-from">●</div>
+        <div class="st-input-wrap">
+          <div class="st-input-label">${t('fieldName')}</div>
+          <input id="ep-name" class="st-input-field" value="${userProfile.name}"/>
+        </div>
+      </div>
+      <div class="st-divider"></div>
+      <div class="st-input-row">
+        <div class="st-input-icon st-icon-to">●</div>
+        <div class="st-input-wrap">
+          <div class="st-input-label">${t('fieldNameEN')}</div>
+          <input id="ep-name-en" class="st-input-field" value="${userProfile.nameEN}"/>
+        </div>
+      </div>
+      <div class="st-divider"></div>
+      <div class="st-input-row">
+        <div class="st-input-icon st-icon-date">@</div>
+        <div class="st-input-wrap">
+          <div class="st-input-label">${t('fieldEmail')}</div>
+          <input id="ep-email" class="st-input-field" type="email" value="${userProfile.email}"/>
+        </div>
+      </div>
+      <div class="st-divider"></div>
+      <div class="st-input-row">
+        <div class="st-input-icon st-icon-time">☎</div>
+        <div class="st-input-wrap">
+          <div class="st-input-label">${t('fieldPhone')}</div>
+          <input id="ep-phone" class="st-input-field" type="tel" value="${userProfile.phone}"/>
+        </div>
+      </div>
+      <div class="st-divider"></div>
+      <div class="st-input-row">
+        <div class="st-input-icon st-icon-from" style="background:#FCE7F3;color:#BE185D">🚗</div>
+        <div class="st-input-wrap">
+          <div class="st-input-label">${t('fieldCar')}</div>
+          <input id="ep-car" class="st-input-field" placeholder="${t('fieldCarPH')}" value="${userProfile.car || ''}"/>
+        </div>
+      </div>
+    </div>
+
+    <button class="st-search-cta" onclick="saveProfile()" style="margin-top:18px">
+      ✓ ${t('saveChanges')}
+    </button>
+
+    <button class="profile-edit-link" style="text-align:center;color:var(--text-muted)" onclick="show('profile')">${t('cancel')}</button>
+  `;
+}
+
+function saveProfile() {
+  const name = document.getElementById('ep-name')?.value.trim();
+  const nameEN = document.getElementById('ep-name-en')?.value.trim();
+  const email = document.getElementById('ep-email')?.value.trim();
+  const phone = document.getElementById('ep-phone')?.value.trim();
+  const car = document.getElementById('ep-car')?.value.trim();
+
+  if (name) userProfile.name = name;
+  if (nameEN) userProfile.nameEN = nameEN;
+  if (email) userProfile.email = email;
+  if (phone) userProfile.phone = phone;
+  if (car) {
+    userProfile.car = car;
+    userProfile.done.vehicle = true;
+  }
+
+  // อัปเดต greeting บน home ด้วย
+  if (typeof updateHome === 'function') {
+    // จะ refresh ที่ home next time
+  }
+
+  alert(t('saved'));
+  show('profile');
+}
+// ====== Edit Profile end ======
+
 // ====== My Profile end ======
 
 
@@ -4851,51 +5344,177 @@ function renderCO2Card() {
 
   return `
     <div class="co2-card">
-      <div class="co2-leaf">🌱</div>
-      <svg class="co2-happy-earth" viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
-        <!-- โลกพื้นน้ำเงิน-เขียว -->
+      <svg class="co2-happy-earth" viewBox="20 10 120 80" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <radialGradient id="earthGrad" cx="35%" cy="35%">
-            <stop offset="0%" stop-color="#4FC3F7"/>
-            <stop offset="100%" stop-color="#0288D1"/>
-          </radialGradient>
+          <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E53935"/>
+            <stop offset="55%" stop-color="#C62828"/>
+            <stop offset="100%" stop-color="#8B1A1A"/>
+          </linearGradient>
+          <linearGradient id="windowGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#90CAF9"/>
+            <stop offset="100%" stop-color="#42A5F5"/>
+          </linearGradient>
         </defs>
 
-        <!-- แขนซ้าย (ชูนิ้วโป้ง 👍) -->
-        <g class="earth-arm-left">
-          <!-- แขน -->
-          <path d="M 22 52 Q 14 42 12 28" stroke="#0288D1" stroke-width="5" fill="none" stroke-linecap="round"/>
-          <!-- กำปั้น -->
-          <circle cx="12" cy="24" r="6" fill="#FFD180" stroke="#1A1A2E" stroke-width="1.5"/>
-          <!-- นิ้วโป้งชี้ขึ้น -->
-          <path d="M 12 18 Q 10 12 11 8 Q 14 6 16 9 Q 17 13 15 18 Z" fill="#FFD180" stroke="#1A1A2E" stroke-width="1.5" stroke-linejoin="round"/>
-          <!-- เส้นนิ้วโค้งบนกำปั้น -->
-          <path d="M 8 23 Q 12 21 16 23" stroke="#1A1A2E" stroke-width="0.8" fill="none" stroke-linecap="round" opacity="0.5"/>
+        <!-- เมฆ (ขยับช้าๆ) -->
+        <g class="clouds-move">
+          <ellipse cx="40" cy="20" rx="9" ry="3.5" fill="#FFFFFF" opacity="0.85"/>
+          <ellipse cx="48" cy="18" rx="6" ry="3" fill="#FFFFFF" opacity="0.85"/>
+          <ellipse cx="125" cy="22" rx="10" ry="3.5" fill="#FFFFFF" opacity="0.85"/>
+          <ellipse cx="135" cy="20" rx="6" ry="3" fill="#FFFFFF" opacity="0.85"/>
         </g>
 
-        <!-- แขนขวา (ชี้ลงข้าง) -->
-        <g class="earth-arm-right">
-          <path d="M 98 52 Q 108 56 114 64" stroke="#0288D1" stroke-width="5" fill="none" stroke-linecap="round"/>
-          <circle cx="115" cy="66" r="5" fill="#FFD180" stroke="#1A1A2E" stroke-width="1.5"/>
+        <!-- เส้นพื้นหญ้า (บางๆ ไม่เป็นกล่อง) -->
+        <line x1="20" y1="64" x2="140" y2="64" stroke="#8BC34A" stroke-width="1.5" opacity="0.6"/>
+
+        <!-- ต้นไม้: 2 ชุดคู่กัน เพื่อ loop ต่อเนื่อง -->
+        <!-- ชุดแรกอยู่ที่ x=0~150, ชุดสองที่ x=150~300 → loop -150 = ตรงกัน -->
+        <g class="trees-move">
+          <!-- ===== ชุดที่ 1 ===== -->
+          <g>
+            <rect x="14" y="58" width="3" height="10" fill="#5D4037" rx="0.5"/>
+            <circle cx="15.5" cy="54" r="8" fill="#388E3C"/>
+            <circle cx="11" cy="56" r="5" fill="#2E7D32"/>
+            <circle cx="20" cy="56" r="5" fill="#2E7D32"/>
+          </g>
+          <g>
+            <rect x="65" y="60" width="2.5" height="8" fill="#5D4037" rx="0.5"/>
+            <circle cx="66" cy="56" r="6" fill="#43A047"/>
+            <circle cx="62" cy="58" r="4" fill="#388E3C"/>
+            <circle cx="70" cy="58" r="4" fill="#388E3C"/>
+          </g>
+          <g>
+            <rect x="115" y="59" width="3" height="9" fill="#5D4037" rx="0.5"/>
+            <circle cx="116.5" cy="55" r="7" fill="#388E3C"/>
+            <circle cx="112" cy="57" r="4.5" fill="#2E7D32"/>
+            <circle cx="121" cy="57" r="4.5" fill="#2E7D32"/>
+          </g>
+
+          <!-- ===== ชุดที่ 2 (สำเนา offset +150) ===== -->
+          <g transform="translate(150, 0)">
+            <rect x="14" y="58" width="3" height="10" fill="#5D4037" rx="0.5"/>
+            <circle cx="15.5" cy="54" r="8" fill="#388E3C"/>
+            <circle cx="11" cy="56" r="5" fill="#2E7D32"/>
+            <circle cx="20" cy="56" r="5" fill="#2E7D32"/>
+          </g>
+          <g transform="translate(150, 0)">
+            <rect x="65" y="60" width="2.5" height="8" fill="#5D4037" rx="0.5"/>
+            <circle cx="66" cy="56" r="6" fill="#43A047"/>
+            <circle cx="62" cy="58" r="4" fill="#388E3C"/>
+            <circle cx="70" cy="58" r="4" fill="#388E3C"/>
+          </g>
+          <g transform="translate(150, 0)">
+            <rect x="115" y="59" width="3" height="9" fill="#5D4037" rx="0.5"/>
+            <circle cx="116.5" cy="55" r="7" fill="#388E3C"/>
+            <circle cx="112" cy="57" r="4.5" fill="#2E7D32"/>
+            <circle cx="121" cy="57" r="4.5" fill="#2E7D32"/>
+          </g>
         </g>
 
-        <!-- โลก -->
-        <circle cx="60" cy="50" r="42" fill="url(#earthGrad)" stroke="#01579B" stroke-width="2"/>
-        <!-- ทวีปสีเขียว -->
-        <path d="M 32 38 Q 38 32 45 36 Q 50 42 46 48 Q 40 52 34 48 Q 30 42 32 38 Z" fill="#43A047"/>
-        <path d="M 66 28 Q 74 26 80 32 Q 82 38 78 42 Q 70 42 66 38 Q 62 32 66 28 Z" fill="#43A047"/>
-        <path d="M 58 58 Q 68 56 76 62 Q 80 70 74 76 Q 64 78 56 72 Q 52 64 58 58 Z" fill="#43A047"/>
-        <path d="M 34 64 Q 40 62 46 66 Q 48 72 44 76 Q 38 78 34 74 Q 30 68 34 64 Z" fill="#43A047"/>
-        <!-- ตาซ้าย -->
-        <ellipse cx="46" cy="50" rx="6.5" ry="7.5" fill="#FFFFFF"/>
-        <circle cx="47.5" cy="51.5" r="4" fill="#1A1A2E"/>
-        <circle cx="48.8" cy="50.3" r="1.5" fill="#FFFFFF"/>
-        <!-- ตาขวา -->
-        <ellipse cx="74" cy="50" rx="6.5" ry="7.5" fill="#FFFFFF"/>
-        <circle cx="75.5" cy="51.5" r="4" fill="#1A1A2E"/>
-        <circle cx="76.8" cy="50.3" r="1.5" fill="#FFFFFF"/>
-        <!-- ปากยิ้ม -->
-        <path d="M 50 64 Q 60 74 70 64" stroke="#1A1A2E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- ถนนพื้นดำ -->
+        <rect x="20" y="72" width="120" height="14" fill="#2A2A2A" rx="2"/>
+
+        <!-- เส้นขาดสีเหลืองกลางถนน (เลื่อน) -->
+        <g class="road-dash-move">
+          <rect x="22" y="78" width="10" height="1.8" fill="#FFC107" rx="0.4"/>
+          <rect x="42" y="78" width="10" height="1.8" fill="#FFC107" rx="0.4"/>
+          <rect x="62" y="78" width="10" height="1.8" fill="#FFC107" rx="0.4"/>
+          <rect x="82" y="78" width="10" height="1.8" fill="#FFC107" rx="0.4"/>
+          <rect x="102" y="78" width="10" height="1.8" fill="#FFC107" rx="0.4"/>
+          <rect x="122" y="78" width="10" height="1.8" fill="#FFC107" rx="0.4"/>
+          <rect x="142" y="78" width="10" height="1.8" fill="#FFC107" rx="0.4"/>
+        </g>
+
+        <!-- เส้นลม (wind/speed lines) ตามท้ายรถ -->
+        <g class="speed-lines">
+          <!-- เส้นยาวเรียว -->
+          <path d="M 30 58 Q 40 58 52 60" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" fill="none" opacity="0.9"/>
+          <path d="M 25 62 Q 38 62 52 64" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.75"/>
+          <path d="M 32 67 Q 42 67 54 68" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.6"/>
+          <!-- จุดเล็กๆ -->
+          <circle cx="22" cy="60" r="0.8" fill="#FFFFFF" opacity="0.6"/>
+          <circle cx="20" cy="65" r="0.6" fill="#FFFFFF" opacity="0.5"/>
+        </g>
+
+        <!-- รถสีเขียว Coolpar (รถมุม side view, น่ารักๆ) -->
+        <g class="car-bounce" transform="translate(80, 67)">
+          <!-- เงาใต้รถ -->
+          <ellipse cx="0" cy="9" rx="22" ry="2" fill="#000000" opacity="0.22"/>
+
+          <!-- ตัวถัง: ฐานล่าง -->
+          <path d="M -20 5
+                   Q -21 5 -21 3
+                   L -21 -1
+                   Q -20 -3 -17 -3
+                   L 17 -3
+                   Q 20 -3 21 -1
+                   L 21 3
+                   Q 21 5 20 5
+                   Z"
+                fill="url(#carBody)" stroke="#5A0A0A" stroke-width="0.5"/>
+
+          <!-- ห้องโดยสาร (cabin) - ทรงโดมโค้งน่ารัก -->
+          <path d="M -14 -3
+                   Q -13 -10 -7 -11
+                   L 7 -11
+                   Q 13 -10 14 -3
+                   Z"
+                fill="url(#carBody)" stroke="#5A0A0A" stroke-width="0.5"/>
+
+          <!-- กระจกหน้าใหญ่ๆ -->
+          <path d="M -10 -10 Q -7 -10 -5 -10 L 5 -10 Q 7 -10 10 -10 L 12 -4 L -12 -4 Z"
+                fill="url(#windowGrad)" opacity="0.95"/>
+          <!-- เส้นเสากลาง (ไม่ต้องมีเสาแยกชัด) -->
+          <line x1="0" y1="-10" x2="0" y2="-4" stroke="#5A0A0A" stroke-width="0.5"/>
+          <!-- highlight กระจก -->
+          <line x1="-9" y1="-9" x2="-3" y2="-9" stroke="#FFFFFF" stroke-width="0.4" opacity="0.7"/>
+
+          <!-- เส้น character body line -->
+          <line x1="-20" y1="1" x2="20" y2="1" stroke="#5A0A0A" stroke-width="0.4" opacity="0.5"/>
+
+          <!-- ที่จับประตู -->
+          <rect x="-5" y="-1" width="3" height="0.8" fill="#5A0A0A" rx="0.2"/>
+          <rect x="2" y="-1" width="3" height="0.8" fill="#5A0A0A" rx="0.2"/>
+
+          <!-- ไฟหน้า (ขวา) -->
+          <ellipse cx="20" cy="0" rx="1.5" ry="1.8" fill="#FFF59D"/>
+          <ellipse cx="20.3" cy="-0.3" rx="0.8" ry="1" fill="#FFFFFF"/>
+
+          <!-- ไฟท้าย (ซ้าย) -->
+          <rect x="-21" y="-1" width="2" height="3.5" fill="#FFD54F" rx="0.4"/>
+
+          <!-- ขอบกันโคลน (เส้นโค้งบางๆ ตามขอบบนล้อ) -->
+          <path d="M -17 5 Q -17 -1 -12 -1 Q -7 -1 -7 5"
+                fill="none" stroke="#5A0A0A" stroke-width="0.6"/>
+          <path d="M 7 5 Q 7 -1 12 -1 Q 17 -1 17 5"
+                fill="none" stroke="#5A0A0A" stroke-width="0.6"/>
+
+          <!-- ล้อหลัง -->
+          <g class="wheel-spin" style="transform-origin: -12px 6px">
+            <circle cx="-12" cy="6" r="4.5" fill="#1A1A1A"/>
+            <circle cx="-12" cy="6" r="3" fill="#2A2A2A"/>
+            <circle cx="-12" cy="6" r="1.7" fill="#999"/>
+            <circle cx="-12" cy="6" r="0.7" fill="#444"/>
+            <line x1="-12" y1="4" x2="-12" y2="8" stroke="#666" stroke-width="0.6"/>
+            <line x1="-14" y1="6" x2="-10" y2="6" stroke="#666" stroke-width="0.6"/>
+            <line x1="-13.4" y1="4.6" x2="-10.6" y2="7.4" stroke="#666" stroke-width="0.5"/>
+            <line x1="-13.4" y1="7.4" x2="-10.6" y2="4.6" stroke="#666" stroke-width="0.5"/>
+          </g>
+
+          <!-- ล้อหน้า -->
+          <g class="wheel-spin" style="transform-origin: 12px 6px">
+            <circle cx="12" cy="6" r="4.5" fill="#1A1A1A"/>
+            <circle cx="12" cy="6" r="3" fill="#2A2A2A"/>
+            <circle cx="12" cy="6" r="1.7" fill="#999"/>
+            <circle cx="12" cy="6" r="0.7" fill="#444"/>
+            <line x1="12" y1="4" x2="12" y2="8" stroke="#666" stroke-width="0.6"/>
+            <line x1="10" y1="6" x2="14" y2="6" stroke="#666" stroke-width="0.6"/>
+            <line x1="10.6" y1="4.6" x2="13.4" y2="7.4" stroke="#666" stroke-width="0.5"/>
+            <line x1="10.6" y1="7.4" x2="13.4" y2="4.6" stroke="#666" stroke-width="0.5"/>
+          </g>
+        </g>
+      </svg>
       </svg>
       <div class="co2-header">
         <div class="co2-badge">
@@ -4905,7 +5524,7 @@ function renderCO2Card() {
         <span class="co2-date">${today}</span>
       </div>
       <div class="co2-main">
-        <span class="co2-number">${s.co2Kg.toLocaleString()}</span>
+        <span class="co2-number" id="co2-counter">${s.co2Kg.toLocaleString()}</span>
         <span class="co2-unit">kg CO₂</span>
       </div>
       <div class="co2-label" style="margin-bottom:0">${t('co2Label')}</div>
@@ -4954,71 +5573,277 @@ function renderSearchPill() {
   }
 }
 
-function openSearchSheet() {
-  // ลบ overlay เก่า (ถ้ามี)
-  document.querySelectorAll('.search-overlay').forEach(el => el.remove());
-
+// ====== Search Trip (full-screen) ======
+function renderSearchTripScreen() {
   const trips = filterAvailableTrips();
   const seatsLabel = t('seatsAvail');
+
   const tripsHtml = trips.length === 0
-    ? `<div style="text-align:center;padding:20px 0;color:var(--text-muted);font-size:13px">${t('sheetEmpty')}<br>${t('sheetEmptySub')}</div>`
+    ? `
+      <div class="search-empty">
+        <div class="search-empty-emoji">🔍</div>
+        <div class="search-empty-title">${currentLang === 'EN' ? 'No trips found' : 'ยังไม่มีทริปนี้'}</div>
+        <div class="search-empty-sub">${currentLang === 'EN' ? 'Try a different route or date' : 'ลองเส้นทางหรือวันอื่นดูสิ'}</div>
+      </div>
+    `
     : trips.map(tr => `
-        <div class="mini-trip" onclick="selectTrip('${tr.from}','${tr.to}','${tr.date}')">
-          <div class="avatar ${tr.av}">${tripInitials(tr)}</div>
-          <div class="mini-trip-info">
-            <div class="mini-trip-route">${tripFrom(tr)} → ${tripTo(tr)}</div>
-            <div class="mini-trip-meta">${tripDate(tr)} • ${tripDriver(tr)} • ⭐${tr.rating} • ${tr.seats}${seatsLabel}</div>
+        <div class="search-trip-card" onclick="selectTrip('${tr.from}','${tr.to}','${tr.date}')">
+          <div class="stc-top">
+            <div class="stc-time">${tripDate(tr)}</div>
+            <div class="stc-price">฿${tr.price}<span>${t('perPerson')}</span></div>
           </div>
-          <div class="mini-trip-price">฿${tr.price}<small>${t('perPerson')}</small></div>
+          <div class="stc-route">
+            <span class="stc-dot green"></span>
+            <span class="stc-loc">${tripFrom(tr)}</span>
+            <span class="stc-arrow">→</span>
+            <span class="stc-dot red"></span>
+            <span class="stc-loc">${tripTo(tr)}</span>
+          </div>
+          <div class="stc-driver">
+            <div class="avatar ${tr.av}">${tripInitials(tr)}</div>
+            <div class="stc-driver-info">
+              <div class="stc-driver-name">${tripDriver(tr)}</div>
+              <div class="stc-driver-meta">⭐ ${tr.rating} · ${tr.seats}${seatsLabel}</div>
+            </div>
+            <div class="stc-cta">${currentLang === 'EN' ? 'View' : 'ดู'} →</div>
+          </div>
         </div>
       `).join('');
 
-  const overlay = document.createElement('div');
-  overlay.className = 'search-overlay';
-  overlay.innerHTML = `
-    <div class="search-sheet" onclick="event.stopPropagation()">
-      <div class="sheet-handle"></div>
-      <div class="sheet-header">
-        <div class="sheet-title">${t('sheetTitle')}</div>
-        <button class="sheet-close" onclick="closeSearchSheet()">✕</button>
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  return `
+    <div class="search-trip-screen">
+      <div class="st-header">
+        <button class="st-back" onclick="show('home')">←</button>
+        <div class="st-title">${currentLang === 'EN' ? 'Find a ride' : 'ค้นหารถ'}</div>
       </div>
 
-      <p class="section-title">${t('sheetSelf')}</p>
-      <div class="field-group">
-        <div class="field-row">
-          <span class="field-icon">🟢</span>
-          <input id="sh-from" placeholder="${t('postFrom')}" value="${homeSearch.from}" oninput="refreshSheetTrips()"/>
+      <!-- Input card สวยๆ -->
+      <div class="st-input-card">
+        <div class="st-input-row">
+          <div class="st-input-icon st-icon-from">●</div>
+          <div class="st-input-wrap">
+            <div class="st-input-label">${currentLang === 'EN' ? 'From' : 'จาก'}</div>
+            <input id="st-from" class="st-input-field" placeholder="${currentLang === 'EN' ? 'Where from?' : 'ออกจากที่ไหน?'}"
+                   value="${homeSearch.from}" autocomplete="off"
+                   oninput="onSTInput('from')" onfocus="onSTInput('from')" onblur="hideSTAutocomplete('from')"/>
+          </div>
+          ${homeSearch.from ? `<button class="st-clear" onclick="clearSTField('from')">✕</button>` : ''}
         </div>
-        <div class="field-row">
-          <span class="field-icon">🔴</span>
-          <input id="sh-to" placeholder="${t('postTo')}" value="${homeSearch.to}" oninput="refreshSheetTrips()"/>
+        <div id="st-ac-from" class="ac-list"></div>
+
+        <div class="st-divider"></div>
+
+        <div class="st-input-row">
+          <div class="st-input-icon st-icon-to">●</div>
+          <div class="st-input-wrap">
+            <div class="st-input-label">${currentLang === 'EN' ? 'To' : 'ไป'}</div>
+            <input id="st-to" class="st-input-field" placeholder="${currentLang === 'EN' ? 'Where to?' : 'ไปที่ไหน?'}"
+                   value="${homeSearch.to}" autocomplete="off"
+                   oninput="onSTInput('to')" onfocus="onSTInput('to')" onblur="hideSTAutocomplete('to')"/>
+          </div>
+          ${homeSearch.to ? `<button class="st-clear" onclick="clearSTField('to')">✕</button>` : ''}
         </div>
-        <div class="field-row">
-          <span class="field-icon">📅</span>
-          <input id="sh-date" type="date" value="${homeSearch.date}"/>
+        <div id="st-ac-to" class="ac-list"></div>
+
+        <div class="st-divider"></div>
+
+        <div class="st-input-row">
+          <div class="st-input-icon st-icon-date">📅</div>
+          <div class="st-input-wrap">
+            <div class="st-input-label">${currentLang === 'EN' ? 'Date' : 'วันที่'}</div>
+            <input id="st-date" class="st-input-field st-date-input" type="date" value="${homeSearch.date || todayStr}"/>
+          </div>
         </div>
       </div>
 
-      <button class="btn-primary" onclick="applySearch()">
-        ${t('sheetGo')}
+      <!-- Search button big CTA -->
+      <button class="st-search-cta" onclick="applySTSearch()">
+        🔍 ${currentLang === 'EN' ? 'Search rides' : 'ค้นหา'}
       </button>
 
-      <div class="sheet-divider">
-        <div class="line"></div>
-        <div class="text">${t('sheetOr')}</div>
-        <div class="line"></div>
+      <div class="st-section-title">
+        <span>${trips.length > 0 ? (currentLang === 'EN' ? 'Available rides' : 'ทริปที่เปิดรับ') : (currentLang === 'EN' ? 'Suggested' : 'แนะนำ')}</span>
+        <span class="st-count">${trips.length}</span>
       </div>
 
-      <div class="sheet-section-title">
-        <span>${t('sheetAvailable')}</span>
-        <span class="count" id="trips-count">${trips.length}${t('sheetCount')}</span>
-      </div>
-
-      <div id="sheet-trips-list">${tripsHtml}</div>
+      <div id="st-trips-list">${tripsHtml}</div>
     </div>
   `;
-  overlay.addEventListener('click', closeSearchSheet);
-  document.body.appendChild(overlay);
+}
+
+function onSTInput(which) {
+  const input = document.getElementById('st-' + which);
+  const list = document.getElementById('st-ac-' + which);
+  if (!input || !list) return;
+  const q = input.value.trim();
+  if (q.length < 2) {
+    list.classList.remove('show');
+    refreshSTTrips();
+    return;
+  }
+  clearTimeout(acTimers['st_' + which]);
+  acTimers['st_' + which] = setTimeout(async () => {
+    if (acCache[q]) { renderSTAutocomplete(which, acCache[q]); return; }
+    list.innerHTML = `<div class="ac-loading">🔍 ${currentLang === 'EN' ? 'Searching...' : 'กำลังค้นหา...'}</div>`;
+    list.classList.add('show');
+    try {
+      const lang = currentLang === 'EN' ? 'en' : 'th';
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&countrycodes=th&limit=6&accept-language=${lang}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      acCache[q] = data;
+      renderSTAutocomplete(which, data);
+    } catch (e) {
+      list.innerHTML = `<div class="ac-loading">❌ ${currentLang === 'EN' ? 'Search failed' : 'ค้นหาไม่ได้'}</div>`;
+    }
+    refreshSTTrips();
+  }, 300);
+}
+
+function renderSTAutocomplete(which, results) {
+  const list = document.getElementById('st-ac-' + which);
+  if (!list) return;
+  if (!results || results.length === 0) {
+    list.innerHTML = `<div class="ac-loading">${currentLang === 'EN' ? 'No places found' : 'ไม่พบสถานที่'}</div>`;
+    list.classList.add('show');
+    return;
+  }
+  list.innerHTML = results.map(r => {
+    const parts = r.display_name.split(',').map(s => s.trim());
+    const main = parts[0];
+    const sub = parts.slice(1, 4).join(', ');
+    return `
+      <div class="ac-item" onmousedown="selectSTPlace('${which}', ${JSON.stringify(main).replace(/"/g, '&quot;')})">
+        <span class="ac-icon">📍</span>
+        <div class="ac-text">
+          <div class="ac-main">${main}</div>
+          <div class="ac-sub">${sub}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  list.classList.add('show');
+}
+
+function selectSTPlace(which, name) {
+  const input = document.getElementById('st-' + which);
+  if (input) input.value = name;
+  const list = document.getElementById('st-ac-' + which);
+  if (list) list.classList.remove('show');
+  refreshSTTrips();
+}
+
+function hideSTAutocomplete(which) {
+  setTimeout(() => {
+    const list = document.getElementById('st-ac-' + which);
+    if (list) list.classList.remove('show');
+  }, 200);
+}
+
+function clearSTField(which) {
+  const input = document.getElementById('st-' + which);
+  if (input) input.value = '';
+  if (which === 'from') homeSearch.from = '';
+  else homeSearch.to = '';
+  show('searchTrip');
+}
+
+function setSTDate(daysAfter) {
+  const d = new Date();
+  d.setDate(d.getDate() + daysAfter);
+  const dateStr = d.toISOString().split('T')[0];
+  const input = document.getElementById('st-date');
+  if (input) input.value = dateStr;
+  document.querySelectorAll('.st-quick-chip').forEach(c => c.classList.remove('active'));
+  if (event && event.target) event.target.classList.add('active');
+  refreshSTTrips();
+}
+
+function swapSTRoute() {
+  const fromEl = document.getElementById('st-from');
+  const toEl = document.getElementById('st-to');
+  if (!fromEl || !toEl) return;
+  const tmp = fromEl.value;
+  fromEl.value = toEl.value;
+  toEl.value = tmp;
+  refreshSTTrips();
+}
+
+function applySTSearch() {
+  const fromEl = document.getElementById('st-from');
+  const toEl = document.getElementById('st-to');
+  const dateEl = document.getElementById('st-date');
+  homeSearch.from = fromEl ? fromEl.value.trim() : '';
+  homeSearch.to = toEl ? toEl.value.trim() : '';
+  homeSearch.date = dateEl ? dateEl.value : '';
+  show('home');
+}
+
+function refreshSTTrips() {
+  const fromEl = document.getElementById('st-from');
+  const toEl = document.getElementById('st-to');
+  if (!fromEl || !toEl) return;
+  const tempSearch = { from: fromEl.value.trim(), to: toEl.value.trim() };
+  const filtered = availableTrips.filter(tr => {
+    const matchFrom = !tempSearch.from || tr.from.includes(tempSearch.from) || tempSearch.from.includes(tr.from);
+    const matchTo = !tempSearch.to || tr.to.includes(tempSearch.to) || tempSearch.to.includes(tr.to);
+    return matchFrom && matchTo;
+  });
+  const list = document.getElementById('st-trips-list');
+  const seatsLabel = t('seatsAvail');
+  if (!list) return;
+
+  // อัพเดท count
+  const countEl = document.querySelector('.st-count');
+  if (countEl) countEl.textContent = filtered.length;
+
+  if (filtered.length === 0) {
+    list.innerHTML = `
+      <div class="search-empty">
+        <div class="search-empty-emoji">🔍</div>
+        <div class="search-empty-title">${currentLang === 'EN' ? 'No trips found' : 'ยังไม่มีทริปนี้'}</div>
+        <div class="search-empty-sub">${currentLang === 'EN' ? 'Try a different route or date' : 'ลองเส้นทางหรือวันอื่นดูสิ'}</div>
+      </div>
+    `;
+    return;
+  }
+  list.innerHTML = filtered.map(tr => `
+    <div class="search-trip-card" onclick="selectTrip('${tr.from}','${tr.to}','${tr.date}')">
+      <div class="stc-top">
+        <div class="stc-time">${tripDate(tr)}</div>
+        <div class="stc-price">฿${tr.price}<span>${t('perPerson')}</span></div>
+      </div>
+      <div class="stc-route">
+        <span class="stc-dot green"></span>
+        <span class="stc-loc">${tripFrom(tr)}</span>
+        <span class="stc-arrow">→</span>
+        <span class="stc-dot red"></span>
+        <span class="stc-loc">${tripTo(tr)}</span>
+      </div>
+      <div class="stc-driver">
+        <div class="avatar ${tr.av}">${tripInitials(tr)}</div>
+        <div class="stc-driver-info">
+          <div class="stc-driver-name">${tripDriver(tr)}</div>
+          <div class="stc-driver-meta">⭐ ${tr.rating} · ${tr.seats}${seatsLabel}</div>
+        </div>
+        <div class="stc-cta">${currentLang === 'EN' ? 'View' : 'ดู'} →</div>
+      </div>
+    </div>
+  `).join('');
+}
+// ====== Search Trip end ======
+
+function openSearchSheet() {
+  // เปิดเป็นหน้าใหม่เต็มจอแทน bottom sheet
+  show('searchTrip');
+}
+
+function closeSearchSheet() {
+  // ปิดทุก overlay ถ้ามี + กลับหน้าหลัก
+  document.querySelectorAll('.search-overlay').forEach(el => el.remove());
+  show('home');
 }
 
 // อัพเดทรายการทริปใน sheet ตามที่กรอก (realtime)
@@ -5085,8 +5910,48 @@ function clearSearch() {
   updateHome();
 }
 
+// ====== CO2 Counter (เพิ่มขึ้นเรื่อยๆ เพื่อแสดงว่าระบบยังลด CO2 อยู่ตลอด) ======
+let co2CounterInterval = null;
+let co2CurrentValue = null;
+
+function startCO2Counter() {
+  // หยุด interval เก่าก่อน
+  if (co2CounterInterval) clearInterval(co2CounterInterval);
+
+  const el = document.getElementById('co2-counter');
+  if (!el) return;
+
+  // เริ่มจากค่าปัจจุบันบน UI
+  if (co2CurrentValue === null) {
+    co2CurrentValue = parseInt(el.textContent.replace(/,/g, '')) || 0;
+  } else {
+    // ใส่ค่าล่าสุดที่เก็บไว้
+    el.textContent = co2CurrentValue.toLocaleString();
+  }
+
+  // อัปเดตทุก 1.5-3 วินาที — เพิ่ม 1-5 kg ต่อครั้ง
+  co2CounterInterval = setInterval(() => {
+    const el2 = document.getElementById('co2-counter');
+    if (!el2) {
+      // หน้านี้ไม่อยู่บน home แล้ว — หยุด
+      clearInterval(co2CounterInterval);
+      co2CounterInterval = null;
+      return;
+    }
+    const inc = 1 + Math.floor(Math.random() * 5); // 1-5
+    co2CurrentValue += inc;
+    el2.textContent = co2CurrentValue.toLocaleString();
+    // pulse animation เล็กๆ
+    el2.classList.remove('co2-pulse');
+    void el2.offsetWidth; // trigger reflow
+    el2.classList.add('co2-pulse');
+  }, 1500 + Math.random() * 1500);
+}
+
 function updateHome() {
   renderSearchPill();
+  // เริ่ม CO2 counter ทันที (เพิ่มเลขเรื่อยๆ เพื่อแสดงว่ายังลดต่อเนื่อง)
+  startCO2Counter();
   const results = document.getElementById('home-results');
   if (!results) return;
 
@@ -5235,7 +6100,7 @@ function resetHomeSearch() {
 
 function getScreens() { return {
   home: `
-    <h2>${t('greet')}<span style="color:var(--primary)">${t('userName')}</span></h2>
+    <h2>${t('greet')}<span style="color:var(--primary)">${currentLang === 'EN' ? userProfile.nameEN : 'คุณ' + userProfile.name}</span></h2>
     <p class="tagline">${t('tagline')}</p>
     <div id="search-pill-wrap"></div>
     <div id="home-results"></div>
@@ -5300,13 +6165,13 @@ function getScreens() { return {
     <p class="section-title">${t('postRoute')}</p>
     <div class="field-group">
       <div class="field-row">
-        <span class="field-icon">🟢</span>
+        <div class="st-input-icon st-icon-from" style="margin-right:4px">●</div>
         <input id="in-from" placeholder="${t('postFrom')}" value="กรุงเทพ" autocomplete="off"
                oninput="onPlaceInput('from')" onfocus="onPlaceInput('from')" onblur="hideAutocomplete('from')"/>
       </div>
       <div id="ac-from" class="ac-list"></div>
       <div class="field-row">
-        <span class="field-icon">🔴</span>
+        <div class="st-input-icon st-icon-to" style="margin-right:4px">●</div>
         <input id="in-to" placeholder="${t('postTo')}" value="เชียงใหม่" autocomplete="off"
                oninput="onPlaceInput('to')" onfocus="onPlaceInput('to')" onblur="hideAutocomplete('to')"/>
       </div>
@@ -5316,7 +6181,7 @@ function getScreens() { return {
     <!-- Quick location chips -->
     <div class="ql-section">
       <div class="ql-label">
-        <span>⚡ ${t('quickLoc')}</span>
+        <span>${t('quickLoc')}</span>
         <span style="color:var(--text-light);font-weight:500;text-transform:none;letter-spacing:0;margin-left:2px;">${t('setAs')}</span>
         <div class="ql-target">
           <button class="ql-target-btn active" id="ql-target-from" onclick="setQLTarget('from')">🟢 ${t('asFrom')}</button>
@@ -5329,11 +6194,11 @@ function getScreens() { return {
     <p class="section-title">${t('postWhen')}</p>
     <div class="field-group">
       <div class="field-row">
-        <span class="field-icon">📅</span>
+        <div class="st-input-icon st-icon-date" style="margin-right:4px">📅</div>
         <input id="in-date" type="date"/>
       </div>
       <div class="field-row">
-        <span class="field-icon">🕐</span>
+        <div class="st-input-icon st-icon-time" style="margin-right:4px">🕐</div>
         <input id="in-time" type="time" value="07:00"/>
       </div>
     </div>
@@ -5350,8 +6215,8 @@ function getScreens() { return {
              min="1.0" max="2.0" step="0.1" value="1.5"
              oninput="updatePriceSlider()"/>
       <div class="price-slider-range">
-        <span>💸 ฿1.0 • ${t('priceLow')}</span>
-        <span>${t('priceHigh')} • ฿2.0 💎</span>
+        <span>฿1.0 • ${t('priceLow')}</span>
+        <span>${t('priceHigh')} • ฿2.0</span>
       </div>
       <div class="price-income-box">
         <div class="pib-info">
@@ -5419,6 +6284,8 @@ function getScreens() { return {
   chat: `${renderChatScreen()}`,
   userProfile: `${renderUserProfile()}`,
   postDetail: `${renderPostDetail()}`,
+  searchTrip: `${renderSearchTripScreen()}`,
+  editProfile: `${renderEditProfile()}`,
   profile: `${renderProfileScreen()}`
 }; }
 
@@ -5429,10 +6296,12 @@ const navEl = document.getElementById('app-nav');
 let map = null;
 
 function show(name) {
-  // หน้าแผนที่ + post detail: ซ่อน header + nav, ใช้พื้นที่เต็ม
+  // หน้าแผนที่ + post detail + searchTrip + editProfile: ซ่อน header
   const isMapScreen = (name === 'map');
   const isPostDetail = (name === 'postDetail');
-  const isFullScreen = isMapScreen || isPostDetail;
+  const isSearchTrip = (name === 'searchTrip');
+  const isEditProfile = (name === 'editProfile');
+  const isFullScreen = isMapScreen || isPostDetail || isSearchTrip || isEditProfile;
   const wrap = document.querySelector('.header-wrap');
   if (wrap) wrap.style.display = isFullScreen ? 'none' : 'block';
   headerEl.style.display = isFullScreen ? 'none' : 'flex';
@@ -5448,6 +6317,8 @@ function show(name) {
                 : (name === 'userProfile') ? 'messages'
                 : (name === 'map') ? 'post'
                 : (name === 'postDetail') ? 'home'
+                : (name === 'searchTrip') ? 'home'
+                : (name === 'editProfile') ? 'profile'
                 : name;
   navBtns.forEach(b => b.classList.toggle('active', b.dataset.screen === navName));
 
@@ -5484,6 +6355,12 @@ function show(name) {
 
   if (name === 'home') {
     updateHome();
+  } else {
+    // ออกจากหน้า home → หยุด CO2 counter
+    if (co2CounterInterval) {
+      clearInterval(co2CounterInterval);
+      co2CounterInterval = null;
+    }
   }
 
   if (name === 'detail') {
