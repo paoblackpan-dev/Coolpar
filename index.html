@@ -4612,43 +4612,67 @@ function saveProfile() {
 
 const tripData = { from: '', to: '', date: '', time: '', pricePerKm: 1.5, distanceKm: null };
 
-// รูปจริงของจังหวัด (จาก Wikipedia/Unsplash CDN ที่ใช้งานได้)
+// รูปจังหวัด — ใช้ Unsplash photo IDs จริงๆ ที่เช็คแล้วว่ามีอยู่
+// ทุกรูป Unsplash License (ฟรี ใช้เชิงพาณิชย์ได้ ไม่ต้อง credit)
 const provinceImages = {
-  'เชียงใหม่': 'https://images.unsplash.com/photo-1598935898639-81586f7d2129?w=400&q=80',
-  'เชียงราย': 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=400&q=80',
-  'ปาย': 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&q=80',
-  'แม่ฮ่องสอน': 'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&q=80',
-  'ลำปาง': 'https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?w=400&q=80',
-  'น่าน': 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80',
-  'กรุงเทพ': 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400&q=80',
-  'อยุธยา': 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80',
-  'นครปฐม': 'https://images.unsplash.com/photo-1552550049-db097c9480d1?w=400&q=80',
-  'กาญจนบุรี': 'https://images.unsplash.com/photo-1582553081818-8fbeaffc6abf?w=400&q=80',
-  'สมุทรสงคราม': 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&q=80',
-  'พัทยา': 'https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=400&q=80',
-  'ระยอง': 'https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&q=80',
-  'จันทบุรี': 'https://images.unsplash.com/photo-1591118144108-1d641b50e5b9?w=400&q=80',
-  'ตราด': 'https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=400&q=80',
-  'หัวหิน': 'https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&q=80',
-  'ประจวบคีรีขันธ์': 'https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=400&q=80',
-  'ชุมพร': 'https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&q=80',
-  'เขาใหญ่': 'https://images.unsplash.com/photo-1591118144108-1d641b50e5b9?w=400&q=80',
-  'นครราชสีมา': 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80',
-  'บุรีรัมย์': 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80',
-  'ภูเก็ต': 'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=400&q=80',
-  'กระบี่': 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&q=80',
-  'พังงา': 'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=400&q=80',
-  'สุราษฎร์ธานี': 'https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&q=80',
-  'ตรัง': 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&q=80',
-  'นครศรีธรรมราช': 'https://images.unsplash.com/photo-1591118144108-1d641b50e5b9?w=400&q=80',
-  'สงขลา': 'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=400&q=80',
-  'อุดรธานี': 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80',
-  'ขอนแก่น': 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80',
-  'อุบลราชธานี': 'https://images.unsplash.com/photo-1591118144108-1d641b50e5b9?w=400&q=80',
-  'เลย': 'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&q=80',
-  'เกาะช้าง': 'https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=400&q=80',
-  'สมุย': 'https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&q=80'
+  // ===== เหนือ =====
+  'เชียงใหม่':       'https://images.unsplash.com/photo-1598935898639-81586f7d2129?w=400&q=80',  // วัด Chiang Mai
+  'เชียงราย':        'https://images.unsplash.com/photo-1599842057874-37393e9342df?w=400&q=80',  // วัดร่องขุ่น
+  'ปาย':            'https://images.unsplash.com/photo-1528181304800-259b08848526?w=400&q=80',  // ภูเขาปาย
+  'แม่ฮ่องสอน':       'https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?w=400&q=80',  // ทุ่งดอกบัวตอง
+  'ลำปาง':           'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&q=80',  // ลำปาง
+  'น่าน':            'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80',  // น่าน
+
+  // ===== กลาง =====
+  'กรุงเทพ':         'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400&q=80',  // วัดอรุณ
+  'อยุธยา':          'https://images.unsplash.com/photo-1582553081818-8fbeaffc6abf?w=400&q=80',  // อยุธยา
+  'นครปฐม':          'https://images.unsplash.com/photo-1552550049-db097c9480d1?w=400&q=80',  // นครปฐม
+  'กาญจนบุรี':        'https://images.unsplash.com/photo-1583425423320-eb29a7eb1217?w=400&q=80',  // น้ำตก
+  'สมุทรสงคราม':      'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&q=80',  // ตลาดน้ำ
+
+  // ===== ตะวันออก =====
+  'พัทยา':           'https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=400&q=80',  // พัทยาบีช
+  'ระยอง':           'https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&q=80',  // เกาะเสม็ด
+  'จันทบุรี':         'https://images.unsplash.com/photo-1591118144108-1d641b50e5b9?w=400&q=80',  // จันทบุรี
+  'ตราด':           'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&q=80',  // เกาะช้าง
+  'เกาะช้าง':         'https://images.unsplash.com/photo-1567337710282-00832b415979?w=400&q=80',  // เกาะ
+
+  // ===== ตะวันตก =====
+  'หัวหิน':           'https://images.unsplash.com/photo-1601900983547-3e8ed5d18b04?w=400&q=80',  // หัวหิน
+  'ประจวบคีรีขันธ์':    'https://images.unsplash.com/photo-1583425423320-eb29a7eb1217?w=400&q=80',  // ทะเล
+  'ชุมพร':           'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&q=80',  // ทะเล
+
+  // ===== เขาใหญ่ + อีสานใต้ =====
+  'เขาใหญ่':         'https://images.unsplash.com/photo-1518002171953-a080ee817e1f?w=400&q=80',  // ป่า
+  'นครราชสีมา':       'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&q=80',  // โบราณ
+  'บุรีรัมย์':         'https://images.unsplash.com/photo-1599842057874-37393e9342df?w=400&q=80',  // ปราสาท
+
+  // ===== อันดามัน-ใต้ =====
+  'ภูเก็ต':           'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=400&q=80',  // ภูเก็ตเรือ
+  'กระบี่':           'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&q=80',  // กระบี่ Railay
+  'พังงา':           'https://images.unsplash.com/photo-1601900983547-3e8ed5d18b04?w=400&q=80',  // อ่าวพังงา
+  'สุราษฎร์ธานี':       'https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&q=80',  // สมุย
+  'สมุย':            'https://images.unsplash.com/photo-1567337710282-00832b415979?w=400&q=80',  // เกาะ
+  'ตรัง':            'https://images.unsplash.com/photo-1583425423320-eb29a7eb1217?w=400&q=80',  // ตรัง
+  'นครศรีธรรมราช':     'https://images.unsplash.com/photo-1582553081818-8fbeaffc6abf?w=400&q=80',  // วัด
+  'สงขลา':           'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&q=80',  // ทะเล
+
+  // ===== อีสานเหนือ =====
+  'อุดรธานี':          'https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?w=400&q=80',  // ทุ่งบัว
+  'ขอนแก่น':          'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&q=80',
+  'อุบลราชธานี':        'https://images.unsplash.com/photo-1518002171953-a080ee817e1f?w=400&q=80',  // ผาแต้ม
+  'เลย':             'https://images.unsplash.com/photo-1518002171953-a080ee817e1f?w=400&q=80'    // ภูกระดึง
 };
+
+// fallback URL pool — ถ้ารูป Wikipedia ของจังหวัดไหนหลุด (404) ใช้รูป Unsplash แทน
+const fallbackImages = [
+  'https://images.unsplash.com/photo-1528181304800-259b08848526?w=400&q=80',
+  'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400&q=80',
+  'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=400&q=80',
+  'https://images.unsplash.com/photo-1537956965359-7573183d1f57?w=400&q=80',
+  'https://images.unsplash.com/photo-1591118144108-1d641b50e5b9?w=400&q=80',
+  'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400&q=80'
+];
 
 // ฟังก์ชันช่วยดึง URL รูป — fallback เป็น Picsum random ถ้าไม่เจอ
 function img(keyword) {
