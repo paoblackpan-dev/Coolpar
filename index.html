@@ -6891,20 +6891,41 @@ function closeReturnDialog(goToTrips) {
 
 // Geocoding via Nominatim (OSM) — แปลงชื่อสถานที่เป็นพิกัด GPS
 async function geocode(name) {
-  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(name + ', Thailand')}&limit=1`;
-  const res = await fetch(url, { headers: { 'Accept-Language': 'th' } });
-  const data = await res.json();
-  if (!data || data.length === 0) throw new Error('ไม่พบสถานที่: ' + name);
-  return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+  const lang = currentLang === 'EN' ? 'en' : 'th';
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(name + ', Thailand')}&limit=1&accept-language=${lang}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!data || data.length === 0) throw new Error((currentLang === 'EN' ? 'Place not found: ' : 'ไม่พบสถานที่: ') + name);
+    return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+  } catch (e) {
+    if (e.message && (e.message.includes('Failed to fetch') || e.message.includes('NetworkError'))) {
+      throw new Error(currentLang === 'EN'
+        ? 'Cannot connect to map server. Check your internet or try again.'
+        : 'เชื่อมต่อแผนที่ไม่ได้ ตรวจอินเทอร์เน็ตหรือลองใหม่อีกครั้ง');
+    }
+    throw e;
+  }
 }
 
 // Routing via OSRM — คำนวณเส้นทางขับรถจากพิกัด GPS
 async function getRoute(from, to) {
   const url = `https://router.project-osrm.org/route/v1/driving/${from.lng},${from.lat};${to.lng},${to.lat}?overview=full&geometries=geojson`;
-  const res = await fetch(url);
-  const data = await res.json();
-  if (!data.routes || data.routes.length === 0) throw new Error('ไม่พบเส้นทาง');
-  return data.routes[0];
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!data.routes || data.routes.length === 0) throw new Error(currentLang === 'EN' ? 'Route not found' : 'ไม่พบเส้นทาง');
+    return data.routes[0];
+  } catch (e) {
+    if (e.message && (e.message.includes('Failed to fetch') || e.message.includes('NetworkError'))) {
+      throw new Error(currentLang === 'EN'
+        ? 'Cannot connect to routing server. Try again.'
+        : 'เชื่อมต่อบริการเส้นทางไม่ได้ ลองใหม่อีกครั้ง');
+    }
+    throw e;
+  }
 }
 
 async function initMap() {
