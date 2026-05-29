@@ -52,6 +52,314 @@
     display: flex;
     flex-direction: column;
     height: 780px;
+    position: relative;
+  }
+
+  /* ====== Splash Screen ====== */
+  .splash-screen {
+    position: absolute;
+    inset: 0;
+    background: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    cursor: pointer;
+    animation: splash-fadeout 0.6s ease forwards;
+    animation-delay: 1.5s;
+  }
+  .splash-logo {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 56px;
+    color: #1A1A2E;
+    letter-spacing: -2px;
+    animation: splash-pop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .splash-logo span {
+    color: #00A082;
+  }
+  .splash-tagline {
+    margin-top: 10px;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    animation: splash-fade 1s ease;
+    animation-delay: 0.3s;
+    animation-fill-mode: backwards;
+  }
+  .splash-sub {
+    margin-top: 6px;
+    color: var(--primary);
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    letter-spacing: 0.3px;
+    animation: splash-fade 1s ease;
+    animation-delay: 0.5s;
+    animation-fill-mode: backwards;
+  }
+  .splash-sprout-row {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 6px;
+    padding: 0 30px;
+    pointer-events: none;
+  }
+  .sprout {
+    transform-origin: bottom center;
+    opacity: 0;
+  }
+  .sprout-1 {
+    width: 110px; height: 130px;
+    animation: sprout-pop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: 0.6s;
+  }
+  .sprout-2 {
+    width: 130px; height: 150px;
+    animation: sprout-pop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: 0.95s;
+  }
+  .sprout-3 {
+    width: 110px; height: 130px;
+    animation: sprout-pop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: 1.3s;
+  }
+  @keyframes sprout-pop {
+    0% {
+      transform: scale(0.2) translateY(20px);
+      opacity: 0;
+    }
+    60% {
+      transform: scale(1.08) translateY(-2px);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes splash-pop {
+    0% { transform: scale(0.3); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes splash-fade {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes splash-fadeout {
+    0% { opacity: 1; }
+    100% { opacity: 0; pointer-events: none; visibility: hidden; }
+  }
+
+  /* ====== Welcome Screen ====== */
+  .welcome-screen {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    z-index: 9998;
+    overflow-y: auto;
+    animation: welcome-fadein 0.5s ease;
+  }
+  @keyframes welcome-fadein {
+    0% { opacity: 0; transform: translateY(15px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .welcome-content {
+    padding: 36px 26px 26px;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .welcome-logo {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 36px;
+    text-align: center;
+    color: var(--text);
+    letter-spacing: -1.5px;
+    margin-bottom: 8px;
+  }
+  .welcome-logo span { color: var(--primary); }
+  .welcome-tagline {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+  .welcome-sub {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 18px;
+  }
+  .welcome-hero {
+    width: 100%;
+    height: 120px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Auth buttons */
+  .welcome-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .auth-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 13px 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    width: 100%;
+  }
+  .auth-btn:hover {
+    border-color: var(--primary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .auth-btn .auth-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .auth-btn-google {
+    background: white;
+    border-color: #DADCE0;
+  }
+  .auth-btn-apple {
+    background: #000;
+    color: #FFF;
+    border-color: #000;
+  }
+  .auth-btn-apple:hover {
+    background: #1A1A1A;
+  }
+  .auth-btn-fb {
+    background: #1877F2;
+    color: white;
+    border-color: #1877F2;
+  }
+  .auth-btn-fb:hover {
+    background: #1465D5;
+  }
+  .auth-btn-other {
+    background: var(--bg-soft);
+    border-color: transparent;
+    color: var(--text-muted);
+    justify-content: center;
+    font-size: 13px;
+    padding: 9px;
+  }
+  .auth-btn-email, .auth-btn-phone {
+    background: var(--bg);
+  }
+  #other-auth-list { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+
+  /* Guest button */
+  .guest-btn {
+    margin-top: auto;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: center;
+  }
+  .guest-btn:hover { color: var(--primary); }
+
+  .welcome-terms {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-light);
+    line-height: 1.5;
+    padding: 0 20px;
+  }
+  
+  /* Login required modal (สำหรับ guest mode) */
+  .login-required-modal {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 8000;
+    animation: welcome-fadein 0.2s ease;
+  }
+  .login-required-card {
+    background: var(--bg);
+    border-radius: 20px;
+    padding: 24px 22px;
+    width: calc(100% - 40px);
+    max-width: 340px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  }
+  .lr-emoji { font-size: 44px; margin-bottom: 8px; }
+  .lr-title {
+    font-size: 18px;
+    font-weight: 800;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    letter-spacing: -0.3px;
+    margin-bottom: 6px;
+  }
+  .lr-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  .lr-actions { display: flex; flex-direction: column; gap: 8px; }
+  .lr-primary {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .lr-secondary {
+    background: transparent;
+    color: var(--text-muted);
+    border: none;
+    padding: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
   }
   .status-bar {
     background: var(--bg);
@@ -2181,7 +2489,9 @@
     margin-bottom: 6px;
   }
   .user-review-stars {
-    font-size: 12px;
+    font-size: 13px;
+    color: #FFC107;
+    letter-spacing: 1px;
   }
   .user-review-from {
     font-size: 11px;
@@ -2442,6 +2752,603 @@
   }
   .account-danger {
     color: #2563EB !important;
+  }
+
+  /* ====== Profile 2-tab (clean, no emoji) ====== */
+  .pf2-tabs {
+    display: flex;
+    border-bottom: 1.5px solid var(--border);
+    margin: -16px -22px 18px;
+  }
+  .pf2-tab {
+    flex: 1;
+    padding: 14px 8px;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    position: relative;
+    letter-spacing: -0.2px;
+  }
+  .pf2-tab.active { color: var(--primary); }
+  .pf2-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1.5px;
+    left: 20%; right: 20%;
+    height: 2.5px;
+    background: var(--primary);
+    border-radius: 2px;
+  }
+  .pf2-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 4px 0 18px;
+    cursor: pointer;
+  }
+  .pf2-avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--bg-soft);
+    border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .pf2-head-info { flex: 1; min-width: 0; }
+  .pf2-name {
+    font-size: 21px; font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.5px;
+  }
+  .pf2-tag { font-size: 13px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+  .pf2-chev { color: var(--text-light); font-size: 22px; }
+  .pf2-cta {
+    width: 100%;
+    padding: 13px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+  }
+
+  /* completion */
+  .pf2-completion {
+    background: var(--bg-soft);
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+  }
+  .pf2-completion-title {
+    font-size: 16px; font-weight: 800;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    margin-bottom: 4px;
+  }
+  .pf2-completion-sub { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 10px; line-height: 1.5; }
+  .pf2-completion-count { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .pf2-bar { display: flex; gap: 4px; margin-bottom: 12px; }
+  .pf2-bar-seg { flex: 1; height: 4px; background: var(--border); border-radius: 2px; }
+  .pf2-bar-seg.done { background: var(--primary); }
+  .pf2-link {
+    font-size: 14px; font-weight: 700;
+    color: var(--primary);
+    cursor: pointer; background: none; border: none; padding: 0;
+    font-family: inherit;
+  }
+  .pf2-edit-link {
+    display: block; width: 100%; text-align: left;
+    font-size: 15px; font-weight: 700;
+    color: var(--primary);
+    cursor: pointer; background: none; border: none;
+    padding: 12px 0;
+    font-family: inherit;
+  }
+
+  .pf2-section-title {
+    font-size: 17px; font-weight: 800;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    letter-spacing: -0.3px;
+    margin: 20px 0 10px;
+  }
+  .pf2-trust {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; color: var(--text); font-weight: 500;
+    margin-bottom: 14px;
+  }
+  .pf2-trust-mark {
+    width: 24px; height: 24px; border-radius: 7px;
+    background: var(--primary-light); color: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 900; flex-shrink: 0;
+  }
+
+  /* card with steps */
+  .pf2-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .pf2-card-flush { margin-bottom: 4px; }
+  .pf2-step {
+    display: flex; align-items: center; gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    background: none; border: none;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer; font-family: inherit; text-align: left;
+  }
+  .pf2-step:last-child { border-bottom: none; }
+  .pf2-step:hover { background: var(--bg-soft); }
+  .pf2-step-mark {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 1.5px solid var(--primary);
+    color: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; flex-shrink: 0;
+  }
+  .pf2-step.done .pf2-step-mark {
+    background: var(--primary); color: white; border-color: var(--primary);
+  }
+  .pf2-step-label {
+    flex: 1; font-size: 15px; font-weight: 600; color: var(--text);
+    display: flex; flex-direction: column;
+  }
+  .pf2-step-sub {
+    font-size: 12px; color: var(--text-muted); font-weight: 500; margin-top: 1px;
+  }
+  .pf2-step.done .pf2-step-label { color: var(--text-muted); }
+  .pf2-step-done { font-size: 11px; color: var(--primary); font-weight: 700; }
+
+  /* account rows */
+  .pf2-acc-row {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%;
+    padding: 15px 16px;
+    background: none; border: none;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer; font-family: inherit;
+    font-size: 15px; font-weight: 600; color: var(--text);
+    text-align: left;
+  }
+  .pf2-acc-row:last-child { border-bottom: none; }
+  .pf2-acc-row:hover { background: var(--bg-soft); }
+  .pf2-acc-chev { color: var(--text-light); font-size: 18px; }
+  .pf2-acc-danger { color: #2563EB; font-weight: 700; }
+
+  /* ====== Profile Redesign (old, unused) ====== */
+  .pf-hero {
+    background: linear-gradient(135deg, #00C49E 0%, #00A082 100%);
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 20px;
+    color: white;
+  }
+  .pf-hero-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+  }
+  .pf-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    border: 2px solid rgba(255,255,255,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    color: white;
+    flex-shrink: 0;
+  }
+  .pf-hero-info { flex: 1; min-width: 0; }
+  .pf-hero-name {
+    font-size: 20px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.4px;
+  }
+  .pf-hero-tag {
+    font-size: 12px;
+    opacity: 0.9;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .pf-hero-edit {
+    font-size: 18px;
+    opacity: 0.85;
+  }
+  .pf-login-cta {
+    width: 100%;
+    margin-top: 14px;
+    padding: 11px;
+    background: white;
+    color: var(--primary-dark);
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+  }
+  .pf-progress-wrap {
+    margin-top: 14px;
+    cursor: pointer;
+  }
+  .pf-progress-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    opacity: 0.95;
+  }
+  .pf-progress-pct { font-weight: 800; }
+  .pf-progress-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .pf-progress-fill {
+    height: 100%;
+    background: white;
+    border-radius: 99px;
+    transition: width 0.4s;
+  }
+
+  /* menu sections */
+  .pf-menu-section { margin-bottom: 18px; }
+  .pf-menu-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    padding-left: 4px;
+  }
+  .pf-menu-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .pf-menu-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    transition: background 0.1s;
+  }
+  .pf-menu-row:last-child { border-bottom: none; }
+  .pf-menu-row:hover { background: var(--bg-soft); }
+  .pf-menu-icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .pf-menu-text {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .pf-menu-chev {
+    color: var(--text-light);
+    font-size: 18px;
+  }
+  .pf-logout .pf-menu-text { color: #DC2626; font-weight: 700; }
+
+  /* verify chips */
+  .verify-chips {
+    display: flex;
+    gap: 8px;
+  }
+  .verify-chip {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 12px 6px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: all 0.15s;
+    position: relative;
+  }
+  .verify-chip span:first-child { font-size: 18px; }
+  .verify-chip.done {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary-dark);
+  }
+  .verify-status {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--border);
+    color: white;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+  }
+  .verify-chip.done .verify-status { background: var(--primary); }
+
+  /* ====== Bottom Sheet (generic) ====== */
+  .cp-sheet-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0);
+    z-index: 7000;
+    display: flex;
+    align-items: flex-end;
+    transition: background 0.3s;
+  }
+  .cp-sheet-overlay.show { background: rgba(0,0,0,0.45); }
+  .cp-sheet {
+    width: 100%;
+    background: var(--bg);
+    border-radius: 24px 24px 0 0;
+    padding: 10px 22px 28px;
+    max-height: 80%;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.34, 1.3, 0.64, 1);
+  }
+  .cp-sheet-overlay.show .cp-sheet { transform: translateY(0); }
+  .sheet-grab {
+    width: 40px;
+    height: 4px;
+    background: var(--border-strong);
+    border-radius: 99px;
+    margin: 0 auto 16px;
+  }
+
+  /* ====== Rating UI ====== */
+  .rating-summary {
+    text-align: center;
+    padding: 10px 0 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .rating-big {
+    font-size: 44px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    color: var(--primary);
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+  .rating-stars-big {
+    color: #FFC107;
+    font-size: 20px;
+    margin-top: 4px;
+    letter-spacing: 2px;
+  }
+  .rating-count {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  .review-card {
+    background: var(--bg-soft);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .review-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .review-card-stars { color: #FFC107; font-size: 14px; letter-spacing: 1px; }
+  .review-card-date { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+  .review-card-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .review-card-from { font-size: 12px; color: var(--text-muted); font-weight: 700; }
+
+  /* rate app / trip */
+  .rate-app-content { text-align: center; padding: 8px 0; }
+  .rate-app-emoji { font-size: 48px; margin-bottom: 8px; }
+  .rate-trip-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    margin: 0 auto 12px;
+  }
+  .rate-app-title {
+    font-size: 18px;
+    font-weight: 800;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+  }
+  .rate-app-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+  .rate-stars {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .rate-star {
+    font-size: 40px;
+    color: var(--border-strong);
+    cursor: pointer;
+    transition: transform 0.15s, color 0.15s;
+    line-height: 1;
+  }
+  .rate-star:hover { transform: scale(1.15); }
+  .rate-star.lit { color: #FFC107; }
+  .rate-comment {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: none;
+    outline: none;
+    margin: 14px 0;
+    box-sizing: border-box;
+  }
+  .rate-comment:focus { border-color: var(--primary); }
+
+  /* trip rate button */
+  .trip-rate-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 9px;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .trip-rate-btn:hover { background: var(--primary); color: white; }
+
+  .trip-cancel-btn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 9px;
+    background: transparent;
+    color: #DC2626;
+    border: 1px solid #FCA5A5;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .trip-cancel-btn:hover { background: #FEE2E2; }
+
+  /* Booking confirmation */
+  .booking-confirm { text-align: center; padding: 8px 0; }
+  .bc-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--primary-light); color: var(--primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; font-weight: 900;
+    margin: 0 auto 12px;
+  }
+  .bc-title {
+    font-size: 20px; font-weight: 800;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    letter-spacing: -0.4px;
+    margin-bottom: 4px;
+  }
+  .bc-sub {
+    font-size: 13px; color: var(--text-muted); font-weight: 500;
+    margin-bottom: 16px;
+  }
+  .bc-sub b { color: var(--primary); font-family: 'Manrope', sans-serif; letter-spacing: 0.5px; }
+  .bc-box {
+    background: var(--bg-soft);
+    border-radius: 14px;
+    padding: 4px 16px;
+    margin-bottom: 16px;
+    text-align: left;
+  }
+  .bc-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+  .bc-row:last-child { border-bottom: none; }
+  .bc-label { color: var(--text-muted); font-weight: 600; }
+  .bc-val { font-weight: 700; color: var(--text); }
+  .bc-total .bc-val { font-size: 18px; color: var(--primary); font-family: 'Manrope', sans-serif; }
+  .bc-secondary {
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px;
+    background: transparent; border: none;
+    color: var(--text-muted);
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+  }
+
+  /* ====== Toast ====== */
+  .cp-toast {
+    position: absolute;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--text);
+    color: white;
+    padding: 11px 20px;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 9000;
+    opacity: 0;
+    transition: all 0.3s;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    max-width: 80%;
+    text-align: center;
+  }
+  .cp-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 
   /* ========== Search Trip Screen (full screen) ========== */
@@ -3544,6 +4451,111 @@
 
 <div>
 <div class="phone">
+  <!-- ====== Splash Screen ====== -->
+  <div id="splash-screen" class="splash-screen" onclick="resetToWelcome()" title="กดเพื่อดูหน้า login">
+    <div class="splash-logo">Cool<span>par</span></div>
+    <div class="splash-tagline">Carpool with Coolpar</div>
+    <div class="splash-sub">ทางเดียวกัน ไปด้วยกัน</div>
+  </div>
+
+  <!-- ====== Welcome / Auth Screen ====== -->
+  <div id="welcome-screen" class="welcome-screen" style="display:none">
+    <div class="welcome-content">
+      <div class="welcome-logo">Cool<span>par</span></div>
+      <div class="welcome-tagline">ยินดีต้อนรับ</div>
+      <div class="welcome-sub">ค้นหาเพื่อนเดินทาง ประหยัด ปลอดภัย</div>
+
+      <!-- Hero illustration -->
+      <div class="welcome-hero">
+        <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+          <defs>
+            <linearGradient id="welcomeCarBody" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1AC09B"/>
+              <stop offset="100%" stop-color="#00A082"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="40" cy="20" rx="14" ry="5" fill="#E0F4FF"/>
+          <ellipse cx="50" cy="18" rx="10" ry="4" fill="#E0F4FF"/>
+          <ellipse cx="150" cy="22" rx="14" ry="5" fill="#E0F4FF"/>
+          <line x1="20" y1="92" x2="180" y2="92" stroke="#E0E0E0" stroke-width="1"/>
+          <g transform="translate(100, 75)">
+            <ellipse cx="0" cy="14" rx="32" ry="3" fill="#000000" opacity="0.15"/>
+            <path d="M -30 8 Q -32 8 -32 5 L -32 -1 Q -30 -4 -25 -4 L 25 -4 Q 30 -4 32 -1 L 32 5 Q 32 8 30 8 Z"
+                  fill="url(#welcomeCarBody)" stroke="#006B57" stroke-width="0.7"/>
+            <path d="M -20 -4 Q -19 -14 -10 -15 L 10 -15 Q 19 -14 20 -4 Z"
+                  fill="url(#welcomeCarBody)" stroke="#006B57" stroke-width="0.7"/>
+            <path d="M -14 -14 Q -12 -15 -8 -15 L 8 -15 Q 12 -15 14 -14 L 17 -5 L -17 -5 Z"
+                  fill="#B3E5FC" opacity="0.95"/>
+            <ellipse cx="30" cy="0" rx="2" ry="2.5" fill="#FFF59D"/>
+            <rect x="-32" y="-1" width="2.5" height="4" fill="#FFD54F"/>
+            <circle cx="-18" cy="9" r="6" fill="#1A1A1A"/>
+            <circle cx="-18" cy="9" r="3.5" fill="#444"/>
+            <circle cx="-18" cy="9" r="1.2" fill="#888"/>
+            <circle cx="18" cy="9" r="6" fill="#1A1A1A"/>
+            <circle cx="18" cy="9" r="3.5" fill="#444"/>
+            <circle cx="18" cy="9" r="1.2" fill="#888"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- ปุ่ม Login หลัก -->
+      <div class="welcome-buttons">
+        <button class="auth-btn auth-btn-google" onclick="loginWith('google')">
+          <span class="auth-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+          </span>
+          <span class="auth-label">เข้าสู่ระบบด้วย Google</span>
+        </button>
+
+        <button class="auth-btn auth-btn-apple" onclick="loginWith('apple')">
+          <span class="auth-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="#FFFFFF">
+              <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+            </svg>
+          </span>
+          <span class="auth-label">เข้าสู่ระบบด้วย Apple</span>
+        </button>
+
+        <button class="auth-btn auth-btn-other" onclick="toggleOtherAuth()">
+          <span class="auth-label" id="other-auth-label">ตัวเลือกอื่นๆ</span>
+          <span id="other-auth-arrow">▾</span>
+        </button>
+
+        <div id="other-auth-list" style="display:none">
+          <button class="auth-btn auth-btn-email" onclick="loginWith('email')">
+            <span class="auth-icon">📧</span>
+            <span class="auth-label">อีเมล + รหัสผ่าน</span>
+          </button>
+          <button class="auth-btn auth-btn-phone" onclick="loginWith('phone')">
+            <span class="auth-icon">📱</span>
+            <span class="auth-label">เบอร์โทรศัพท์ (OTP)</span>
+          </button>
+          <button class="auth-btn auth-btn-fb" onclick="loginWith('facebook')">
+            <span class="auth-icon">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="#FFFFFF">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </span>
+            <span class="auth-label">เข้าสู่ระบบด้วย Facebook</span>
+          </button>
+        </div>
+      </div>
+
+      <button class="guest-btn" onclick="enterGuestMode()">
+        ยังไม่สมัครตอนนี้ →
+      </button>
+
+      <div class="welcome-terms">
+        การดำเนินการต่อ ถือว่าคุณยอมรับ ข้อกำหนดและนโยบายความเป็นส่วนตัว
+      </div>
+    </div>
+  </div>
+
   <div class="header-wrap">
     <div class="header" id="app-header">
       <div class="brand">Cool<span>par</span></div>
@@ -3560,23 +4572,43 @@
 
   <div class="nav" id="app-nav">
     <button class="nav-btn active" data-screen="home">
-      <span class="icon">🏠</span>
-      <span class="label">Home</span>
+      <span class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+          <path d="M3 9.5L12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1V9.5z"/>
+        </svg>
+      </span>
+      <span class="label">หน้าหลัก</span>
     </button>
     <button class="nav-btn" data-screen="post">
-      <span class="icon">➕</span>
-      <span class="label">แชร์รถของคุณ</span>
+      <span class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+          <circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>
+        </svg>
+      </span>
+      <span class="label">ประกาศ</span>
     </button>
     <button class="nav-btn" data-screen="trips">
-      <span class="icon">🛣️</span>
+      <span class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+          <path d="M3 21l4-4 5 2 5-4 4 2"/><circle cx="3" cy="21" r="0.5" fill="currentColor"/><circle cx="20" cy="17" r="0.5" fill="currentColor"/>
+        </svg>
+      </span>
       <span class="label">เดินทาง</span>
     </button>
     <button class="nav-btn" data-screen="messages">
-      <span class="icon">💬</span>
+      <span class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+        </svg>
+      </span>
       <span class="label">ข้อความ</span>
     </button>
     <button class="nav-btn" data-screen="profile">
-      <span class="icon">👤</span>
+      <span class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
+      </span>
       <span class="label">โปรไฟล์</span>
     </button>
   </div>
@@ -3613,8 +4645,8 @@ const i18n = {
   // sections
   popularDest: { TH: 'จุดหมายยอดนิยม', EN: 'Popular destinations' },
   fromOrigin: { TH: 'น่าสนใจจาก ', EN: 'Interesting trips from ' },
-  pickDest: { TH: '💡 เลือกปลายทาง', EN: '💡 Choose destination' },
-  pickDestSub: { TH: 'เลื่อนการ์ดด้านบนแล้วกดเลือก หรือกด 🔍 ด้านบนเพื่อพิมพ์เอง', EN: 'Scroll cards above to pick, or tap 🔍 to type' },
+  pickDest: { TH: 'เลือกปลายทาง', EN: 'Choose destination' },
+  pickDestSub: { TH: 'เลื่อนการ์ดด้านบนแล้วกดเลือก หรือพิมพ์ในช่องค้นหาด้านบน', EN: 'Scroll cards above to pick, or use search bar above' },
 
   // trip cards
   foundTrips: { TH: ' เส้นทาง', EN: ' routes' },
@@ -3664,14 +4696,14 @@ const i18n = {
   perPassenger: { TH: '/คน', EN: '/passenger' },
 
   // Price feedback (เปลี่ยนตาม slider)
-  priceFb1: { TH: '⭐ ราคาดีมาก! คุณจะอยู่ลำดับบนๆ', EN: '⭐ Great price! You\'ll rank top' },
-  priceFb2: { TH: '✅ ราคาดี ได้ผู้โดยสารง่าย', EN: '✅ Good price, easy to get riders' },
-  priceFb3: { TH: '👌 ราคาพอดี เหมาะสม', EN: '👌 Fair price, balanced' },
-  priceFb4: { TH: '⚠️ ราคาเริ่มสูง ผู้โดยสารอาจน้อย', EN: '⚠️ Getting high, fewer riders' },
-  priceFb5: { TH: '❌ ราคาแพงไป อาจไม่มีคนจอง', EN: '❌ Too expensive, may get no bookings' },
+  priceFb1: { TH: 'ราคาดีมาก! คุณจะอยู่ลำดับบนๆ', EN: "Great price! You'll rank top" },
+  priceFb2: { TH: 'ราคาดี ได้ผู้โดยสารง่าย', EN: 'Good price, easy to get riders' },
+  priceFb3: { TH: 'ราคาพอดี เหมาะสม', EN: 'Fair price, balanced' },
+  priceFb4: { TH: 'ราคาเริ่มสูง ผู้โดยสารอาจน้อย', EN: 'Getting high, fewer riders' },
+  priceFb5: { TH: 'ราคาแพงไป อาจไม่มีคนจอง', EN: 'Too expensive, may get no bookings' },
   rank: { TH: 'อันดับ', EN: 'Rank' },
-  bestDeal: { TH: '🏆 ดีลที่ดีที่สุด', EN: '🏆 Best deal' },
-  recommended: { TH: '⭐ แนะนำ', EN: '⭐ Recommended' },
+  bestDeal: { TH: 'ดีลที่ดีที่สุด', EN: 'Best deal' },
+  recommended: { TH: 'แนะนำ', EN: 'Recommended' },
 
   // Pickup points (passenger)
   pickupPoints: { TH: 'เลือกจุดขึ้นรถ', EN: 'Choose pickup point' },
@@ -3679,7 +4711,7 @@ const i18n = {
   pickupAt: { TH: 'ขึ้นที่', EN: 'Pickup at' },
   distance: { TH: 'ระยะ', EN: 'Distance' },
   yourPrice: { TH: 'ราคาของคุณ', EN: 'Your price' },
-  bookPickup: { TH: '🚗 จองจาก ', EN: '🚗 Book from ' },
+  bookPickup: { TH: 'จองจาก ', EN: 'Book from ' },
 
   // Pickup editor (driver)
   pickupEditor: { TH: 'เลือกจุดรับผู้โดยสาร', EN: 'Choose pickup stops' },
@@ -3709,8 +4741,8 @@ const i18n = {
   // trips screen
   tripsTitle: { TH: 'การเดินทาง', EN: 'My Trips' },
   tripsSub: { TH: 'ทริปทั้งหมดของคุณ', EN: 'All your trips' },
-  asPassenger: { TH: '🧍 ผู้โดยสาร', EN: '🧍 As Passenger' },
-  asDriver: { TH: '🚗 ผู้ขับ', EN: '🚗 As Driver' },
+  asPassenger: { TH: 'ผู้โดยสาร', EN: 'As Passenger' },
+  asDriver: { TH: 'ผู้ขับ', EN: 'As Driver' },
   upcoming: { TH: 'จะมาถึง', EN: 'Upcoming' },
   past: { TH: 'ผ่านมาแล้ว', EN: 'Past' },
   confirmed: { TH: 'ยืนยันแล้ว', EN: 'Confirmed' },
@@ -3731,7 +4763,7 @@ const i18n = {
   // profile
   profileTitle: { TH: 'โปรไฟล์', EN: 'Profile' },
   profileSub: { TH: 'บัญชีและการตั้งค่า', EN: 'Account and settings' },
-  newMember: { TH: '⭐ 5.0 • สมาชิกใหม่', EN: '⭐ 5.0 • New member' },
+  newMember: { TH: '★ 5.0 · สมาชิกใหม่', EN: '★ 5.0 · New member' },
   statDriven: { TH: 'เที่ยวที่ขับ', EN: 'Driven' },
   statRidden: { TH: 'เที่ยวที่นั่ง', EN: 'Ridden' },
   statSaved: { TH: 'ประหยัด', EN: 'Saved' },
@@ -3744,9 +4776,9 @@ const i18n = {
   sheetTitle: { TH: 'ค้นหาเส้นทาง', EN: 'Search trips' },
   sheetSelf: { TH: 'หาเอง', EN: 'Search yourself' },
   sheetWhen: { TH: 'วันเดินทาง (ไม่ระบุก็ได้)', EN: 'Travel date (optional)' },
-  sheetGo: { TH: '🔍 ค้นหาเส้นทาง', EN: '🔍 Search trips' },
+  sheetGo: { TH: 'ค้นหาเส้นทาง', EN: 'Search trips' },
   sheetOr: { TH: 'หรือ', EN: 'OR' },
-  sheetAvailable: { TH: '🚗 ทริปที่เปิดรับตอนนี้', EN: '🚗 Available trips now' },
+  sheetAvailable: { TH: 'ทริปที่เปิดรับตอนนี้', EN: 'Available trips now' },
   sheetCount: { TH: ' ทริป', EN: ' trips' },
   sheetEmpty: { TH: 'ยังไม่มีทริปที่ตรงกับเงื่อนไข', EN: 'No trips match your criteria' },
   sheetEmptySub: { TH: 'ลองเปลี่ยนต้นทาง/ปลายทาง หรือกดค้นหาเลย', EN: 'Try changing origin/destination, or just search' },
@@ -3774,7 +4806,7 @@ const i18n = {
   userProfileTitle: { TH: 'โปรไฟล์ผู้ใช้', EN: 'User Profile' },
   reviewsCount: { TH: 'รีวิว', EN: 'Reviews' },
   yearsActive: { TH: 'ปีที่ใช้งาน', EN: 'Years' },
-  sendMsg: { TH: '💬 ส่งข้อความ', EN: '💬 Send message' },
+  sendMsg: { TH: 'ส่งข้อความ', EN: 'Send message' },
   viewProfile: { TH: 'ดูโปรไฟล์', EN: 'View profile' },
   aboutMe: { TH: 'เกี่ยวกับ', EN: 'About' },
   vehicleInfo: { TH: 'ข้อมูลรถ', EN: 'Vehicle' },
@@ -3839,7 +4871,7 @@ const i18n = {
   pdShares: { TH: 'แชร์', EN: 'Shares' },
   pdLike: { TH: '♥ ถูกใจ', EN: '♥ Like' },
   pdLiked: { TH: '♥ ถูกใจแล้ว', EN: '♥ Liked' },
-  pdComment: { TH: '💬 คอมเมนต์', EN: '💬 Comment' },
+  pdComment: { TH: 'คอมเมนต์', EN: 'Comment' },
   pdShare: { TH: '↗ แชร์', EN: '↗ Share' },
   pdSave: { TH: '🔖 บันทึก', EN: '🔖 Save' },
   pdRelated: { TH: 'รีวิวอื่นที่เกี่ยวข้อง', EN: 'Related reviews' }
@@ -3886,26 +4918,77 @@ function applyLang() {
 const tripsView = { role: 'passenger', tab: 'upcoming' };
 
 // ทริปของผู้ใช้ (mock)
-const myTrips = {
+let myTrips = {
   passenger: {
     upcoming: [
-      { time: 'พรุ่งนี้ 07:00', timeEN: 'Tomorrow 07:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'เชียงใหม่', toEN: 'Chiang Mai', other: 'สมชาย', otherEN: 'Somchai', price: 650, status: 'confirmed' },
-      { time: '28 พ.ค. 14:00', timeEN: 'May 28, 14:00', from: 'เชียงใหม่', fromEN: 'Chiang Mai', to: 'กรุงเทพฯ', toEN: 'Bangkok', other: 'วรพล', otherEN: 'Worapon', price: 700, status: 'pending' }
+      { id: 'p1', time: 'พรุ่งนี้ 07:00', timeEN: 'Tomorrow 07:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'เชียงใหม่', toEN: 'Chiang Mai', other: 'สมชาย', otherEN: 'Somchai', price: 650, status: 'confirmed' },
+      { id: 'p2', time: '28 พ.ค. 14:00', timeEN: 'May 28, 14:00', from: 'เชียงใหม่', fromEN: 'Chiang Mai', to: 'กรุงเทพฯ', toEN: 'Bangkok', other: 'วรพล', otherEN: 'Worapon', price: 700, status: 'pending' }
     ],
     past: [
-      { time: '15 พ.ค. 09:00', timeEN: 'May 15, 09:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'พัทยา', toEN: 'Pattaya', other: 'นภัทร', otherEN: 'Napat', price: 250, status: 'completed' },
-      { time: '5 พ.ค. 16:00', timeEN: 'May 5, 16:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'หัวหิน', toEN: 'Hua Hin', other: 'พลอย', otherEN: 'Ploy', price: 350, status: 'completed' }
+      { id: 'p3', time: '15 พ.ค. 09:00', timeEN: 'May 15, 09:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'พัทยา', toEN: 'Pattaya', other: 'นภัทร', otherEN: 'Napat', price: 250, status: 'completed' },
+      { id: 'p4', time: '5 พ.ค. 16:00', timeEN: 'May 5, 16:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'หัวหิน', toEN: 'Hua Hin', other: 'พลอย', otherEN: 'Ploy', price: 350, status: 'completed' }
     ]
   },
   driver: {
     upcoming: [
-      { time: '30 พ.ค. 06:00', timeEN: 'May 30, 06:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'เชียงใหม่', toEN: 'Chiang Mai', other: 'ผู้โดยสาร 3 คน', otherEN: '3 passengers', price: 2400, status: 'confirmed' }
+      { id: 'd1', time: '30 พ.ค. 06:00', timeEN: 'May 30, 06:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'เชียงใหม่', toEN: 'Chiang Mai', other: 'ผู้โดยสาร 3 คน', otherEN: '3 passengers', price: 2400, status: 'confirmed' }
     ],
     past: [
-      { time: '10 พ.ค. 08:00', timeEN: 'May 10, 08:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'อยุธยา', toEN: 'Ayutthaya', other: 'ผู้โดยสาร 2 คน', otherEN: '2 passengers', price: 320, status: 'completed' }
+      { id: 'd2', time: '10 พ.ค. 08:00', timeEN: 'May 10, 08:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'อยุธยา', toEN: 'Ayutthaya', other: 'ผู้โดยสาร 2 คน', otherEN: '2 passengers', price: 320, status: 'completed' }
     ]
   }
 };
+
+// load จาก localStorage
+const MY_TRIPS_KEY = 'coolpar_my_trips';
+const POSTED_TRIPS_KEY = 'coolpar_posted_trips';
+try {
+  const saved = localStorage.getItem(MY_TRIPS_KEY);
+  if (saved) myTrips = JSON.parse(saved);
+} catch (e) {}
+
+function saveMyTrips() {
+  try { localStorage.setItem(MY_TRIPS_KEY, JSON.stringify(myTrips)); } catch (e) {}
+}
+
+// ทริปที่ผู้ใช้โพสต์ (เพิ่มเข้า availableTrips ในรอบหน้า)
+let userPostedTrips = [];
+try {
+  const saved = localStorage.getItem(POSTED_TRIPS_KEY);
+  if (saved) userPostedTrips = JSON.parse(saved);
+} catch (e) {}
+
+function saveUserPostedTrips() {
+  try { localStorage.setItem(POSTED_TRIPS_KEY, JSON.stringify(userPostedTrips)); } catch (e) {}
+}
+
+// generator id
+function genTripId() {
+  return 'trip_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+}
+
+// แปลงวันที่/เวลาเป็น display string
+function formatTripDate(dateStr, timeStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T' + (timeStr || '07:00'));
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const dDate = new Date(d);
+  dDate.setHours(0,0,0,0);
+  const diffDays = Math.round((dDate - today) / 86400000);
+
+  const time = (timeStr || '07:00');
+
+  if (currentLang === 'EN') {
+    if (diffDays === 0) return `Today ${time}`;
+    if (diffDays === 1) return `Tomorrow ${time}`;
+    return d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) + ' ' + time;
+  } else {
+    if (diffDays === 0) return `วันนี้ ${time}`;
+    if (diffDays === 1) return `พรุ่งนี้ ${time}`;
+    return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' }) + ' ' + time;
+  }
+}
 
 function setTripsRole(role) {
   tripsView.role = role;
@@ -3948,14 +5031,26 @@ function renderTripsScreen() {
       else { pillClass = 'pill-neutral'; pillText = t('completed'); }
 
       const isPast = tab === 'past';
+      const rateBtn = isPast ? `
+          <button class="trip-rate-btn" onclick="event.stopPropagation();showTripRating('${tr.other}','${tr.otherEN || tr.other}')">
+            ${currentLang === 'EN' ? 'Rate this trip' : 'ให้คะแนนทริปนี้'}
+          </button>
+      ` : '';
+      const cancelBtn = !isPast && tr.id ? `
+          <button class="trip-cancel-btn" onclick="event.stopPropagation();cancelMyTrip('${tr.id}','${role}')">
+            ${currentLang === 'EN' ? 'Cancel' : 'ยกเลิก'}
+          </button>
+      ` : '';
       return `
         <div class="my-trip">
           <div class="trip-when">
-            <span class="trip-when-time" style="${isPast ? 'color:var(--text-muted)' : ''}">🕐 ${timeStr}</span>
+            <span class="trip-when-time" style="${isPast ? 'color:var(--text-muted)' : ''}">${timeStr}</span>
             <span class="status-pill ${pillClass}">${pillText}</span>
           </div>
           <div class="trip-name">${fromStr} → ${toStr}</div>
           <div class="trip-sub">${otherLabel}${otherStr} • ฿${tr.price.toLocaleString()}</div>
+          ${rateBtn}
+          ${cancelBtn}
         </div>
       `;
     }).join('');
@@ -4104,6 +5199,7 @@ let activeChatRoom = null;
 let viewingUser = null;
 
 function openChat(userId) {
+  if (!requireLogin(currentLang === 'EN' ? 'send messages' : 'ส่งข้อความ')) return;
   activeChatRoom = userId;
   if (chatRooms[userId]) chatRooms[userId].unread = 0;
   show('chat');
@@ -4261,7 +5357,7 @@ function renderUserProfile() {
   const reviewsHtml = reviews.map(r => `
     <div class="user-review">
       <div class="user-review-head">
-        <div class="user-review-stars">${'⭐'.repeat(r.rating)}</div>
+        <div class="user-review-stars">${'★'.repeat(r.rating)}</div>
         <div class="user-review-from">${r.from}</div>
       </div>
       <div class="user-review-text">${r.text}</div>
@@ -4277,7 +5373,7 @@ function renderUserProfile() {
         ${name}
         ${user.verified ? `<span class="up-verified" title="${t('verified')}">✓</span>` : ''}
       </div>
-      <div class="up-rating">⭐ ${user.rating} · ${user.totalTrips} ${t('trips')}</div>
+      <div class="up-rating">★ ${user.rating} · ${user.totalTrips} ${t('trips')}</div>
       <div class="up-online" style="color:${user.online ? 'var(--primary)' : 'var(--text-muted)'}">
         ${user.online ? (currentLang === 'EN' ? '● Online now' : '● ออนไลน์ตอนนี้') : (currentLang === 'EN' ? '○ Offline' : '○ ออฟไลน์')}
       </div>
@@ -4304,7 +5400,7 @@ function renderUserProfile() {
     <div class="up-bio">${bio}</div>
 
     <p class="section-title">${t('vehicleInfo')}</p>
-    <div class="up-bio">🚗 ${car}</div>
+    <div class="up-bio">${car}</div>
 
     <p class="section-title">${t('recentReviews')} (${reviews.length})</p>
     ${reviewsHtml}
@@ -4343,100 +5439,187 @@ function setProfileTab(tab) {
   show('profile');
 }
 
+const profileTab = { current: 'about' }; // 'about' | 'account'
+function setProfileTab2(tab) {
+  profileTab.current = tab;
+  show('profile');
+}
+
 function renderProfileScreen() {
-  const tab = profileState.tab;
+  const tab = profileTab.current;
   return `
-    <div class="profile-tabs">
-      <button class="profile-tab ${tab === 'about' ? 'active' : ''}" onclick="setProfileTab('about')">${t('profileAbout')}</button>
-      <button class="profile-tab ${tab === 'account' ? 'active' : ''}" onclick="setProfileTab('account')">${t('profileAccount')}</button>
+    <div class="pf2-tabs">
+      <button class="pf2-tab ${tab === 'about' ? 'active' : ''}" onclick="setProfileTab2('about')">${currentLang === 'EN' ? 'About you' : 'เกี่ยวกับคุณ'}</button>
+      <button class="pf2-tab ${tab === 'account' ? 'active' : ''}" onclick="setProfileTab2('account')">${currentLang === 'EN' ? 'Account' : 'บัญชี'}</button>
     </div>
-    ${tab === 'about' ? renderProfileAbout() : renderProfileAccount()}
+    ${tab === 'about' ? renderProfileAbout2() : renderProfileAccount2()}
   `;
 }
 
-function renderProfileAbout() {
+function renderProfileAbout2() {
+  const displayName = currentLang === 'EN' ? userProfile.nameEN : userProfile.name;
   const done = getStepsCompleted();
   const total = userProfile.totalSteps;
+  const isGuest = !authState.isLoggedIn;
+
+  const avatarHtml = userProfile.photo
+    ? `<div class="pf2-avatar" style="background-image:url('${userProfile.photo}');background-size:cover;background-position:center"></div>`
+    : `<div class="pf2-avatar">${isGuest ? '–' : displayName.charAt(0)}</div>`;
+
+  if (isGuest) {
+    return `
+      <div class="pf2-head">
+        <div class="pf2-avatar">–</div>
+        <div class="pf2-head-info">
+          <div class="pf2-name">${currentLang === 'EN' ? 'Guest' : 'ผู้เยี่ยมชม'}</div>
+          <div class="pf2-tag">${currentLang === 'EN' ? 'Not signed in' : 'ยังไม่เข้าสู่ระบบ'}</div>
+        </div>
+      </div>
+      <button class="pf2-cta" onclick="goToLogin()">${currentLang === 'EN' ? 'Sign in / Sign up' : 'เข้าสู่ระบบ / สมัครสมาชิก'}</button>
+      <div style="height:30px"></div>
+    `;
+  }
 
   const barSegs = Array.from({ length: total }, (_, i) =>
-    `<div class="completion-bar-seg ${i < done ? 'done' : ''}"></div>`
+    `<div class="pf2-bar-seg ${i < done ? 'done' : ''}"></div>`
   ).join('');
 
-  const stepsText = t('stepsComplete').replace('{n}', done).replace('6', total);
-  const newbieText = userProfile.tag === 'newbie' ? t('profileNewbie') : userProfile.tag;
-  const displayName = currentLang === 'EN' ? userProfile.nameEN : userProfile.name;
+  // ขั้นตอนถัดไป
+  let nextKey, nextLabel;
+  if (!userProfile.done.photo) { nextKey = 'photo'; nextLabel = currentLang === 'EN' ? 'Add profile photo' : 'เพิ่มรูปโปรไฟล์'; }
+  else if (!userProfile.done.id) { nextKey = 'id'; nextLabel = currentLang === 'EN' ? 'Verify identity' : 'ยืนยันตัวตน'; }
+  else if (!userProfile.done.email) { nextKey = 'email'; nextLabel = currentLang === 'EN' ? 'Verify email' : 'ยืนยันอีเมล'; }
+  else if (!userProfile.done.phone) { nextKey = 'phone'; nextLabel = currentLang === 'EN' ? 'Verify phone' : 'ยืนยันเบอร์โทร'; }
+  else if (!userProfile.done.vehicle) { nextKey = 'vehicle'; nextLabel = currentLang === 'EN' ? 'Add vehicle' : 'เพิ่มรถยนต์'; }
+  else { nextKey = null; }
 
-  // avatar — ถ้ามีรูปแสดงรูป ถ้าไม่มีใส่ emoji
-  const avatarHtml = userProfile.photo
-    ? `<div class="mp-avatar" style="background-image:url('${userProfile.photo}');background-size:cover;background-position:center"></div>`
-    : `<div class="mp-avatar">👤</div>`;
+  const completionLink = nextKey
+    ? (nextKey === 'photo'
+        ? `<button class="pf2-link" onclick="triggerPhotoUpload()">${nextLabel}</button>`
+        : `<button class="pf2-link" onclick="markStepDone('${nextKey}')">${nextLabel}</button>`)
+    : `<div class="pf2-link" style="color:var(--primary)">${currentLang === 'EN' ? 'All complete' : 'ครบแล้ว'}</div>`;
 
-  // ขั้นตอนถัดไป (ที่ยังไม่ทำ) สำหรับลิงก์ในกล่อง completion
-  let nextStepKey, nextStepLabel;
-  if (!userProfile.done.photo) { nextStepKey = 'photo'; nextStepLabel = t('addProfilePhoto'); }
-  else if (!userProfile.done.id) { nextStepKey = 'id'; nextStepLabel = t('verifyId'); }
-  else if (!userProfile.done.email) { nextStepKey = 'email'; nextStepLabel = t('verifyEmail'); }
-  else if (!userProfile.done.phone) { nextStepKey = 'phone'; nextStepLabel = t('verifyPhone'); }
-  else if (!userProfile.done.vehicle) { nextStepKey = 'vehicle'; nextStepLabel = t('addVehicle'); }
-  else { nextStepKey = null; }
-
-  const completionLink = nextStepKey
-    ? (nextStepKey === 'photo'
-        ? `<button class="completion-link" onclick="triggerPhotoUpload()">${nextStepLabel}</button>`
-        : `<button class="completion-link" onclick="markStepDone('${nextStepKey}')">${nextStepLabel}</button>`)
-    : `<div class="completion-link" style="color:var(--primary)">✓ ${currentLang === 'EN' ? 'All steps completed!' : 'ครบแล้ว!'}</div>`;
-
-  // helper สร้างรายการขั้นตอน
-  const stepItem = (key, label, action) => {
+  // รายการ step
+  const stepRow = (key, label, sublabel) => {
     const isDone = userProfile.done[key];
+    const action = key === 'photo' ? 'triggerPhotoUpload()' : `markStepDone('${key}')`;
     return `
-      <button class="profile-list-item ${isDone ? 'done' : ''}" onclick="${action}">
-        <span class="pli-icon">${isDone ? '✓' : '+'}</span>
-        <span>${label}</span>
-        ${isDone ? `<span style="margin-left:auto;color:var(--primary);font-size:11px">${t('verified')}</span>` : ''}
+      <button class="pf2-step ${isDone ? 'done' : ''}" onclick="${action}">
+        <span class="pf2-step-mark">${isDone ? '✓' : '+'}</span>
+        <span class="pf2-step-label">${label}${sublabel ? `<span class="pf2-step-sub">${sublabel}</span>` : ''}</span>
+        ${isDone ? `<span class="pf2-step-done">${currentLang === 'EN' ? 'Verified' : 'ยืนยันแล้ว'}</span>` : ''}
       </button>
     `;
   };
 
   return `
-    <!-- input file ซ่อนไว้ -->
     <input type="file" id="photo-upload-input" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)"/>
 
-    <div class="my-profile-head" onclick="show('editProfile')">
+    <div class="pf2-head" onclick="show('editProfile')">
       ${avatarHtml}
-      <div class="mp-name-block">
-        <div class="mp-name">${displayName}</div>
-        <div class="mp-tag">${newbieText}</div>
+      <div class="pf2-head-info">
+        <div class="pf2-name">${displayName}</div>
+        <div class="pf2-tag">${currentLang === 'EN' ? 'New member' : 'สมาชิกใหม่'}</div>
       </div>
-      <span class="mp-chevron">›</span>
+      <span class="pf2-chev">›</span>
     </div>
 
-    <div class="completion-card">
-      <div class="completion-title">${t('completeProfile')}</div>
-      <div class="completion-sub">${t('completeProfileSub')}</div>
-      <div class="completion-count">${done} ${currentLang === 'EN' ? `of ${total} steps completed` : `จาก ${total} ขั้นตอนเสร็จสมบูรณ์`}</div>
-      <div class="completion-bar">${barSegs}</div>
+    <div class="pf2-completion">
+      <div class="pf2-completion-title">${currentLang === 'EN' ? 'Complete your profile' : 'กรอกโปรไฟล์ให้ครบถ้วน'}</div>
+      <div class="pf2-completion-sub">${currentLang === 'EN' ? 'This builds trust with other members' : 'สร้างความน่าเชื่อถือให้สมาชิกคนอื่น'}</div>
+      <div class="pf2-completion-count">${done} / ${total} ${currentLang === 'EN' ? 'completed' : 'เสร็จสมบูรณ์'}</div>
+      <div class="pf2-bar">${barSegs}</div>
       ${completionLink}
     </div>
 
-    <button class="profile-edit-link" onclick="show('editProfile')">${t('editPersonal')}</button>
+    <button class="pf2-edit-link" onclick="show('editProfile')">${currentLang === 'EN' ? 'Edit personal details' : 'แก้ไขรายละเอียดส่วนตัว'}</button>
 
-    <div class="profile-section-title">${t('trustHeading')}</div>
-    <div class="trust-item">
-      <div class="trust-item-icon">✓</div>
-      <div class="trust-item-text">${t('trustNoCancel')}</div>
+    <div class="pf2-section-title">${currentLang === 'EN' ? 'Trust & verification' : 'ความน่าเชื่อถือ'}</div>
+    <div class="pf2-trust">
+      <span class="pf2-trust-mark">✓</span>
+      <span>${currentLang === 'EN' ? 'Never canceled as a passenger' : 'ไม่เคยยกเลิกการจองในฐานะผู้โดยสาร'}</span>
     </div>
 
-    <div class="profile-section-title">${t('verifyProfile')}</div>
-    ${stepItem('id', t('verifyId'), "markStepDone('id')")}
-    ${stepItem('email', `${t('verifyEmail')} ${userProfile.email}`, "markStepDone('email')")}
-    ${stepItem('phone', `${t('verifyPhone')} ${userProfile.phone}`, "markStepDone('phone')")}
+    <div class="pf2-card">
+      ${stepRow('id', currentLang === 'EN' ? 'Identity' : 'ยืนยันตัวตน')}
+      ${stepRow('email', currentLang === 'EN' ? 'Email' : 'อีเมล', userProfile.email)}
+      ${stepRow('phone', currentLang === 'EN' ? 'Phone' : 'เบอร์โทรศัพท์', userProfile.phone)}
+    </div>
 
-    <div class="profile-section-title">${t('vehicleHeading')}</div>
-    ${stepItem('vehicle', t('addVehicle'), "markStepDone('vehicle')")}
+    <div class="pf2-section-title">${currentLang === 'EN' ? 'Vehicle' : 'รถยนต์'}</div>
+    <div class="pf2-card">
+      ${stepRow('vehicle', currentLang === 'EN' ? 'Add a vehicle' : 'เพิ่มรถยนต์', userProfile.car || '')}
+    </div>
 
     <div style="height:30px"></div>
   `;
+}
+
+function renderProfileAccount2() {
+  const isGuest = !authState.isLoggedIn;
+
+  const row = (label, action) => `
+    <button class="pf2-acc-row" onclick="${action}">
+      <span>${label}</span><span class="pf2-acc-chev">›</span>
+    </button>
+  `;
+
+  return `
+    <div class="pf2-card pf2-card-flush">
+      ${row(currentLang === 'EN' ? 'My reviews' : 'รีวิวของฉัน', "showMyReviews()")}
+      ${row(currentLang === 'EN' ? 'Saved passengers' : 'ผู้โดยสารที่บันทึกไว้', "openProfileDetail('saved')")}
+      ${row(currentLang === 'EN' ? 'Communication settings' : 'การตั้งค่าการสื่อสาร', "openProfileDetail('comm')")}
+      ${row(currentLang === 'EN' ? 'Password' : 'รหัสผ่าน', "openProfileDetail('password')")}
+      ${row(currentLang === 'EN' ? 'Postal address' : 'ที่อยู่ทางไปรษณีย์', "openProfileDetail('address')")}
+    </div>
+
+    <div class="pf2-section-title">${currentLang === 'EN' ? 'Payments' : 'การเงิน'}</div>
+    <div class="pf2-card pf2-card-flush">
+      ${row(currentLang === 'EN' ? 'Payment methods' : 'วิธีชำระเงิน', "openProfileDetail('payment')")}
+      ${row(currentLang === 'EN' ? 'Income' : 'รายรับ', "openProfileDetail('income')")}
+      ${row(currentLang === 'EN' ? 'Payments & refunds' : 'การชำระเงินและการคืนเงิน', "openProfileDetail('payhistory')")}
+    </div>
+
+    <div class="pf2-section-title">${currentLang === 'EN' ? 'App' : 'แอป'}</div>
+    <div class="pf2-card pf2-card-flush">
+      ${row(currentLang === 'EN' ? 'Language' : 'ภาษา', "toggleLang()")}
+      ${row(currentLang === 'EN' ? 'Rate the app' : 'ให้คะแนนแอป', "showRateApp()")}
+      ${row(currentLang === 'EN' ? 'Help' : 'ความช่วยเหลือ', "openProfileDetail('help')")}
+      ${row(currentLang === 'EN' ? 'Terms & conditions' : 'ข้อกำหนดและเงื่อนไข', "openProfileDetail('terms')")}
+      ${row(currentLang === 'EN' ? 'Data protection' : 'การคุ้มครองข้อมูล', "openProfileDetail('privacy')")}
+    </div>
+
+    ${isGuest ? '' : `
+      <div class="pf2-card pf2-card-flush" style="margin-top:18px">
+        <button class="pf2-acc-row pf2-acc-danger" onclick="logout()">${currentLang === 'EN' ? 'Log out' : 'ออกจากระบบ'}</button>
+        <button class="pf2-acc-row pf2-acc-danger" onclick="openProfileDetail('delete')">${currentLang === 'EN' ? 'Delete my account' : 'ปิดบัญชีของฉัน'}</button>
+      </div>
+    `}
+
+    <div style="height:30px"></div>
+  `;
+}
+
+function openProfileDetail(type) {
+  if (type === 'reviews') { showMyReviews(); return; }
+  if (type === 'rateapp') { showRateApp(); return; }
+  showToast(currentLang === 'EN' ? 'Coming soon' : 'กำลังพัฒนา');
+}
+
+// Toast เบาๆ
+function showToast(msg) {
+  document.querySelectorAll('.cp-toast').forEach(el => el.remove());
+  const phone = document.querySelector('.phone');
+  if (!phone) return;
+  const toast = document.createElement('div');
+  toast.className = 'cp-toast';
+  toast.textContent = msg;
+  phone.appendChild(toast);
+  setTimeout(() => toast.classList.add('show'), 10);
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 2000);
 }
 
 // อัปโหลดรูปโปรไฟล์ (ภายในเครื่อง)
@@ -4459,51 +5642,164 @@ function handlePhotoUpload(event) {
 
 function markStepDone(key) {
   if (userProfile.done.hasOwnProperty(key)) {
-    userProfile.done[key] = !userProfile.done[key]; // toggle เพื่อทดสอบ
+    userProfile.done[key] = !userProfile.done[key];
     show('profile');
   }
 }
 
 function renderProfileAccount() {
-  const demoAlert = (label) => `alert(${JSON.stringify(label + (currentLang === 'EN' ? ' (demo)' : ' (จำลอง)'))})`;
-
-  return `
-    <div class="account-group">
-      <button class="account-row" onclick="${demoAlert(t('accSavedPassengers'))}">${t('accSavedPassengers')}<span class="chev">›</span></button>
-      <button class="account-row" onclick="${demoAlert(t('accCommunication'))}">${t('accCommunication')}<span class="chev">›</span></button>
-      <button class="account-row" onclick="${demoAlert(t('accDarkMode'))}">${t('accDarkMode')}<span class="chev">›</span></button>
-      <button class="account-row" onclick="${demoAlert(t('accPassword'))}">${t('accPassword')}<span class="chev">›</span></button>
-      <button class="account-row" onclick="${demoAlert(t('accAddress'))}">${t('accAddress')}<span class="chev">›</span></button>
-    </div>
-
-    <div class="account-divider"></div>
-
-    <div class="account-group">
-      <button class="account-row" onclick="${demoAlert(t('accReceive'))}">${t('accReceive')}<span class="chev">›</span></button>
-      <button class="account-row" onclick="${demoAlert(t('accIncome'))}">${t('accIncome')}<span class="chev">›</span></button>
-      <button class="account-row" onclick="${demoAlert(t('accPayment'))}">${t('accPayment')}<span class="chev">›</span></button>
-      <button class="account-row" onclick="${demoAlert(t('accPayHistory'))}">${t('accPayHistory')}<span class="chev">›</span></button>
-    </div>
-
-    <div class="account-divider"></div>
-
-    <div class="account-group">
-      <button class="account-row" onclick="${demoAlert(t('accRateApp'))}">${t('accRateApp')}<span class="chev">›</span></button>
-      <button class="account-row" onclick="${demoAlert(t('accHelp'))}">${t('accHelp')}<span class="chev">›</span></button>
-      <button class="account-row" onclick="${demoAlert(t('accTerms'))}">${t('accTerms')}<span class="chev">›</span></button>
-      <button class="account-row" onclick="${demoAlert(t('accPrivacy'))}">${t('accPrivacy')}<span class="chev">›</span></button>
-    </div>
-
-    <div class="account-divider"></div>
-
-    <div class="account-group">
-      <button class="account-row account-danger" onclick="${demoAlert(t('accLogout'))}">${t('accLogout')}</button>
-      <button class="account-row account-danger" onclick="${demoAlert(t('accDelete'))}">${t('accDelete')}</button>
-    </div>
-
-    <div style="height:30px"></div>
-  `;
+  return ''; // legacy — ไม่ใช้แล้ว (รวมเข้า renderProfileScreen)
 }
+
+// ====== Rating System ======
+// รีวิวของฉัน (ที่ได้รับ + ที่ให้คนอื่น)
+const myReviewsData = {
+  received: [
+    { from: 'สมชาย จ.', fromEN: 'Somchai J.', rating: 5, text: 'ผู้โดยสารน่ารัก ตรงเวลา', textEN: 'Lovely passenger, on time', date: '15 พ.ค.' },
+    { from: 'นภัทร ป.', fromEN: 'Napat P.', rating: 5, text: 'คุยสนุก แนะนำเลย', textEN: 'Fun to talk with, recommended', date: '5 พ.ค.' }
+  ]
+};
+
+function showMyReviews() {
+  const reviews = myReviewsData.received;
+  const avgRating = reviews.length ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1) : '—';
+
+  const reviewsHtml = reviews.length === 0
+    ? `<div class="trips-empty">${currentLang === 'EN' ? 'No reviews yet' : 'ยังไม่มีรีวิว'}</div>`
+    : reviews.map(r => {
+        const name = currentLang === 'EN' ? (r.fromEN || r.from) : r.from;
+        const text = currentLang === 'EN' ? (r.textEN || r.text) : r.text;
+        return `
+          <div class="review-card">
+            <div class="review-card-head">
+              <div class="review-card-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+              <div class="review-card-date">${r.date}</div>
+            </div>
+            <div class="review-card-text">${text}</div>
+            <div class="review-card-from">— ${name}</div>
+          </div>
+        `;
+      }).join('');
+
+  showSheet(`
+    <div class="sheet-grab"></div>
+    <div class="rating-summary">
+      <div class="rating-big">${avgRating}</div>
+      <div class="rating-stars-big">★★★★★</div>
+      <div class="rating-count">${reviews.length} ${currentLang === 'EN' ? 'reviews' : 'รีวิว'}</div>
+    </div>
+    <div style="margin-top:16px">${reviewsHtml}</div>
+  `);
+}
+
+// ให้คะแนนแอป
+function showRateApp() {
+  let selectedStars = 0;
+  showSheet(`
+    <div class="sheet-grab"></div>
+    <div class="rate-app-content">
+      <div class="rate-app-emoji" style="font-size:32px;font-weight:800;color:var(--primary);font-family:'Manrope',sans-serif">Coolpar</div>
+      <div class="rate-app-title">${currentLang === 'EN' ? 'Enjoying Coolpar?' : 'ชอบ Coolpar ไหม?'}</div>
+      <div class="rate-app-sub">${currentLang === 'EN' ? 'Tap a star to rate us' : 'แตะดาวเพื่อให้คะแนน'}</div>
+      <div class="rate-stars" id="rate-app-stars">
+        ${[1,2,3,4,5].map(n => `<span class="rate-star" data-star="${n}" onclick="setAppStars(${n})">☆</span>`).join('')}
+      </div>
+      <button class="btn-primary" id="rate-submit" style="margin-top:18px;opacity:0.5;pointer-events:none" onclick="submitAppRating()">
+        ${currentLang === 'EN' ? 'Submit' : 'ส่งคะแนน'}
+      </button>
+    </div>
+  `);
+}
+
+let appRatingValue = 0;
+function setAppStars(n) {
+  appRatingValue = n;
+  const stars = document.querySelectorAll('#rate-app-stars .rate-star');
+  stars.forEach((s, i) => {
+    s.textContent = i < n ? '★' : '☆';
+    s.classList.toggle('lit', i < n);
+  });
+  const btn = document.getElementById('rate-submit');
+  if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+}
+
+function submitAppRating() {
+  closeSheet();
+  if (appRatingValue >= 4) {
+    showToast(currentLang === 'EN' ? '🙏 Thank you! Redirecting to store...' : '🙏 ขอบคุณ! กำลังไปหน้า store...');
+  } else {
+    showToast(currentLang === 'EN' ? '🙏 Thanks for your feedback!' : '🙏 ขอบคุณสำหรับความคิดเห็น!');
+  }
+  appRatingValue = 0;
+}
+
+// ====== Rate a trip (หลังทริปจบ) ======
+let tripRatingValue = 0;
+let tripRatingTarget = null;
+
+function showTripRating(targetName, targetNameEN) {
+  tripRatingValue = 0;
+  tripRatingTarget = currentLang === 'EN' ? (targetNameEN || targetName) : targetName;
+  const name = tripRatingTarget;
+
+  showSheet(`
+    <div class="sheet-grab"></div>
+    <div class="rate-app-content">
+      <div class="rate-trip-avatar">${name.charAt(0)}</div>
+      <div class="rate-app-title">${currentLang === 'EN' ? 'How was your trip with' : 'ทริปกับ'} ${name}?</div>
+      <div class="rate-app-sub">${currentLang === 'EN' ? 'Rate your experience' : 'ให้คะแนนประสบการณ์'}</div>
+      <div class="rate-stars" id="trip-rate-stars">
+        ${[1,2,3,4,5].map(n => `<span class="rate-star" data-star="${n}" onclick="setTripStars(${n})">☆</span>`).join('')}
+      </div>
+      <textarea class="rate-comment" id="trip-rate-comment" placeholder="${currentLang === 'EN' ? 'Add a comment (optional)' : 'เพิ่มความคิดเห็น (ไม่บังคับ)'}" rows="3"></textarea>
+      <button class="btn-primary" id="trip-rate-submit" style="opacity:0.5;pointer-events:none" onclick="submitTripRating()">
+        ${currentLang === 'EN' ? 'Submit review' : 'ส่งรีวิว'}
+      </button>
+    </div>
+  `);
+}
+
+function setTripStars(n) {
+  tripRatingValue = n;
+  const stars = document.querySelectorAll('#trip-rate-stars .rate-star');
+  stars.forEach((s, i) => {
+    s.textContent = i < n ? '★' : '☆';
+    s.classList.toggle('lit', i < n);
+  });
+  const btn = document.getElementById('trip-rate-submit');
+  if (btn) { btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+}
+
+function submitTripRating() {
+  const comment = document.getElementById('trip-rate-comment')?.value.trim() || '';
+  closeSheet();
+  showToast(currentLang === 'EN'
+    ? `✓ Thanks! You rated ${tripRatingTarget} ${tripRatingValue}★`
+    : `✓ ขอบคุณ! ให้ ${tripRatingTarget} ${tripRatingValue}★`);
+  tripRatingValue = 0;
+  tripRatingTarget = null;
+}
+
+// ====== Generic bottom sheet ======
+function showSheet(innerHtml) {
+  document.querySelectorAll('.cp-sheet-overlay').forEach(el => el.remove());
+  const phone = document.querySelector('.phone');
+  if (!phone) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'cp-sheet-overlay';
+  overlay.innerHTML = `<div class="cp-sheet" onclick="event.stopPropagation()">${innerHtml}</div>`;
+  overlay.onclick = closeSheet;
+  phone.appendChild(overlay);
+  setTimeout(() => overlay.classList.add('show'), 10);
+}
+
+function closeSheet() {
+  document.querySelectorAll('.cp-sheet-overlay').forEach(el => {
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 300);
+  });
+}
+// ====== Rating System end ======
 
 function incrementStep() {
   // legacy — เผื่อมี caller เก่า
@@ -4952,20 +6248,20 @@ function generatePostContent(p) {
       <h3>📅 Best time to visit</h3>
       <p>The weather is amazing from <span class="highlight">November to February</span>. Cool, dry, and perfect for outdoor activities. If you can avoid the rainy season (June-October), do it.</p>
 
-      <h3>🚗 How to get there</h3>
+      <h3>How to get there</h3>
       <p>I carpooled with <strong>${postAuthor(p)}</strong> through Coolpar — saved about ฿1,200 vs flying! The drive was scenic and we made several stops along the way for coffee and food.</p>
 
       <h3>💰 Budget breakdown</h3>
       <p>For 3 days 2 nights:</p>
       <p>• Transport: ฿650<br>• Accommodation: ฿1,500/night<br>• Food: ~฿500/day<br>• Activities: ฿800<br><strong>Total: ~฿5,500 per person</strong></p>
 
-      <h3>📍 Must-visit spots</h3>
+      <h3>Must-visit spots</h3>
       <p>The viewpoints in ${province} are absolutely stunning, especially during sunrise. Bring a camera and arrive early — the morning light is magical.</p>
 
       <h3>🍜 Where to eat</h3>
       <p>Local street food is incredible. Try the night market — everything is fresh and inexpensive. Don't miss the local specialties unique to this region.</p>
 
-      <h3>💡 Tips & tricks</h3>
+      <h3>Tips & tricks</h3>
       <p>1. Book accommodation 2-3 weeks ahead during peak season<br>2. Cash is king — many small shops don't accept cards<br>3. Download offline maps before leaving<br>4. Pack light layers — weather changes fast in the mountains</p>
 
       <p>Overall, this was one of the best trips I've taken this year. ${province} has so much to offer beyond the typical tourist spots. Happy travels!</p>
@@ -4977,20 +6273,20 @@ function generatePostContent(p) {
     <h3>📅 ช่วงไหนไปดีที่สุด</h3>
     <p>อากาศกำลังดีช่วง <span class="highlight">พฤศจิกายน - กุมภาพันธ์</span> เย็นสบาย แห้ง ทำกิจกรรมกลางแจ้งได้สบาย ถ้าเลี่ยงหน้าฝน (มิ.ย.-ต.ค.) ได้จะดีมาก</p>
 
-    <h3>🚗 ไปยังไง</h3>
+    <h3>ไปยังไง</h3>
     <p>ผมแชร์รถกับ <strong>${postAuthor(p)}</strong> ผ่าน Coolpar ประหยัดไปประมาณ ฿1,200 เทียบกับนั่งเครื่อง วิวระหว่างทางสวยมาก แวะถ่ายรูป กินกาแฟกันเรื่อยๆ</p>
 
     <h3>💰 งบประมาณ</h3>
     <p>สำหรับทริป 3 วัน 2 คืน:</p>
     <p>• ค่าเดินทาง: ฿650<br>• ที่พัก: ฿1,500/คืน<br>• อาหาร: ประมาณ ฿500/วัน<br>• กิจกรรม: ฿800<br><strong>รวม: ประมาณ ฿5,500/คน</strong></p>
 
-    <h3>📍 จุดต้องไป</h3>
+    <h3>จุดต้องไป</h3>
     <p>จุดชมวิวที่ ${province} สวยมากๆ โดยเฉพาะตอนพระอาทิตย์ขึ้น เอากล้องไปด้วย และไปให้เช้าหน่อย แสงเช้าสวยที่สุด</p>
 
     <h3>🍜 กินที่ไหนดี</h3>
     <p>street food ดีมาก ลองไปตลาดกลางคืนสิ ทุกอย่างสด ราคาไม่แพง อย่าพลาดอาหารพื้นเมืองของแต่ละจังหวัด รสชาติเฉพาะตัว</p>
 
-    <h3>💡 ทริค & เคล็ดลับ</h3>
+    <h3>ทริค & เคล็ดลับ</h3>
     <p>1. จองที่พักล่วงหน้า 2-3 สัปดาห์ในช่วง high season<br>2. พกเงินสดเยอะหน่อย ร้านเล็กๆ ไม่รับบัตร<br>3. โหลด offline map ก่อนไป<br>4. ใส่เสื้อแบบเลเยอร์ อากาศบนเขาเปลี่ยนเร็ว</p>
 
     <p>โดยรวมเป็นทริปที่ดีที่สุดของปีนี้เลย ${province} มีอะไรน่าสนใจมากกว่าที่คิด หวังว่าจะเป็นประโยชน์นะครับ! 🌍</p>
@@ -5018,7 +6314,7 @@ function renderPostDetail() {
       <div class="post-card" onclick="openPostDetail(${realIdx})">
         <div class="post-cover">
           <img src="${rp.img}" alt="${postProvince(rp)}" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>
-          <div class="post-province-tag">📍 ${postProvince(rp)}</div>
+          <div class="post-province-tag">${postProvince(rp)}</div>
         </div>
         <div class="post-body">
           <div class="post-author">
@@ -5030,7 +6326,7 @@ function renderPostDetail() {
           <div class="post-title">${postTitle(rp)}</div>
           <div class="post-stats">
             <span class="post-stat liked">♥ ${formatLikes(rp.likes)}</span>
-            <span class="post-stat">💬 ${rp.comments}</span>
+            <span class="post-stat">${rp.comments}</span>
           </div>
         </div>
       </div>
@@ -5044,7 +6340,7 @@ function renderPostDetail() {
         <div class="post-hero">
           <img src="${p.img}" alt="${postProvince(p)}" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>
           <div class="post-hero-overlay"></div>
-          <div class="post-hero-province">📍 ${postProvince(p)}</div>
+          <div class="post-hero-province">${postProvince(p)}</div>
         </div>
       </div>
 
@@ -5170,7 +6466,7 @@ function renderStarSection() {
   if (filteredPosts.length === 0) {
     postsHtml = `
       <div class="no-results">
-        <div class="no-results-emoji">🔍</div>
+        
         ${t('noResults1')}${postSearch.query}${t('noResults2')}<br>
         ${t('noResultsHint')}
       </div>
@@ -5182,8 +6478,8 @@ function renderStarSection() {
       <div class="post-card" onclick="openPostDetail(${realIdx})">
         <div class="post-cover">
           <img src="${p.img}" alt="${postProvince(p)}" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>
-          <div class="post-rank ${i < 3 && !postSearch.query && postSearch.activeChip === 'all' ? 'top' : ''}">${i < 3 && !postSearch.query && postSearch.activeChip === 'all' ? '👑' : '#'}${i + 1}</div>
-          <div class="post-province-tag">📍 ${postProvince(p)}</div>
+          <div class="post-rank ${i < 3 && !postSearch.query && postSearch.activeChip === 'all' ? 'top' : ''}">#${i + 1}</div>
+          <div class="post-province-tag">${postProvince(p)}</div>
         </div>
         <div class="post-body">
           <div class="post-author">
@@ -5195,7 +6491,7 @@ function renderStarSection() {
           <div class="post-title">${postTitle(p)}</div>
           <div class="post-stats">
             <span class="post-stat liked">♥ ${formatLikes(p.likes)}</span>
-            <span class="post-stat">💬 ${p.comments}</span>
+            <span class="post-stat">${p.comments}</span>
           </div>
         </div>
       </div>
@@ -5212,7 +6508,11 @@ function renderStarSection() {
       </button>
     </div>
     <div class="post-search">
-      <span class="post-search-icon">🔍</span>
+      <span class="post-search-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </span>
       <input
         id="post-search-input"
         type="text"
@@ -5327,11 +6627,17 @@ function tripDriver(tr) { return currentLang === 'EN' ? (tr.driverEN || tr.drive
 function tripInitials(tr) { return currentLang === 'EN' ? (tr.initialsEN || tr.initials) : tr.initials; }
 
 // กรองทริปตาม homeSearch (ถ้ามี)
+function getAllTrips() {
+  // รวม mock + ทริปที่ผู้ใช้โพสต์เอง (ใหม่ที่สุดอยู่บน)
+  return [...userPostedTrips, ...availableTrips];
+}
+
 function filterAvailableTrips() {
   const from = homeSearch.from.trim();
   const to = homeSearch.to.trim();
-  if (!from && !to) return availableTrips;
-  return availableTrips.filter(tr => {
+  const all = getAllTrips();
+  if (!from && !to) return all;
+  return all.filter(tr => {
     const matchFrom = !from || tr.from.includes(from) || from.includes(tr.from);
     const matchTo = !to || tr.to.includes(to) || to.includes(tr.to);
     return matchFrom && matchTo;
@@ -5567,7 +6873,7 @@ function renderSearchPill() {
   if (!hasData) {
     wrap.innerHTML = `
       <div class="search-pill" onclick="openSearchSheet()">
-        <div class="pill-icon">🔍</div>
+        <div class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
         <div class="pill-text">
           <div class="pill-main">${t('pillStart')}</div>
           <div class="pill-sub">${t('pillSub')}</div>
@@ -5586,7 +6892,7 @@ function renderSearchPill() {
       : noDateText;
     wrap.innerHTML = `
       <div class="search-pill" onclick="openSearchSheet()">
-        <div class="pill-icon">🔍</div>
+        <div class="pill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
         <div class="pill-text">
           <div class="pill-main">${mainText}</div>
           <div class="pill-sub">${subText}</div>
@@ -5605,7 +6911,7 @@ function renderSearchTripScreen() {
   const tripsHtml = trips.length === 0
     ? `
       <div class="search-empty">
-        <div class="search-empty-emoji">🔍</div>
+        
         <div class="search-empty-title">${currentLang === 'EN' ? 'No trips found' : 'ยังไม่มีทริปนี้'}</div>
         <div class="search-empty-sub">${currentLang === 'EN' ? 'Try a different route or date' : 'ลองเส้นทางหรือวันอื่นดูสิ'}</div>
       </div>
@@ -5627,7 +6933,7 @@ function renderSearchTripScreen() {
             <div class="avatar ${tr.av}">${tripInitials(tr)}</div>
             <div class="stc-driver-info">
               <div class="stc-driver-name">${tripDriver(tr)}</div>
-              <div class="stc-driver-meta">⭐ ${tr.rating} · ${tr.seats}${seatsLabel}</div>
+              <div class="stc-driver-meta">★ ${tr.rating} · ${tr.seats}${seatsLabel}</div>
             </div>
             <div class="stc-cta">${currentLang === 'EN' ? 'View' : 'ดู'} →</div>
           </div>
@@ -5684,7 +6990,7 @@ function renderSearchTripScreen() {
 
       <!-- Search button big CTA -->
       <button class="st-search-cta" onclick="applySTSearch()">
-        🔍 ${currentLang === 'EN' ? 'Search rides' : 'ค้นหา'}
+        ${currentLang === 'EN' ? 'Search rides' : 'ค้นหา'}
       </button>
 
       <div class="st-section-title">
@@ -5710,7 +7016,7 @@ function onSTInput(which) {
   clearTimeout(acTimers['st_' + which]);
   acTimers['st_' + which] = setTimeout(async () => {
     if (acCache[q]) { renderSTAutocomplete(which, acCache[q]); return; }
-    list.innerHTML = `<div class="ac-loading">🔍 ${currentLang === 'EN' ? 'Searching...' : 'กำลังค้นหา...'}</div>`;
+    list.innerHTML = `<div class="ac-loading">${currentLang === "EN" ? "Searching..." : "กำลังค้นหา..."}</div>`;
     list.classList.add('show');
     try {
       const lang = currentLang === 'EN' ? 'en' : 'th';
@@ -5810,7 +7116,7 @@ function refreshSTTrips() {
   const toEl = document.getElementById('st-to');
   if (!fromEl || !toEl) return;
   const tempSearch = { from: fromEl.value.trim(), to: toEl.value.trim() };
-  const filtered = availableTrips.filter(tr => {
+  const filtered = getAllTrips().filter(tr => {
     const matchFrom = !tempSearch.from || tr.from.includes(tempSearch.from) || tempSearch.from.includes(tr.from);
     const matchTo = !tempSearch.to || tr.to.includes(tempSearch.to) || tempSearch.to.includes(tr.to);
     return matchFrom && matchTo;
@@ -5826,7 +7132,7 @@ function refreshSTTrips() {
   if (filtered.length === 0) {
     list.innerHTML = `
       <div class="search-empty">
-        <div class="search-empty-emoji">🔍</div>
+        
         <div class="search-empty-title">${currentLang === 'EN' ? 'No trips found' : 'ยังไม่มีทริปนี้'}</div>
         <div class="search-empty-sub">${currentLang === 'EN' ? 'Try a different route or date' : 'ลองเส้นทางหรือวันอื่นดูสิ'}</div>
       </div>
@@ -5850,7 +7156,7 @@ function refreshSTTrips() {
         <div class="avatar ${tr.av}">${tripInitials(tr)}</div>
         <div class="stc-driver-info">
           <div class="stc-driver-name">${tripDriver(tr)}</div>
-          <div class="stc-driver-meta">⭐ ${tr.rating} · ${tr.seats}${seatsLabel}</div>
+          <div class="stc-driver-meta">★ ${tr.rating} · ${tr.seats}${seatsLabel}</div>
         </div>
         <div class="stc-cta">${currentLang === 'EN' ? 'View' : 'ดู'} →</div>
       </div>
@@ -5877,7 +7183,7 @@ function refreshSheetTrips() {
   if (!fromEl || !toEl) return;
 
   const tempSearch = { from: fromEl.value.trim(), to: toEl.value.trim() };
-  const filtered = availableTrips.filter(tr => {
+  const filtered = getAllTrips().filter(tr => {
     const matchFrom = !tempSearch.from || tr.from.includes(tempSearch.from) || tempSearch.from.includes(tr.from);
     const matchTo = !tempSearch.to || tr.to.includes(tempSearch.to) || tempSearch.to.includes(tr.to);
     return matchFrom && matchTo;
@@ -5894,7 +7200,7 @@ function refreshSheetTrips() {
         <div class="avatar ${tr.av}">${tripInitials(tr)}</div>
         <div class="mini-trip-info">
           <div class="mini-trip-route">${tripFrom(tr)} → ${tripTo(tr)}</div>
-          <div class="mini-trip-meta">${tripDate(tr)} • ${tripDriver(tr)} • ⭐${tr.rating} • ${tr.seats}${seatsLabel}</div>
+          <div class="mini-trip-meta">${tripDate(tr)} • ${tripDriver(tr)} • ★ ${tr.rating} • ${tr.seats}${seatsLabel}</div>
         </div>
         <div class="mini-trip-price">฿${tr.price}<small>${t('perPerson')}</small></div>
       </div>
@@ -6085,7 +7391,7 @@ function updateHome() {
         <div class="avatar ${tr.av}">${tr.initials}</div>
         <div class="driver-info">
           <div>${tr.driver} • ${tr.car}</div>
-          <div class="driver-meta">⭐ ${tr.rating} • ${tr.seats}${t('seatsAvail')}</div>
+          <div class="driver-meta">★ ${tr.rating} • ${tr.seats}${t('seatsAvail')}</div>
         </div>
       </div>
     </div>
@@ -6134,7 +7440,7 @@ function getScreens() { return {
     <div class="driver-profile">
       <div class="avatar av-1">${currentLang === 'EN' ? 'SC' : 'สม'}</div>
       <div class="driver-name">${currentLang === 'EN' ? 'Somchai J.' : 'สมชาย จ.'}</div>
-      <div class="driver-rating">⭐ 4.8 • 124 ${currentLang === 'EN' ? 'trips' : 'เที่ยว'}</div>
+      <div class="driver-rating">★ 4.8 · 124 ${currentLang === 'EN' ? 'trips' : 'เที่ยว'}</div>
     </div>
 
     <div class="detail-map-box">
@@ -6161,13 +7467,12 @@ function getScreens() { return {
 
     <div class="passenger-pickup-section">
       <div class="passenger-pickup-info">
-        <span>💡</span>
         <span>${currentLang === 'EN' ? 'Tap any green dot — pay only for the distance you travel' : 'แตะจุดสีเขียวที่ต้องการขึ้น — จ่ายตามระยะที่นั่งจริง'}</span>
       </div>
 
       <div class="selected-pickup-summary" id="selected-pickup-summary" style="display:none">
         <div class="sps-info">
-          <div class="sps-label">📍 ${currentLang === 'EN' ? 'Boarding at' : 'ขึ้นรถที่'}</div>
+          <div class="sps-label">${currentLang === 'EN' ? 'Boarding at' : 'ขึ้นรถที่'}</div>
           <div class="sps-name" id="sps-name">—</div>
         </div>
         <div class="sps-price">
@@ -6180,7 +7485,7 @@ function getScreens() { return {
       <div class="pickup-list" id="passenger-pickup-list"></div>
     </div>
 
-    <button class="btn-primary" id="book-btn" onclick="bookSeat()">${currentLang === 'EN' ? '🚗 Book this seat' : '🚗 จองที่นั่งนี้'}</button>
+    <button class="btn-primary" id="book-btn" onclick="bookSeat()">${currentLang === 'EN' ? 'Book this seat' : 'จองที่นั่งนี้'}</button>
   `,
   post: `
     <h2>${t('postTitle')}</h2>
@@ -6250,7 +7555,7 @@ function getScreens() { return {
         <span class="pib-value">฿<span id="price-total">—</span></span>
       </div>
       <div class="price-feedback" id="price-feedback">
-        <span id="price-feedback-text">⭐</span>
+        <span id="price-feedback-text">${t('priceFb1')}</span>
       </div>
     </div>
 
@@ -6292,7 +7597,6 @@ function getScreens() { return {
         </div>
 
         <div class="pickup-info-bar">
-          <span class="ico">💡</span>
           <span>${t('pickupHint')}</span>
         </div>
 
@@ -6698,7 +8002,7 @@ async function onPlaceInput(which) {
       return;
     }
 
-    list.innerHTML = `<div class="ac-loading">🔍 ${currentLang === 'EN' ? 'Searching...' : 'กำลังค้นหา...'}</div>`;
+    list.innerHTML = `<div class="ac-loading">${currentLang === "EN" ? "Searching..." : "กำลังค้นหา..."}</div>`;
     list.classList.add('show');
 
     try {
@@ -6791,6 +8095,62 @@ function goToMap() {
 }
 
 function confirmPost() {
+  if (!requireLogin(currentLang === 'EN' ? 'post a trip' : 'โพสต์ทริป')) return;
+
+  // ตรวจ field ขั้นต่ำ
+  const fromVal = document.getElementById('in-from')?.value.trim() || tripData.from;
+  const toVal = document.getElementById('in-to')?.value.trim() || tripData.to;
+  const dateVal = document.getElementById('in-date')?.value || tripData.date;
+  const timeVal = document.getElementById('in-time')?.value || tripData.time || '07:00';
+
+  if (!fromVal || !toVal) {
+    showToast(currentLang === 'EN' ? 'Please enter from/to' : 'กรุณากรอกต้นทางและปลายทาง');
+    return;
+  }
+
+  // คำนวณราคาต่อที่นั่ง (mock: ระยะ * price/km / 1 ที่นั่ง = ผู้โดยสารจ่ายเอง)
+  const pricePerKm = tripData.pricePerKm || 1.5;
+  const distKm = tripData.distanceKm || 696; // fallback
+  const pricePerSeat = Math.round(distKm * pricePerKm);
+
+  // สร้าง trip object
+  const tripId = genTripId();
+  const driverName = userProfile.name || 'คุณวีรนุช';
+  const driverNameEN = userProfile.nameEN || 'Weeranuch';
+  const newTrip = {
+    id: tripId,
+    from: fromVal, to: toVal,
+    date: dateVal, time: timeVal,
+    driver: driverName, driverEN: driverNameEN,
+    av: 'av-1',
+    rating: 5.0,
+    seats: 3,
+    price: pricePerSeat,
+    pricePerKm: pricePerKm,
+    distKm: distKm,
+    ownerByMe: true,
+    posted: Date.now()
+  };
+
+  // 1. เพิ่มเข้า userPostedTrips (สำหรับให้คนอื่นค้นเจอ)
+  userPostedTrips.unshift(newTrip);
+  saveUserPostedTrips();
+
+  // 2. เพิ่มเข้า myTrips.driver.upcoming (เห็นในหน้าทริปของฉัน)
+  const displayTime = formatTripDate(dateVal, timeVal);
+  myTrips.driver.upcoming.unshift({
+    id: tripId,
+    time: displayTime,
+    timeEN: displayTime,
+    from: fromVal, fromEN: fromVal,
+    to: toVal, toEN: toVal,
+    other: currentLang === 'EN' ? 'Waiting for passengers' : 'รอผู้โดยสาร',
+    otherEN: 'Waiting for passengers',
+    price: pricePerSeat,
+    status: 'confirmed'
+  });
+  saveMyTrips();
+
   showReturnDialog();
 }
 
@@ -6824,7 +8184,7 @@ function showReturnDialog() {
         <div class="avatar ${tr.av}">${tripInitials(tr)}</div>
         <div class="rtc-info">
           <div class="rtc-time">${tripDate(tr)}</div>
-          <div class="rtc-driver">${tripDriver(tr)} • ⭐${tr.rating} • ${tr.seats}${t('seatsAvail')}</div>
+          <div class="rtc-driver">${tripDriver(tr)} • ★ ${tr.rating} • ${tr.seats}${t('seatsAvail')}</div>
         </div>
         <div class="rtc-price">฿${tr.price}</div>
       </div>
@@ -7465,27 +8825,341 @@ function selectPassengerPickup(idx, remainKm, pricePerKm, name) {
   const btn = document.getElementById('book-btn');
   if (btn) {
     if (idx === 0) {
-      btn.textContent = currentLang === 'EN' ? '🚗 Book this seat (full route)' : '🚗 จองที่นั่งนี้ (เต็มเส้นทาง)';
+      btn.textContent = currentLang === 'EN' ? 'Book this seat (full route)' : 'จองที่นั่งนี้ (เต็มเส้นทาง)';
     } else {
-      btn.textContent = currentLang === 'EN' ? `🚗 Book from ${name}` : `🚗 จองจาก ${name}`;
+      btn.textContent = currentLang === 'EN' ? `Book from ${name}` : `จองจาก ${name}`;
     }
   }
 }
 
 function bookSeat() {
-  if (!passengerSelectedPickup) {
-    alert(t('bookSuccess'));
-    return;
+  if (!requireLogin(currentLang === 'EN' ? 'book a seat' : 'จองที่นั่ง')) return;
+
+  // mock: ทริปนี้คือกรุงเทพ → เชียงใหม่ คนขับสมชาย
+  const mockTrip = {
+    from: currentLang === 'EN' ? 'Bangkok' : 'กรุงเทพฯ',
+    fromEN: 'Bangkok',
+    to: currentLang === 'EN' ? 'Chiang Mai' : 'เชียงใหม่',
+    toEN: 'Chiang Mai',
+    other: 'สมชาย',
+    otherEN: 'Somchai'
+  };
+
+  const price = passengerSelectedPickup ? passengerSelectedPickup.price : 650;
+  const pickupName = passengerSelectedPickup ? passengerSelectedPickup.name : mockTrip.from;
+  const km = passengerSelectedPickup ? passengerSelectedPickup.remainKm.toFixed(0) : '696';
+
+  // เพิ่มเข้า myTrips.passenger.upcoming
+  const bookingId = genTripId();
+  myTrips.passenger.upcoming.unshift({
+    id: bookingId,
+    time: currentLang === 'EN' ? 'Tomorrow 07:00' : 'พรุ่งนี้ 07:00',
+    timeEN: 'Tomorrow 07:00',
+    from: pickupName,
+    fromEN: pickupName,
+    to: mockTrip.to,
+    toEN: mockTrip.toEN,
+    other: mockTrip.other,
+    otherEN: mockTrip.otherEN,
+    price: price,
+    pickupName: pickupName,
+    distKm: km,
+    status: 'pending'
+  });
+  saveMyTrips();
+
+  showBookingConfirmation(bookingId, pickupName, mockTrip.to, price, km, mockTrip.other);
+}
+
+// หน้า booking confirmation
+function showBookingConfirmation(bookingId, from, to, price, km, driver) {
+  showSheet(`
+    <div class="sheet-grab"></div>
+    <div class="booking-confirm">
+      <div class="bc-icon">✓</div>
+      <div class="bc-title">${currentLang === 'EN' ? 'Booking confirmed!' : 'จองสำเร็จแล้ว!'}</div>
+      <div class="bc-sub">${currentLang === 'EN' ? 'Your booking ID' : 'รหัสการจอง'}: <b>${bookingId.slice(-8).toUpperCase()}</b></div>
+
+      <div class="bc-box">
+        <div class="bc-row"><span class="bc-label">${currentLang === 'EN' ? 'From' : 'ขึ้นที่'}</span><span class="bc-val">${from}</span></div>
+        <div class="bc-row"><span class="bc-label">${currentLang === 'EN' ? 'To' : 'ปลายทาง'}</span><span class="bc-val">${to}</span></div>
+        <div class="bc-row"><span class="bc-label">${currentLang === 'EN' ? 'Driver' : 'คนขับ'}</span><span class="bc-val">${driver}</span></div>
+        <div class="bc-row"><span class="bc-label">${currentLang === 'EN' ? 'Distance' : 'ระยะ'}</span><span class="bc-val">${km} ${currentLang === 'EN' ? 'km' : 'กม.'}</span></div>
+        <div class="bc-row bc-total"><span class="bc-label">${currentLang === 'EN' ? 'Total' : 'ยอดรวม'}</span><span class="bc-val">฿${price.toLocaleString()}</span></div>
+      </div>
+
+      <button class="btn-primary" onclick="closeSheet();show('trips');">
+        ${currentLang === 'EN' ? 'View my trips' : 'ดูการเดินทางของฉัน'}
+      </button>
+      <button class="bc-secondary" onclick="closeSheet();show('home');">
+        ${currentLang === 'EN' ? 'Back to home' : 'กลับหน้าหลัก'}
+      </button>
+    </div>
+  `);
+}
+
+// ยกเลิกทริป (ลบจาก myTrips)
+function cancelMyTrip(tripId, role) {
+  const confirmMsg = currentLang === 'EN' ? 'Cancel this trip?' : 'ยกเลิกทริปนี้?';
+  if (!confirm(confirmMsg)) return;
+
+  myTrips[role].upcoming = myTrips[role].upcoming.filter(tr => tr.id !== tripId);
+  // ถ้าเป็น driver ลบจาก userPostedTrips ด้วย
+  if (role === 'driver') {
+    userPostedTrips = userPostedTrips.filter(tr => tr.id !== tripId);
+    saveUserPostedTrips();
   }
-  const msg = currentLang === 'EN'
-    ? `✓ Booked!\n\nBoarding at: ${passengerSelectedPickup.name}\nDistance: ${passengerSelectedPickup.remainKm.toFixed(0)} km\nTotal: ฿${passengerSelectedPickup.price}`
-    : `✓ จองสำเร็จ!\n\nขึ้นที่: ${passengerSelectedPickup.name}\nระยะ: ${passengerSelectedPickup.remainKm.toFixed(0)} กม.\nยอดรวม: ฿${passengerSelectedPickup.price}`;
-  alert(msg);
+  saveMyTrips();
+  showToast(currentLang === 'EN' ? '✓ Trip canceled' : '✓ ยกเลิกแล้ว');
   show('trips');
 }
 
-navBtns.forEach(b => b.addEventListener('click', () => show(b.dataset.screen)));
-show('home');
+// ====== Auth System ======
+const AUTH_KEY = 'coolpar_auth';
+let authState = {
+  isLoggedIn: false,
+  isGuest: false,
+  user: null  // { name, email, phone, photo, provider }
+};
+
+// โหลด session เก่าจาก localStorage
+function loadAuthSession() {
+  try {
+    const saved = localStorage.getItem(AUTH_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      authState = parsed;
+      // sync กับ userProfile
+      if (parsed.user) {
+        if (parsed.user.name) userProfile.name = parsed.user.name;
+        if (parsed.user.nameEN) userProfile.nameEN = parsed.user.nameEN;
+        if (parsed.user.email) userProfile.email = parsed.user.email;
+        if (parsed.user.phone) userProfile.phone = parsed.user.phone;
+        if (parsed.user.photo) {
+          userProfile.photo = parsed.user.photo;
+          userProfile.done.photo = true;
+        }
+      }
+      return true;
+    }
+  } catch (e) {}
+  return false;
+}
+
+function saveAuthSession() {
+  try {
+    localStorage.setItem(AUTH_KEY, JSON.stringify(authState));
+  } catch (e) {}
+}
+
+// แสดง splash + ตัดสินใจไปหน้าไหน
+function initApp() {
+  loadAuthSession();
+  // splash จะ fade out auto จาก CSS animation
+  setTimeout(() => {
+    const splash = document.getElementById('splash-screen');
+    if (splash) splash.style.display = 'none';
+
+    if (authState.isLoggedIn || authState.isGuest) {
+      // ข้าม welcome → เข้าหน้าหลัก
+      const welcome = document.getElementById('welcome-screen');
+      if (welcome) welcome.style.display = 'none';
+      show('home');
+    } else {
+      // โชว์ welcome
+      const welcome = document.getElementById('welcome-screen');
+      if (welcome) welcome.style.display = 'block';
+    }
+  }, 2100);
+}
+
+// กดโลโก้ splash → ข้ามไปหน้า welcome (สำหรับ demo/dev — ดู login ได้เสมอ)
+function resetToWelcome() {
+  const splash = document.getElementById('splash-screen');
+  if (splash) splash.style.display = 'none';
+  const welcome = document.getElementById('welcome-screen');
+  if (welcome) {
+    welcome.style.display = 'block';
+    welcome.scrollTop = 0;
+  }
+}
+
+function toggleOtherAuth() {
+  const list = document.getElementById('other-auth-list');
+  const arrow = document.getElementById('other-auth-arrow');
+  const label = document.getElementById('other-auth-label');
+  if (!list) return;
+  const isOpen = list.style.display !== 'none';
+  list.style.display = isOpen ? 'none' : 'flex';
+  if (arrow) arrow.textContent = isOpen ? '▾' : '▴';
+  if (label) label.textContent = isOpen
+    ? (currentLang === 'EN' ? 'Other options' : 'อื่นๆ')
+    : (currentLang === 'EN' ? 'Hide options' : 'ซ่อน');
+}
+
+function loginWith(provider) {
+  // ข้อมูล mock ตาม provider
+  const mockUsers = {
+    google: { name: 'วีรนุช', nameEN: 'Weeranuch', email: 'weeranuch@gmail.com', phone: '', provider: 'google' },
+    apple: { name: 'วีรนุช', nameEN: 'Weeranuch', email: 'weeranuch@privaterelay.appleid.com', phone: '', provider: 'apple' },
+    facebook: { name: 'วีรนุช', nameEN: 'Weeranuch', email: 'weeranuch@fb.com', phone: '', provider: 'facebook' },
+    email: null, // ต้องไปหน้ากรอก
+    phone: null  // ต้องไปหน้ากรอก
+  };
+
+  if (provider === 'email') {
+    showEmailLogin();
+    return;
+  }
+  if (provider === 'phone') {
+    showPhoneLogin();
+    return;
+  }
+
+  const user = mockUsers[provider];
+  if (!user) return;
+
+  authState.isLoggedIn = true;
+  authState.isGuest = false;
+  authState.user = user;
+  // sync กับ userProfile
+  userProfile.name = user.name;
+  userProfile.nameEN = user.nameEN;
+  userProfile.email = user.email;
+  userProfile.done.email = true; // จาก provider แล้ว verify ในตัว
+
+  saveAuthSession();
+
+  // hide welcome → home
+  const welcome = document.getElementById('welcome-screen');
+  if (welcome) welcome.style.display = 'none';
+  show('home');
+}
+
+function enterGuestMode() {
+  authState.isLoggedIn = false;
+  authState.isGuest = true;
+  authState.user = null;
+  saveAuthSession();
+  const welcome = document.getElementById('welcome-screen');
+  if (welcome) welcome.style.display = 'none';
+  show('home');
+}
+
+function logout() {
+  const msg = currentLang === 'EN' ? 'Log out?' : 'ออกจากระบบใช่ไหม?';
+  if (!confirm(msg)) return;
+  authState = { isLoggedIn: false, isGuest: false, user: null };
+  try { localStorage.removeItem(AUTH_KEY); } catch (e) {}
+  // reset profile photo
+  userProfile.photo = null;
+  userProfile.done = { photo: false, id: false, email: false, phone: false, vehicle: false };
+  // โชว์ welcome อีกครั้ง
+  const welcome = document.getElementById('welcome-screen');
+  if (welcome) {
+    welcome.style.display = 'block';
+    welcome.scrollTop = 0;
+  }
+}
+
+// Gate: ตรวจว่า login หรือไม่ ถ้าไม่ → modal ขอ login
+function requireLogin(actionLabel) {
+  if (authState.isLoggedIn) return true;
+  showLoginRequired(actionLabel);
+  return false;
+}
+
+function showLoginRequired(actionLabel) {
+  // ลบ modal เก่า
+  document.querySelectorAll('.login-required-modal').forEach(el => el.remove());
+
+  const phone = document.querySelector('.phone');
+  if (!phone) return;
+
+  const title = currentLang === 'EN' ? 'Sign in required' : 'ต้องเข้าสู่ระบบ';
+  const sub = actionLabel
+    ? (currentLang === 'EN' ? `Sign in to ${actionLabel}` : `กรุณาเข้าสู่ระบบเพื่อ${actionLabel}`)
+    : (currentLang === 'EN' ? 'Sign in to use this feature' : 'กรุณาเข้าสู่ระบบเพื่อใช้งาน');
+
+  const modal = document.createElement('div');
+  modal.className = 'login-required-modal';
+  modal.innerHTML = `
+    <div class="login-required-card" onclick="event.stopPropagation()">
+      <div class="lr-emoji">🔐</div>
+      <div class="lr-title">${title}</div>
+      <div class="lr-sub">${sub}</div>
+      <div class="lr-actions">
+        <button class="lr-primary" onclick="goToLogin()">${currentLang === 'EN' ? 'Sign in / Sign up' : 'เข้าสู่ระบบ / สมัคร'}</button>
+        <button class="lr-secondary" onclick="closeLoginRequired()">${currentLang === 'EN' ? 'Not now' : 'ไว้ก่อน'}</button>
+      </div>
+    </div>
+  `;
+  modal.onclick = closeLoginRequired;
+  phone.appendChild(modal);
+}
+
+function closeLoginRequired() {
+  document.querySelectorAll('.login-required-modal').forEach(el => el.remove());
+}
+
+function goToLogin() {
+  closeLoginRequired();
+  const welcome = document.getElementById('welcome-screen');
+  if (welcome) {
+    welcome.style.display = 'block';
+    welcome.scrollTop = 0;
+  }
+}
+
+// หน้า login ด้วยอีเมล (popup ง่ายๆ)
+function showEmailLogin() {
+  const email = prompt(currentLang === 'EN' ? 'Email:' : 'อีเมล:');
+  if (!email) return;
+  const pw = prompt(currentLang === 'EN' ? 'Password:' : 'รหัสผ่าน:');
+  if (!pw) return;
+
+  authState.isLoggedIn = true;
+  authState.isGuest = false;
+  authState.user = { name: 'วีรนุช', nameEN: 'Weeranuch', email, phone: '', provider: 'email' };
+  userProfile.name = 'วีรนุช';
+  userProfile.nameEN = 'Weeranuch';
+  userProfile.email = email;
+  userProfile.done.email = true;
+  saveAuthSession();
+  const welcome = document.getElementById('welcome-screen');
+  if (welcome) welcome.style.display = 'none';
+  show('home');
+}
+
+// หน้า login ด้วยเบอร์ + OTP
+function showPhoneLogin() {
+  const phone = prompt(currentLang === 'EN' ? 'Phone number:' : 'เบอร์โทรศัพท์:');
+  if (!phone) return;
+  const otp = prompt(currentLang === 'EN' ? 'Enter OTP (any 6 digits):' : 'กรอกรหัส OTP (6 หลักอะไรก็ได้):');
+  if (!otp || otp.length < 4) return;
+
+  authState.isLoggedIn = true;
+  authState.isGuest = false;
+  authState.user = { name: 'วีรนุช', nameEN: 'Weeranuch', email: '', phone, provider: 'phone' };
+  userProfile.name = 'วีรนุช';
+  userProfile.nameEN = 'Weeranuch';
+  userProfile.phone = phone;
+  userProfile.done.phone = true;
+  saveAuthSession();
+  const welcome = document.getElementById('welcome-screen');
+  if (welcome) welcome.style.display = 'none';
+  show('home');
+}
+// ====== Auth System end ======
+
+navBtns.forEach(b => b.addEventListener('click', () => {
+  // ทุกครั้งกด nav: ถ้า guest mode + กดอะไรนอกจาก home → ขอ login (ยกเว้น home)
+  // ปล่อยให้กดได้ทุก tab แต่ action ใน tab จะ gate ทีหลัง
+  show(b.dataset.screen);
+}));
+
+// init: splash → welcome/home
+initApp();
 </script>
 </body>
 </html>
