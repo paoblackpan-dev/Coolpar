@@ -471,6 +471,159 @@
     justify-content: center;
     border-radius: 12px;
     background: var(--bg-soft);
+    position: relative;
+    transition: all 0.15s;
+  }
+  .bell:hover { background: var(--primary-light); color: var(--primary); }
+  .bell-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: #DC2626;
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+    border: 2px solid var(--bg);
+    box-sizing: border-box;
+  }
+
+  /* Notification panel */
+  .notif-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0);
+    z-index: 7500;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    transition: background 0.25s;
+  }
+  .notif-overlay.show { background: rgba(0,0,0,0.35); }
+  .notif-panel {
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    transform: translateY(-100%);
+    transition: transform 0.3s cubic-bezier(0.34, 1.3, 0.64, 1);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .notif-overlay.show .notif-panel { transform: translateY(0); }
+  .notif-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 2;
+  }
+  .notif-back {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--bg-soft);
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: var(--text);
+    font-family: inherit;
+  }
+  .notif-title {
+    flex: 1;
+    font-size: 22px;
+    font-weight: 800;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    letter-spacing: -0.5px;
+  }
+  .notif-clear {
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: inherit;
+  }
+  .notif-clear:hover { color: var(--primary); border-color: var(--primary); }
+  .notif-list { flex: 1; padding: 8px 0 30px; }
+  .notif-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.1s;
+    position: relative;
+  }
+  .notif-item:hover { background: var(--bg-soft); }
+  .notif-item.unread { background: var(--primary-light); }
+  .notif-item.unread::before {
+    content: '';
+    position: absolute;
+    left: 10px; top: 22px;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--primary);
+  }
+  .notif-icon {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--primary);
+  }
+  .notif-icon-booking { background: var(--primary-light); color: var(--primary-dark); border-color: var(--primary-light); }
+  .notif-icon-msg { background: #E0E7FF; color: #4338CA; border-color: #E0E7FF; }
+  .notif-icon-trip { background: #FEF3C7; color: #B45309; border-color: #FEF3C7; }
+  .notif-icon-rating { background: #FCE7F3; color: #BE185D; border-color: #FCE7F3; }
+  .notif-icon-system { background: var(--bg-soft); color: var(--text-muted); }
+  .notif-body { flex: 1; min-width: 0; }
+  .notif-msg {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text);
+  }
+  .notif-time {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  .notif-empty {
+    text-align: center;
+    padding: 60px 30px;
+    color: var(--text-muted);
+  }
+  .notif-empty-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 14px 0 6px;
+    color: var(--text);
+  }
+  .notif-empty-sub {
+    font-size: 13px;
+    line-height: 1.5;
+    font-weight: 500;
   }
 
   /* language toggle (TH/EN swap) */
@@ -3280,6 +3433,521 @@
   }
   .trip-cancel-btn:hover { background: #FEE2E2; }
 
+  /* Route options (เลือกเส้นทาง 3 ทางเลือก) */
+  .route-options-row {
+    display: flex;
+    gap: 6px;
+    margin: 10px 0 12px;
+  }
+  .route-option {
+    flex: 1;
+    padding: 8px 6px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    cursor: pointer;
+    text-align: center;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .route-option:hover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+  }
+  .route-option.active {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: white;
+  }
+  .ro-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: -0.1px;
+  }
+  .ro-meta {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 2px;
+    font-family: 'Manrope', sans-serif;
+  }
+  .route-option.active .ro-meta { color: rgba(255,255,255,0.8); }
+  .route-option.active .ro-label { color: white; }
+
+  /* ====== Payment / Vehicles / Earnings / Filter ====== */
+  .payment-picker, .search-filters { padding: 8px 0; }
+  .pp-title {
+    font-size: 18px;
+    font-weight: 800;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    letter-spacing: -0.4px;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .pp-methods, .pp-types { display: flex; flex-direction: column; gap: 8px; }
+  .pp-method, .pp-type {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 13px;
+    cursor: pointer;
+    width: 100%;
+    font-family: inherit;
+    text-align: left;
+    transition: all 0.15s;
+  }
+  .pp-method:hover, .pp-type:hover {
+    border-color: var(--primary);
+    background: var(--bg-soft);
+  }
+  .pp-method.selected {
+    border-color: var(--primary);
+    background: var(--primary-light);
+  }
+  .pp-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: var(--bg-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+  .pp-method.selected .pp-icon { background: var(--primary); color: white; }
+  .pp-info { flex: 1; min-width: 0; }
+  .pp-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .pp-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 1px;
+    font-family: 'Manrope', sans-serif;
+  }
+  .pp-check {
+    font-size: 20px;
+    color: var(--text-light);
+  }
+  .pp-method.selected .pp-check { color: var(--primary); }
+  .pp-add {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1.5px dashed var(--border-strong);
+    border-radius: 12px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    margin-top: 8px;
+    transition: all 0.15s;
+  }
+  .pp-add:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+  /* payment methods screen */
+  .pp-methods-screen {
+    padding: 0 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .pp-method-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+  .pp-del {
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid #FCA5A5;
+    color: #DC2626;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* vehicles */
+  .vehicles-list { padding: 0 22px; display: flex; flex-direction: column; gap: 10px; }
+  .vehicle-card {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+  .vc-photo {
+    width: 70px; height: 70px;
+    border-radius: 12px;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--bg-soft);
+    flex-shrink: 0;
+  }
+  .vc-photo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+  }
+  .vc-info { flex: 1; min-width: 0; }
+  .vc-name {
+    font-size: 15px;
+    font-weight: 800;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+  .vc-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .vc-plate {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 2px 8px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text);
+    font-family: 'Manrope', monospace;
+  }
+  .vc-del {
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid #FCA5A5;
+    color: #DC2626;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* earnings */
+  .earnings-summary {
+    padding: 4px 22px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .earn-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 16px;
+  }
+  .earn-card-primary {
+    background: linear-gradient(135deg, #00C49E 0%, #00A082 100%);
+    color: white;
+    border-color: var(--primary);
+  }
+  .earn-row { display: flex; gap: 10px; }
+  .earn-row .earn-card { flex: 1; }
+  .earn-label {
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.85;
+    margin-bottom: 4px;
+  }
+  .earn-value {
+    font-size: 28px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.8px;
+    line-height: 1;
+  }
+  .earn-value-sm {
+    font-size: 20px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+    letter-spacing: -0.5px;
+    color: var(--primary);
+  }
+  .earn-chart-section { padding: 6px 22px; }
+  .earn-chart-title {
+    font-size: 14px;
+    font-weight: 800;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+  .earn-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 140px;
+    padding: 0 4px;
+  }
+  .earn-bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .earn-bar-wrap {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .earn-bar {
+    width: 70%;
+    background: linear-gradient(180deg, #00C49E, #00A082);
+    border-radius: 6px 6px 2px 2px;
+    min-height: 4px;
+    transition: height 0.6s cubic-bezier(0.34, 1.3, 0.64, 1);
+  }
+  .earn-bar-amount {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text);
+    margin-top: 4px;
+    font-family: 'Manrope', sans-serif;
+  }
+  .earn-bar-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .earn-recent {
+    padding: 18px 22px 0;
+  }
+  .earn-trip-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .earn-trip-row:last-child { border-bottom: none; }
+  .earn-trip-info { flex: 1; min-width: 0; }
+  .earn-trip-route {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .earn-trip-date {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-top: 1px;
+  }
+  .earn-trip-amount {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--primary);
+    font-family: 'Manrope', sans-serif;
+  }
+
+  /* search filters */
+  .sf-section { margin-bottom: 14px; }
+  .sf-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .sf-options { display: flex; flex-wrap: wrap; gap: 6px; }
+  .sf-pill {
+    padding: 8px 14px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--text);
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .sf-pill:hover { border-color: var(--primary); color: var(--primary); }
+  .sf-pill.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+  }
+
+  /* filter btn in search */
+  .st-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 11px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--text);
+    font-family: inherit;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .st-filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .st-filter-btn svg { color: var(--text-muted); }
+  .st-filter-btn .st-count {
+    background: var(--text);
+    color: white;
+    padding: 1px 7px;
+    border-radius: 99px;
+    font-size: 10px;
+    margin-left: 2px;
+  }
+
+  /* earnings link button on trips screen */
+  .earn-link-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #00C49E 0%, #00A082 100%);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    margin: 12px 0 0;
+    transition: all 0.15s;
+    box-shadow: 0 4px 12px rgba(0,160,130,0.25);
+  }
+  .earn-link-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0,160,130,0.35);
+  }
+  .earn-link-btn span:not(.elb-arrow) { flex: 1; text-align: left; }
+  .elb-arrow { font-size: 20px; opacity: 0.85; }
+
+  /* Escrow notice on booking confirmation */
+  .escrow-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: #FEF3C7;
+    border: 1px solid #FDE68A;
+    border-radius: 12px;
+    margin-bottom: 14px;
+    text-align: left;
+  }
+  .escrow-icon {
+    width: 30px; height: 30px;
+    background: #F59E0B;
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .escrow-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #92400E;
+    margin-bottom: 2px;
+  }
+  .escrow-sub {
+    font-size: 12px;
+    color: #78350F;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* Escrow status row in trip card */
+  .escrow-status-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 8px;
+  }
+  .escrow-status-row.escrow-held {
+    background: #FEF3C7;
+    color: #92400E;
+  }
+  .escrow-status-row.escrow-released {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+  }
+
+  /* Confirm pickup button (driver) */
+  .trip-confirm-pickup-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 11px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    transition: all 0.15s;
+    box-shadow: 0 3px 8px rgba(0,160,130,0.25);
+  }
+  .trip-confirm-pickup-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+  }
+
+  /* Cost-sharing notice */
+  .cost-share-notice {
+    background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+    border: 1px solid #A7F3D0;
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+  .csn-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--primary-dark);
+    margin-bottom: 4px;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+  }
+  .csn-body {
+    font-size: 12px;
+    color: #065F46;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  .csn-counter {
+    margin-top: 6px;
+    display: inline-block;
+    padding: 3px 9px;
+    background: var(--primary);
+    color: white;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 800;
+    font-family: 'Manrope', sans-serif;
+  }
+
   /* Booking confirmation */
   .booking-confirm { text-align: center; padding: 8px 0; }
   .bc-icon {
@@ -4564,7 +5232,13 @@
         <div class="lang-other r">EN</div>
         <div class="lang-knob" id="lang-knob">TH</div>
       </div>
-      <span class="bell">🔔</span>
+      <button class="bell" onclick="openNotifications()" id="notif-bell" style="border:none;background:var(--bg-soft);font-family:inherit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+        </svg>
+        <span class="bell-badge" id="bell-badge" style="display:none">0</span>
+      </button>
     </div>
   </div>
 
@@ -4659,11 +5333,11 @@ const i18n = {
   starCreate: { TH: '➕ create your travel guide', EN: '➕ create your travel guide' },
   searchPlaceholder: { TH: 'ค้นหาจังหวัด เช่น เชียงใหม่ ปาย ภูเก็ต', EN: 'Search provinces e.g. Chiang Mai, Pai, Phuket' },
   chipAll: { TH: 'ทั้งหมด', EN: 'All' },
-  chipNorth: { TH: '🏔️ ภาคเหนือ', EN: '🏔️ North' },
-  chipCentral: { TH: '🏛️ ภาคกลาง', EN: '🏛️ Central' },
-  chipSouth: { TH: '🏖️ ภาคใต้', EN: '🏖️ South' },
-  chipNortheast: { TH: '🌾 ภาคอีสาน', EN: '🌾 Northeast' },
-  chipEast: { TH: '🌊 ภาคตะวันออก', EN: '🌊 East' },
+  chipNorth: { TH: 'ภาคเหนือ', EN: 'North' },
+  chipCentral: { TH: 'ภาคกลาง', EN: 'Central' },
+  chipSouth: { TH: 'ภาคใต้', EN: 'South' },
+  chipNortheast: { TH: 'ภาคอีสาน', EN: 'Northeast' },
+  chipEast: { TH: 'ภาคตะวันออก', EN: 'East' },
   noResults1: { TH: 'ไม่พบโพสที่ตรงกับ "', EN: 'No posts found for "' },
   noResults2: { TH: '"', EN: '"' },
   noResultsHint: { TH: 'ลองค้นหาด้วยชื่อจังหวัดอื่น', EN: 'Try a different province' },
@@ -4688,10 +5362,10 @@ const i18n = {
   next: { TH: 'ถัดไป →', EN: 'Next →' },
 
   // Price slider (driver)
-  setPrice: { TH: 'ตั้งราคาต่อกิโลเมตร', EN: 'Price per kilometer' },
+  setPrice: { TH: 'แชร์ค่าน้ำมัน (ต่อคน)', EN: 'Fuel share (per passenger)' },
   priceLow: { TH: 'ประหยัด', EN: 'Cheap' },
   priceHigh: { TH: 'พรีเมียม', EN: 'Premium' },
-  estIncome: { TH: 'รายได้ประมาณ', EN: 'Est. income' },
+  estIncome: { TH: 'ค่าน้ำมันที่ได้รับ', EN: 'Fuel cost covered' },
   fullRoute: { TH: 'เส้นทางเต็ม', EN: 'Full route' },
   perPassenger: { TH: '/คน', EN: '/passenger' },
 
@@ -5036,7 +5710,27 @@ function renderTripsScreen() {
             ${currentLang === 'EN' ? 'Rate this trip' : 'ให้คะแนนทริปนี้'}
           </button>
       ` : '';
-      const cancelBtn = !isPast && tr.id ? `
+
+      // ปุ่ม "รับผู้โดยสารแล้ว" สำหรับคนขับ (ปล่อย escrow)
+      const driverConfirmBtn = (!isPast && role === 'driver' && tr.id && tr.status !== 'in_progress') ? `
+          <button class="trip-confirm-pickup-btn" onclick="event.stopPropagation();confirmPickupAsDriver('${tr.id}')">
+            ${currentLang === 'EN' ? '✓ Confirm pickup & receive payment' : '✓ ยืนยันรับผู้โดยสาร + รับเงิน'}
+          </button>
+      ` : '';
+
+      // escrow status สำหรับผู้โดยสาร
+      const escrowStatus = (role === 'passenger' && tr.escrowStatus && !isPast) ? `
+          <div class="escrow-status-row escrow-${tr.escrowStatus}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+              <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <span>${tr.escrowStatus === 'held'
+              ? (currentLang === 'EN' ? 'Payment held safely · released when driver picks up' : 'เงินถูกถือไว้ · จะโอนเมื่อคนขับรับ')
+              : (currentLang === 'EN' ? 'Payment released to driver' : 'โอนเงินให้คนขับแล้ว')}</span>
+          </div>
+      ` : '';
+
+      const cancelBtn = !isPast && tr.id && tr.status !== 'in_progress' ? `
           <button class="trip-cancel-btn" onclick="event.stopPropagation();cancelMyTrip('${tr.id}','${role}')">
             ${currentLang === 'EN' ? 'Cancel' : 'ยกเลิก'}
           </button>
@@ -5049,7 +5743,9 @@ function renderTripsScreen() {
           </div>
           <div class="trip-name">${fromStr} → ${toStr}</div>
           <div class="trip-sub">${otherLabel}${otherStr} • ฿${tr.price.toLocaleString()}</div>
+          ${escrowStatus}
           ${rateBtn}
+          ${driverConfirmBtn}
           ${cancelBtn}
         </div>
       `;
@@ -5064,6 +5760,16 @@ function renderTripsScreen() {
       <button class="role-tab ${role === 'passenger' ? 'active' : ''}" onclick="setTripsRole('passenger')">${t('asPassenger')}</button>
       <button class="role-tab ${role === 'driver' ? 'active' : ''}" onclick="setTripsRole('driver')">${t('asDriver')}</button>
     </div>
+
+    ${role === 'driver' ? `
+      <button class="earn-link-btn" onclick="show('earnings')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+          <line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>
+        </svg>
+        <span>${currentLang === 'EN' ? 'View fuel cost received' : 'ดูค่าน้ำมันที่ได้รับ'}</span>
+        <span class="elb-arrow">›</span>
+      </button>
+    ` : ''}
 
     <div class="sub-tab-row">
       <button class="sub-tab ${tab === 'upcoming' ? 'active' : ''}" onclick="setTripsTab('upcoming')">
@@ -5575,8 +6281,9 @@ function renderProfileAccount2() {
 
     <div class="pf2-section-title">${currentLang === 'EN' ? 'Payments' : 'การเงิน'}</div>
     <div class="pf2-card pf2-card-flush">
-      ${row(currentLang === 'EN' ? 'Payment methods' : 'วิธีชำระเงิน', "openProfileDetail('payment')")}
-      ${row(currentLang === 'EN' ? 'Income' : 'รายรับ', "openProfileDetail('income')")}
+      ${row(currentLang === 'EN' ? 'Payment methods' : 'วิธีชำระเงิน', "show('paymentMethods')")}
+      ${row(currentLang === 'EN' ? 'My vehicles' : 'รถของฉัน', "show('vehicles')")}
+      ${row(currentLang === 'EN' ? 'Fuel cost received' : 'ค่าน้ำมันที่ได้รับ', "show('earnings')")}
       ${row(currentLang === 'EN' ? 'Payments & refunds' : 'การชำระเงินและการคืนเงิน', "openProfileDetail('payhistory')")}
     </div>
 
@@ -5906,7 +6613,7 @@ function saveProfile() {
 // ====== My Profile end ======
 
 
-const tripData = { from: '', to: '', date: '', time: '', pricePerKm: 1.5, distanceKm: null };
+const tripData = { from: '', to: '', date: '', time: '', pricePerKm: 1.2, distanceKm: null };
 
 // รูปจังหวัด — ใช้ Unsplash photo IDs จริงๆ ที่เช็คแล้วว่ามีอยู่
 // ทุกรูป Unsplash License (ฟรี ใช้เชิงพาณิชย์ได้ ไม่ต้อง credit)
@@ -6245,20 +6952,20 @@ function generatePostContent(p) {
     return `
       <p>I just got back from <span class="highlight">${province}</span> and I have to say — this trip exceeded all my expectations! Let me share everything I learned.</p>
 
-      <h3>📅 Best time to visit</h3>
+      <h3>Best time to visit</h3>
       <p>The weather is amazing from <span class="highlight">November to February</span>. Cool, dry, and perfect for outdoor activities. If you can avoid the rainy season (June-October), do it.</p>
 
       <h3>How to get there</h3>
       <p>I carpooled with <strong>${postAuthor(p)}</strong> through Coolpar — saved about ฿1,200 vs flying! The drive was scenic and we made several stops along the way for coffee and food.</p>
 
-      <h3>💰 Budget breakdown</h3>
+      <h3>Budget breakdown</h3>
       <p>For 3 days 2 nights:</p>
       <p>• Transport: ฿650<br>• Accommodation: ฿1,500/night<br>• Food: ~฿500/day<br>• Activities: ฿800<br><strong>Total: ~฿5,500 per person</strong></p>
 
       <h3>Must-visit spots</h3>
       <p>The viewpoints in ${province} are absolutely stunning, especially during sunrise. Bring a camera and arrive early — the morning light is magical.</p>
 
-      <h3>🍜 Where to eat</h3>
+      <h3>Where to eat</h3>
       <p>Local street food is incredible. Try the night market — everything is fresh and inexpensive. Don't miss the local specialties unique to this region.</p>
 
       <h3>Tips & tricks</h3>
@@ -6270,20 +6977,20 @@ function generatePostContent(p) {
   return `
     <p>เพิ่งกลับจาก <span class="highlight">${province}</span> มาครับ ทริปนี้เกินคาดมากๆ ขอแชร์ทุกอย่างที่ได้เรียนรู้ให้ฟังกัน</p>
 
-    <h3>📅 ช่วงไหนไปดีที่สุด</h3>
+    <h3>ช่วงไหนไปดีที่สุด</h3>
     <p>อากาศกำลังดีช่วง <span class="highlight">พฤศจิกายน - กุมภาพันธ์</span> เย็นสบาย แห้ง ทำกิจกรรมกลางแจ้งได้สบาย ถ้าเลี่ยงหน้าฝน (มิ.ย.-ต.ค.) ได้จะดีมาก</p>
 
     <h3>ไปยังไง</h3>
     <p>ผมแชร์รถกับ <strong>${postAuthor(p)}</strong> ผ่าน Coolpar ประหยัดไปประมาณ ฿1,200 เทียบกับนั่งเครื่อง วิวระหว่างทางสวยมาก แวะถ่ายรูป กินกาแฟกันเรื่อยๆ</p>
 
-    <h3>💰 งบประมาณ</h3>
+    <h3>งบประมาณ</h3>
     <p>สำหรับทริป 3 วัน 2 คืน:</p>
     <p>• ค่าเดินทาง: ฿650<br>• ที่พัก: ฿1,500/คืน<br>• อาหาร: ประมาณ ฿500/วัน<br>• กิจกรรม: ฿800<br><strong>รวม: ประมาณ ฿5,500/คน</strong></p>
 
     <h3>จุดต้องไป</h3>
     <p>จุดชมวิวที่ ${province} สวยมากๆ โดยเฉพาะตอนพระอาทิตย์ขึ้น เอากล้องไปด้วย และไปให้เช้าหน่อย แสงเช้าสวยที่สุด</p>
 
-    <h3>🍜 กินที่ไหนดี</h3>
+    <h3>กินที่ไหนดี</h3>
     <p>street food ดีมาก ลองไปตลาดกลางคืนสิ ทุกอย่างสด ราคาไม่แพง อย่าพลาดอาหารพื้นเมืองของแต่ละจังหวัด รสชาติเฉพาะตัว</p>
 
     <h3>ทริค & เคล็ดลับ</h3>
@@ -6585,15 +7292,15 @@ function scrollHomeToTop() {
 // ทริปจริง (mock) เมื่อกรอกครบทั้งต้น-ปลาย — มี pricePerKm สำหรับจัดอันดับ
 const mockTrips = [
   {
-    time: '09:30 → 19:00', meta: '9.5 ชม.', price: 800, pricePerKm: 1.1, distance: 696,
+    time: '09:30 → 19:00', meta: '9.5 ชม.', price: 626, pricePerKm: 0.9, distance: 696,
     driver: 'นภัทร', initials: 'นภ', car: 'Toyota Camry', rating: 4.9, seats: 3, av: 'av-2'
   },
   {
-    time: '07:00 → 16:00', meta: '9 ชม.', price: 950, pricePerKm: 1.4, distance: 696,
+    time: '07:00 → 16:00', meta: '9 ชม.', price: 836, pricePerKm: 1.2, distance: 696,
     driver: 'สมชาย', initials: 'สม', car: 'Honda CR-V', rating: 4.8, seats: 2, av: 'av-1'
   },
   {
-    time: '14:00 → 23:30', meta: '9.5 ชม.', price: 1200, pricePerKm: 1.7, distance: 696,
+    time: '14:00 → 23:30', meta: '9.5 ชม.', price: 1184, pricePerKm: 1.7, distance: 696,
     driver: 'วรพล', initials: 'วร', car: 'Mazda CX-5', rating: 4.7, seats: 1, av: 'av-3'
   }
 ];
@@ -6602,7 +7309,7 @@ const mockTrips = [
 // ราคาถูก (1.0) = 50 คะแนน, ราคาแพง (2.0) = 0 คะแนน
 // rating 5.0 = 50 คะแนน, rating 4.0 = 0 คะแนน
 function getTripScore(tr) {
-  const priceScore = (2.0 - tr.pricePerKm) / (2.0 - 1.0) * 50;
+  const priceScore = (2.0 - tr.pricePerKm) / (2.0 - 0.8) * 50;
   const ratingScore = (tr.rating - 4.0) / (5.0 - 4.0) * 50;
   return priceScore + ratingScore;
 }
@@ -6905,7 +7612,8 @@ function renderSearchPill() {
 
 // ====== Search Trip (full-screen) ======
 function renderSearchTripScreen() {
-  const trips = filterAvailableTrips();
+  let trips = filterAvailableTrips();
+  trips = applySearchFiltersToTrips(trips);
   const seatsLabel = t('seatsAvail');
 
   const tripsHtml = trips.length === 0
@@ -6995,7 +7703,13 @@ function renderSearchTripScreen() {
 
       <div class="st-section-title">
         <span>${trips.length > 0 ? (currentLang === 'EN' ? 'Available rides' : 'ทริปที่เปิดรับ') : (currentLang === 'EN' ? 'Suggested' : 'แนะนำ')}</span>
-        <span class="st-count">${trips.length}</span>
+        <button class="st-filter-btn" onclick="showSearchFilters()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+            <line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/>
+          </svg>
+          ${currentLang === 'EN' ? 'Filter' : 'กรอง'}
+          <span class="st-count">${trips.length}</span>
+        </button>
       </div>
 
       <div id="st-trips-list">${tripsHtml}</div>
@@ -7373,9 +8087,9 @@ function updateHome() {
     // badge: อันดับ 1 = best deal, อันดับ 2 = recommended
     let badge = '';
     if (idx === 0) {
-      badge = `<div class="trip-rank-badge best">${t('bestDeal')} · ฿${tr.pricePerKm.toFixed(1)}/${currentLang === 'EN' ? 'km' : 'กม.'}</div>`;
+      badge = `<div class="trip-rank-badge best">${t('bestDeal')}</div>`;
     } else if (idx === 1) {
-      badge = `<div class="trip-rank-badge recommended">${t('recommended')} · ฿${tr.pricePerKm.toFixed(1)}/${currentLang === 'EN' ? 'km' : 'กม.'}</div>`;
+      badge = `<div class="trip-rank-badge recommended">${t('recommended')}</div>`;
     }
     return `
     <div class="trip-card" data-screen="detail">
@@ -7532,25 +8246,44 @@ function getScreens() { return {
       </div>
     </div>
 
+    <!-- Cost-sharing notice -->
+    <div class="cost-share-notice">
+      <div class="csn-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+          <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+        </svg>
+        <span>${currentLang === 'EN' ? 'Cost-sharing only' : 'แชร์ค่าใช้จ่ายเท่านั้น'}</span>
+      </div>
+      <div class="csn-body">
+        ${currentLang === 'EN'
+          ? `Coolpar is for sharing fuel & wear costs with co-travelers — not a commercial driving service. Limit: ${MONTHLY_LIMIT} trips/month.`
+          : `Coolpar คือการแชร์ค่าน้ำมัน + ค่าสึกหรอกับเพื่อนร่วมทาง ไม่ใช่บริการรับจ้างขับ จำกัด ${MONTHLY_LIMIT} ทริป/เดือน`}
+        ${(() => {
+          const lim = checkMonthlyLimit();
+          return `<div class="csn-counter">${currentLang === 'EN' ? 'This month' : 'เดือนนี้'}: ${lim.count} / ${MONTHLY_LIMIT}</div>`;
+        })()}
+      </div>
+    </div>
+
     <p class="section-title">${t('setPrice')}</p>
     <div class="price-slider-card">
       <div class="price-slider-header">
         <div class="price-slider-label">${t('setPrice')}</div>
         <div class="price-slider-value">
-          ฿<span id="price-val">2.0</span><span class="unit">/${currentLang === 'EN' ? 'km' : 'กม.'}</span>
+          ฿<span id="price-val-display">—</span>
         </div>
       </div>
       <input type="range" id="price-slider" class="price-slider-input"
-             min="1.0" max="2.0" step="0.1" value="1.5"
+             min="0.8" max="2.0" step="0.05" value="1.2"
              oninput="updatePriceSlider()"/>
       <div class="price-slider-range">
-        <span>฿1.0 • ${t('priceLow')}</span>
-        <span>${t('priceHigh')} • ฿2.0</span>
+        <span>${t('priceLow')}</span>
+        <span>${t('priceHigh')}</span>
       </div>
       <div class="price-income-box">
         <div class="pib-info">
           <span class="pib-label">${t('estIncome')}</span>
-          <span class="pib-sub" id="price-sub">${t('fullRoute')}${t('perPassenger')}</span>
+          <span class="pib-sub" id="price-sub">${t('perPassenger')}</span>
         </div>
         <span class="pib-value">฿<span id="price-total">—</span></span>
       </div>
@@ -7596,6 +8329,9 @@ function getScreens() { return {
           </div>
         </div>
 
+        <!-- ปุ่มเลือกเส้นทาง (insert dynamically หลัง initMap) -->
+        <div id="route-options-container"></div>
+
         <div class="pickup-info-bar">
           <span>${t('pickupHint')}</span>
         </div>
@@ -7614,6 +8350,9 @@ function getScreens() { return {
   postDetail: `${renderPostDetail()}`,
   searchTrip: `${renderSearchTripScreen()}`,
   editProfile: `${renderEditProfile()}`,
+  paymentMethods: `${renderPaymentMethodsScreen()}`,
+  vehicles: `${renderVehiclesScreen()}`,
+  earnings: `${renderEarningsScreen()}`,
   profile: `${renderProfileScreen()}`
 }; }
 
@@ -7629,7 +8368,10 @@ function show(name) {
   const isPostDetail = (name === 'postDetail');
   const isSearchTrip = (name === 'searchTrip');
   const isEditProfile = (name === 'editProfile');
-  const isFullScreen = isMapScreen || isPostDetail || isSearchTrip || isEditProfile;
+  const isPaymentMethods = (name === 'paymentMethods');
+  const isVehicles = (name === 'vehicles');
+  const isEarnings = (name === 'earnings');
+  const isFullScreen = isMapScreen || isPostDetail || isSearchTrip || isEditProfile || isPaymentMethods || isVehicles || isEarnings;
   const wrap = document.querySelector('.header-wrap');
   if (wrap) wrap.style.display = isFullScreen ? 'none' : 'block';
   headerEl.style.display = isFullScreen ? 'none' : 'flex';
@@ -7647,8 +8389,13 @@ function show(name) {
                 : (name === 'postDetail') ? 'home'
                 : (name === 'searchTrip') ? 'home'
                 : (name === 'editProfile') ? 'profile'
+                : (name === 'paymentMethods') ? 'profile'
+                : (name === 'vehicles') ? 'profile'
+                : (name === 'earnings') ? 'trips'
                 : name;
   navBtns.forEach(b => b.classList.toggle('active', b.dataset.screen === navName));
+  // อัปเดต notification badge
+  setTimeout(updateBellBadge, 50);
 
   // หน้า post: ตั้งวันที่ default = พรุ่งนี้, คงค่าที่เคยกรอกไว้
   if (name === 'post') {
@@ -7895,27 +8642,33 @@ function fillLocation(which, name, lat, lng) {
 function updatePriceSlider() {
   const slider = document.getElementById('price-slider');
   if (!slider) return;
-  const price = parseFloat(slider.value);
-  tripData.pricePerKm = price;
+  const pricePerKm = parseFloat(slider.value);  // เก็บภายใน
+  tripData.pricePerKm = pricePerKm;
 
-  const priceVal = document.getElementById('price-val');
-  if (priceVal) priceVal.textContent = price.toFixed(1);
+  // คำนวณราคารวมต่อที่นั่ง (ใช้โชว์ผู้ใช้)
+  let totalPrice = null;
+  if (tripData.distanceKm) {
+    totalPrice = Math.round(tripData.distanceKm * pricePerKm);
+  } else if (tripData.fromCoords && tripData.toCoords) {
+    const approxKm = distanceKm(tripData.fromCoords, tripData.toCoords) * 1.3;
+    totalPrice = Math.round(approxKm * pricePerKm);
+  }
 
-  // เลือกสี + feedback ตามช่วงราคา (฿1.0 - ฿2.0)
+  // เลือกสี + feedback ตามช่วงราคา (฿0.8 - ฿2.0)
   let color, feedbackClass, feedbackKey;
-  if (price <= 1.2) {
+  if (pricePerKm <= 1.0) {
     color = '#00A082';        // เขียวเข้ม
     feedbackClass = 'fb-1';
     feedbackKey = 'priceFb1';
-  } else if (price <= 1.4) {
+  } else if (pricePerKm <= 1.3) {
     color = '#43A047';        // เขียว
     feedbackClass = 'fb-2';
     feedbackKey = 'priceFb2';
-  } else if (price <= 1.6) {
+  } else if (pricePerKm <= 1.6) {
     color = '#FFA630';        // เหลือง/ส้ม
     feedbackClass = 'fb-3';
     feedbackKey = 'priceFb3';
-  } else if (price <= 1.8) {
+  } else if (pricePerKm <= 1.8) {
     color = '#FF6B00';        // ส้มเข้ม
     feedbackClass = 'fb-4';
     feedbackKey = 'priceFb4';
@@ -7925,28 +8678,30 @@ function updatePriceSlider() {
     feedbackKey = 'priceFb5';
   }
 
+  // โชว์ราคารวมในตัวเลขใหญ่ด้านบน (แทน /km)
+  const priceValDisplay = document.getElementById('price-val-display');
+  if (priceValDisplay) {
+    priceValDisplay.textContent = totalPrice != null ? totalPrice.toLocaleString() : '—';
+    priceValDisplay.style.color = color;
+  }
+
   // สี track + thumb
-  const percent = ((price - 1.0) / (2.0 - 1.0)) * 100;
+  const percent = ((pricePerKm - 0.8) / (2.0 - 0.8)) * 100;
   slider.style.background = `linear-gradient(to right, ${color} 0%, ${color} ${percent}%, var(--border) ${percent}%, var(--border) 100%)`;
   slider.style.setProperty('--thumb-color', color);
 
-  // เปลี่ยนสีตัวเลขราคา + ฿ ใหญ่ด้านบน
-  const priceValEl = document.getElementById('price-val');
-  if (priceValEl) priceValEl.style.color = color;
+  // เปลี่ยนสี ฿ ด้านบน
   const priceSliderValue = document.querySelector('.price-slider-value');
   if (priceSliderValue) priceSliderValue.style.color = color;
 
-  // เปลี่ยนสีของกล่องรายได้ (฿ และตัวเลข)
+  // เปลี่ยนสีของกล่องรายได้
   const incomeBox = document.querySelector('.price-income-box');
   const incomeValue = document.querySelector('.pib-value');
   if (incomeBox) {
-    // พื้นกล่องเปลี่ยนเป็นสีอ่อนของ feedback
     const bgMap = { 'fb-1': '#D1F0E8', 'fb-2': '#E6F7F3', 'fb-3': '#FFF1DC', 'fb-4': '#FFE4CC', 'fb-5': '#FEE2E2' };
     incomeBox.style.background = bgMap[feedbackClass] || 'var(--primary-light)';
   }
-  if (incomeValue) {
-    incomeValue.style.color = color;
-  }
+  if (incomeValue) incomeValue.style.color = color;
 
   // อัปเดต feedback
   const fb = document.getElementById('price-feedback');
@@ -7956,22 +8711,9 @@ function updatePriceSlider() {
     fbText.textContent = t(feedbackKey);
   }
 
-  // คำนวณรายได้ประมาณ
+  // ราคารวมในกล่องรายได้
   const totalEl = document.getElementById('price-total');
-  if (totalEl) {
-    if (tripData.distanceKm) {
-      const total = Math.round(tripData.distanceKm * price);
-      totalEl.textContent = total.toLocaleString();
-    } else {
-      if (tripData.fromCoords && tripData.toCoords) {
-        const approxKm = distanceKm(tripData.fromCoords, tripData.toCoords) * 1.3;
-        const total = Math.round(approxKm * price);
-        totalEl.textContent = '~' + total.toLocaleString();
-      } else {
-        totalEl.textContent = '—';
-      }
-    }
-  }
+  if (totalEl) totalEl.textContent = totalPrice != null ? totalPrice.toLocaleString() : '—';
 }
 
 // ====== Autocomplete สถานที่ (Nominatim) ======
@@ -8097,6 +8839,23 @@ function goToMap() {
 function confirmPost() {
   if (!requireLogin(currentLang === 'EN' ? 'post a trip' : 'โพสต์ทริป')) return;
 
+  // เช็ค monthly limit (กันคนทำเป็นอาชีพ)
+  const limitInfo = checkMonthlyLimit();
+  if (limitInfo.atLimit) {
+    showSheet(`
+      <div class="sheet-grab"></div>
+      <div class="booking-confirm">
+        <div class="bc-icon" style="background:#FEE2E2;color:#DC2626">!</div>
+        <div class="bc-title">${currentLang === 'EN' ? 'Monthly limit reached' : 'ครบจำนวนทริปต่อเดือนแล้ว'}</div>
+        <div class="bc-sub" style="margin-bottom:18px;line-height:1.5">${currentLang === 'EN'
+          ? `Coolpar limits drivers to ${MONTHLY_LIMIT} trips/month to keep the platform for genuine cost-sharing, not commercial driving.`
+          : `Coolpar จำกัด ${MONTHLY_LIMIT} ทริป/เดือน เพื่อเป็นการแชร์ค่าน้ำมันจริงๆ ไม่ใช่ขับเป็นอาชีพ`}</div>
+        <button class="btn-primary" onclick="closeSheet()">${currentLang === 'EN' ? 'Got it' : 'เข้าใจแล้ว'}</button>
+      </div>
+    `);
+    return;
+  }
+
   // ตรวจ field ขั้นต่ำ
   const fromVal = document.getElementById('in-from')?.value.trim() || tripData.from;
   const toVal = document.getElementById('in-to')?.value.trim() || tripData.to;
@@ -8128,6 +8887,8 @@ function confirmPost() {
     price: pricePerSeat,
     pricePerKm: pricePerKm,
     distKm: distKm,
+    // เส้นทางที่คนขับเลือก (สำหรับให้ผู้โดยสารเห็น)
+    routeCoords: tripData.selectedRouteCoords || null,
     ownerByMe: true,
     posted: Date.now()
   };
@@ -8150,6 +8911,11 @@ function confirmPost() {
     status: 'confirmed'
   });
   saveMyTrips();
+
+  // เพิ่มการแจ้งเตือน
+  addNotification('trip',
+    `ลงประกาศสำเร็จ: ${fromVal} → ${toVal}`,
+    `Trip posted: ${fromVal} → ${toVal}`);
 
   showReturnDialog();
 }
@@ -8295,13 +9061,14 @@ async function geocode(name) {
 
 // Routing via OSRM — คำนวณเส้นทางขับรถจากพิกัด GPS
 async function getRoute(from, to) {
-  const url = `https://router.project-osrm.org/route/v1/driving/${from.lng},${from.lat};${to.lng},${to.lat}?overview=full&geometries=geojson`;
+  // ขอ 3 ทางเลือก: ?alternatives=true&overview=full
+  const url = `https://router.project-osrm.org/route/v1/driving/${from.lng},${from.lat};${to.lng},${to.lat}?alternatives=3&overview=full&geometries=geojson`;
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if (!data.routes || data.routes.length === 0) throw new Error(currentLang === 'EN' ? 'Route not found' : 'ไม่พบเส้นทาง');
-    return data.routes[0];
+    return data.routes;  // array ของ routes (ไม่ใช่ตัวเดียว)
   } catch (e) {
     if (e.message && (e.message.includes('Failed to fetch') || e.message.includes('NetworkError'))) {
       throw new Error(currentLang === 'EN'
@@ -8310,6 +9077,73 @@ async function getRoute(from, to) {
     }
     throw e;
   }
+}
+
+// สลับเส้นทางจาก alternatives — คนขับเลือก เส้นที่ 1/2/3
+function selectRoute(idx) {
+  if (!window._allRoutes || !window._routeLayers) return;
+  if (idx === window._selectedRouteIdx) return;
+  window._selectedRouteIdx = idx;
+
+  // อัปเดตสีของทุกเส้น
+  window._routeLayers.forEach((line, i) => {
+    const isSelected = i === idx;
+    line.setStyle({
+      color: isSelected ? '#00A082' : '#94A3B8',
+      weight: isSelected ? 6 : 4,
+      opacity: isSelected ? 0.9 : 0.55
+    });
+    if (isSelected) line.bringToFront();
+  });
+
+  // อัปเดตข้อมูลระยะ + เวลา + ราคา
+  const route = window._allRoutes[idx];
+  const distKmNum = route.distance / 1000;
+  const distKm = distKmNum.toFixed(0);
+  const durHr = Math.floor(route.duration / 3600);
+  const durMin = Math.round((route.duration % 3600) / 60);
+  const durText = durHr > 0 ? durHr + ' ชม. ' + durMin + ' น.' : durMin + ' น.';
+
+  tripData.distanceKm = distKmNum;
+  tripData.selectedRouteIdx = idx;
+  tripData.selectedRouteCoords = route.geometry.coordinates;
+
+  const pricePerKm = tripData.pricePerKm || 1.2;
+  const income = Math.round(distKmNum * pricePerKm);
+
+  document.getElementById('rs-distance') && (document.getElementById('rs-distance').textContent = distKm + ' กม.');
+  document.getElementById('rs-duration') && (document.getElementById('rs-duration').textContent = durText);
+  document.getElementById('rs-income') && (document.getElementById('rs-income').textContent = '฿' + income);
+
+  // อัปเดต UI ปุ่มเลือกเส้นทาง
+  document.querySelectorAll('.route-option').forEach((btn, i) => {
+    btn.classList.toggle('active', i === idx);
+  });
+}
+
+// สร้าง UI เลือกเส้นทาง (3 ปุ่ม)
+function renderRouteOptions(routes) {
+  if (!routes || routes.length < 2) return '';
+  const labels = currentLang === 'EN'
+    ? ['Recommended', 'Alternative 1', 'Alternative 2']
+    : ['แนะนำ', 'ทางเลือก 1', 'ทางเลือก 2'];
+
+  return `
+    <div class="route-options-row">
+      ${routes.slice(0, 3).map((r, i) => {
+        const km = (r.distance / 1000).toFixed(0);
+        const hr = Math.floor(r.duration / 3600);
+        const min = Math.round((r.duration % 3600) / 60);
+        const time = hr > 0 ? hr + 'h ' + min + 'm' : min + 'm';
+        return `
+          <button class="route-option ${i === 0 ? 'active' : ''}" onclick="selectRoute(${i})">
+            <div class="ro-label">${labels[i] || (currentLang === 'EN' ? 'Route ' + (i+1) : 'เส้นทาง ' + (i+1))}</div>
+            <div class="ro-meta">${km} ${currentLang === 'EN' ? 'km' : 'กม.'} · ${time}</div>
+          </button>
+        `;
+      }).join('')}
+    </div>
+  `;
 }
 
 async function initMap() {
@@ -8345,7 +9179,11 @@ async function initMap() {
     }
 
     loadingText.textContent = currentLang === 'EN' ? 'Calculating route...' : 'กำลังคำนวณเส้นทาง...';
-    const route = await getRoute(fromPt, toPt);
+    const routes = await getRoute(fromPt, toPt);
+    // เก็บไว้ทั้งหมด — คนขับสามารถสลับเส้นทางได้
+    window._allRoutes = routes;
+    window._selectedRouteIdx = 0;
+    let route = routes[0];
 
     const greenIcon = L.divIcon({
       className: 'cp-marker',
@@ -8360,11 +9198,27 @@ async function initMap() {
     L.marker([fromPt.lat, fromPt.lng], { icon: greenIcon }).addTo(map).bindPopup('🟢 ' + tripData.from);
     L.marker([toPt.lat, toPt.lng], { icon: redIcon }).addTo(map).bindPopup('🔴 ' + tripData.to);
 
-    const coords = route.geometry.coordinates.map(c => [c[1], c[0]]);
-    const routeLine = L.polyline(coords, {
-      color: '#00A082', weight: 5, opacity: 0.85,
-      lineCap: 'round', lineJoin: 'round'
-    }).addTo(map);
+    // วาดทุกเส้นทาง (alternative routes) สีเทาๆ + เส้นที่เลือกเป็นเขียวเข้ม
+    window._routeLayers = [];
+    routes.forEach((r, idx) => {
+      const isSelected = idx === 0;
+      const coordsArr = r.geometry.coordinates.map(c => [c[1], c[0]]);
+      const line = L.polyline(coordsArr, {
+        color: isSelected ? '#00A082' : '#94A3B8',
+        weight: isSelected ? 6 : 4,
+        opacity: isSelected ? 0.9 : 0.55,
+        lineCap: 'round', lineJoin: 'round'
+      }).addTo(map);
+
+      // กดเส้นเทาเพื่อเลือก
+      line.on('click', () => selectRoute(idx));
+
+      window._routeLayers.push(line);
+    });
+
+    // bring เส้นที่เลือกไปบนสุด
+    window._routeLayers[0].bringToFront();
+    const routeLine = window._routeLayers[0];
 
     map.fitBounds(routeLine.getBounds(), { padding: [40, 40], maxZoom: 8 });
 
@@ -8393,6 +9247,16 @@ async function initMap() {
     document.getElementById('rs-distance') && (document.getElementById('rs-distance').textContent = distKm + ' กม.');
     document.getElementById('rs-duration') && (document.getElementById('rs-duration').textContent = durText);
     document.getElementById('rs-income') && (document.getElementById('rs-income').textContent = '฿' + incomePerPassenger);
+
+    // inject ปุ่มเลือกเส้นทาง
+    const routeOptCont = document.getElementById('route-options-container');
+    if (routeOptCont && routes.length > 1) {
+      routeOptCont.innerHTML = renderRouteOptions(routes);
+    }
+
+    // เก็บเส้นทางที่ผู้ขับเลือก (สำหรับให้ผู้โดยสารเห็น)
+    tripData.selectedRouteCoords = route.geometry.coordinates;
+    tripData.selectedRouteIdx = 0;
 
     // ====== Generate Smart Pickup Points (หาจังหวัดที่ผ่านจริง) ======
     const routeCoords = route.geometry.coordinates; // [lng, lat]
@@ -8652,7 +9516,9 @@ async function initDetailMap() {
   try {
     const fromPt = await geocode(mockTripFrom);
     const toPt = await geocode(mockTripTo);
-    const route = await getRoute(fromPt, toPt);
+    const routes = await getRoute(fromPt, toPt);
+    // ใช้ route แรกเสมอ (passenger view) — production: ดึงจาก trip.routeCoords
+    const route = routes[0];
 
     const routeCoords = route.geometry.coordinates;
     const polylineCoords = routeCoords.map(c => [c[1], c[0]]);
@@ -8832,10 +9698,652 @@ function selectPassengerPickup(idx, remainKm, pricePerKm, name) {
   }
 }
 
+// ====== Payment System ======
+const PAYMENT_KEY = 'coolpar_payment_methods';
+let paymentMethods = [
+  { id: 'pm_promptpay_default', type: 'promptpay', label: 'PromptPay', sublabel: '0955-951-222', isDefault: true }
+];
+let selectedPaymentId = paymentMethods[0].id;
+
+try {
+  const saved = localStorage.getItem(PAYMENT_KEY);
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    if (parsed.methods) paymentMethods = parsed.methods;
+    if (parsed.selected) selectedPaymentId = parsed.selected;
+  }
+} catch (e) {}
+
+function savePaymentMethods() {
+  try {
+    localStorage.setItem(PAYMENT_KEY, JSON.stringify({ methods: paymentMethods, selected: selectedPaymentId }));
+  } catch (e) {}
+}
+
+function getSelectedPayment() {
+  return paymentMethods.find(p => p.id === selectedPaymentId) || paymentMethods[0];
+}
+
+// SVG icon ของแต่ละ payment type
+function getPaymentIcon(type) {
+  const icons = {
+    promptpay: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h7v7h-7z"/><path d="M17 17v.01M14 21v.01M21 21v.01"/></svg>',
+    card: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>',
+    cash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 9v.01M18 15v.01"/></svg>',
+    bank: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 21h18M5 21V10M19 21V10M9 21V10M15 21V10M2 10h20L12 3z"/></svg>'
+  };
+  return icons[type] || icons.cash;
+}
+
+function getPaymentTypeName(type) {
+  const names = {
+    promptpay: 'PromptPay',
+    card: currentLang === 'EN' ? 'Credit card' : 'บัตรเครดิต',
+    cash: currentLang === 'EN' ? 'Cash' : 'เงินสด',
+    bank: currentLang === 'EN' ? 'Bank transfer' : 'โอนผ่านธนาคาร'
+  };
+  return names[type] || 'Payment';
+}
+
+// แสดง modal เลือกวิธีจ่าย (สำหรับใช้ตอนจอง)
+function showPaymentPicker(onConfirm) {
+  const sheet = `
+    <div class="sheet-grab"></div>
+    <div class="payment-picker">
+      <div class="pp-title">${currentLang === 'EN' ? 'Select payment method' : 'เลือกวิธีชำระเงิน'}</div>
+      <div class="pp-methods" id="pp-methods">${renderPaymentMethodsList()}</div>
+      <button class="pp-add" onclick="showAddPaymentMethod()">
+        + ${currentLang === 'EN' ? 'Add payment method' : 'เพิ่มวิธีจ่ายเงิน'}
+      </button>
+      <button class="btn-primary" onclick="confirmPaymentSelection()" style="margin-top:14px">
+        ${currentLang === 'EN' ? 'Continue' : 'ดำเนินการต่อ'}
+      </button>
+    </div>
+  `;
+  window._paymentCallback = onConfirm;
+  showSheet(sheet);
+}
+
+function renderPaymentMethodsList() {
+  return paymentMethods.map(pm => {
+    const isSelected = pm.id === selectedPaymentId;
+    return `
+      <button class="pp-method ${isSelected ? 'selected' : ''}" onclick="selectPaymentMethod('${pm.id}')">
+        <div class="pp-icon">${getPaymentIcon(pm.type)}</div>
+        <div class="pp-info">
+          <div class="pp-label">${pm.label || getPaymentTypeName(pm.type)}</div>
+          ${pm.sublabel ? `<div class="pp-sub">${pm.sublabel}</div>` : ''}
+        </div>
+        <div class="pp-check">${isSelected ? '●' : '○'}</div>
+      </button>
+    `;
+  }).join('');
+}
+
+function selectPaymentMethod(id) {
+  selectedPaymentId = id;
+  savePaymentMethods();
+  const list = document.getElementById('pp-methods');
+  if (list) list.innerHTML = renderPaymentMethodsList();
+}
+
+function confirmPaymentSelection() {
+  closeSheet();
+  savePaymentMethods();
+  if (typeof window._paymentCallback === 'function') {
+    setTimeout(() => window._paymentCallback(getSelectedPayment()), 300);
+    window._paymentCallback = null;
+  }
+}
+
+// เพิ่มวิธีจ่ายใหม่
+function showAddPaymentMethod() {
+  const sheet = `
+    <div class="sheet-grab"></div>
+    <div class="payment-picker">
+      <div class="pp-title">${currentLang === 'EN' ? 'Add payment method' : 'เพิ่มวิธีจ่ายเงิน'}</div>
+      <div class="pp-types">
+        <button class="pp-type" onclick="addPaymentType('promptpay')">
+          <div class="pp-icon">${getPaymentIcon('promptpay')}</div>
+          <span>PromptPay</span>
+        </button>
+        <button class="pp-type" onclick="addPaymentType('card')">
+          <div class="pp-icon">${getPaymentIcon('card')}</div>
+          <span>${currentLang === 'EN' ? 'Credit/Debit card' : 'บัตรเครดิต/เดบิต'}</span>
+        </button>
+        <button class="pp-type" onclick="addPaymentType('bank')">
+          <div class="pp-icon">${getPaymentIcon('bank')}</div>
+          <span>${currentLang === 'EN' ? 'Bank account' : 'บัญชีธนาคาร'}</span>
+        </button>
+        <button class="pp-type" onclick="addPaymentType('cash')">
+          <div class="pp-icon">${getPaymentIcon('cash')}</div>
+          <span>${currentLang === 'EN' ? 'Cash on board' : 'เงินสดบนรถ'}</span>
+        </button>
+      </div>
+      <button class="pp-add" onclick="closeSheet()" style="margin-top:10px">
+        ${currentLang === 'EN' ? 'Cancel' : 'ยกเลิก'}
+      </button>
+    </div>
+  `;
+  showSheet(sheet);
+}
+
+function addPaymentType(type) {
+  let sublabel = '', label = getPaymentTypeName(type);
+
+  if (type === 'promptpay') {
+    const phone = prompt(currentLang === 'EN' ? 'PromptPay number (phone or ID):' : 'เบอร์พร้อมเพย์ (เบอร์โทรหรือเลขบัตร):');
+    if (!phone) return;
+    sublabel = phone;
+  } else if (type === 'card') {
+    const num = prompt(currentLang === 'EN' ? 'Card number (last 4 digits):' : 'เลขบัตร (4 หลักท้าย):');
+    if (!num) return;
+    sublabel = '•••• ' + num.slice(-4);
+    label = currentLang === 'EN' ? 'Credit card' : 'บัตรเครดิต';
+  } else if (type === 'bank') {
+    const bank = prompt(currentLang === 'EN' ? 'Bank name:' : 'ชื่อธนาคาร:');
+    if (!bank) return;
+    const acc = prompt(currentLang === 'EN' ? 'Account number (last 4):' : 'เลขบัญชี (4 หลักท้าย):');
+    if (!acc) return;
+    label = bank;
+    sublabel = '•••• ' + acc.slice(-4);
+  } else if (type === 'cash') {
+    sublabel = currentLang === 'EN' ? 'Pay driver in cash' : 'จ่ายคนขับด้วยเงินสด';
+  }
+
+  const newPm = {
+    id: 'pm_' + Date.now(),
+    type, label, sublabel, isDefault: false
+  };
+  paymentMethods.push(newPm);
+  selectedPaymentId = newPm.id;
+  savePaymentMethods();
+  showToast(currentLang === 'EN' ? '✓ Added' : '✓ เพิ่มแล้ว');
+
+  closeSheet();
+  setTimeout(() => showPaymentPicker(window._paymentCallback), 350);
+}
+
+// ลบวิธีจ่ายเงิน (จากหน้าโปรไฟล์)
+function deletePaymentMethod(id) {
+  const pm = paymentMethods.find(p => p.id === id);
+  if (!pm) return;
+  if (!confirm(currentLang === 'EN' ? `Delete ${pm.label}?` : `ลบ ${pm.label}?`)) return;
+  paymentMethods = paymentMethods.filter(p => p.id !== id);
+  if (selectedPaymentId === id && paymentMethods.length > 0) {
+    selectedPaymentId = paymentMethods[0].id;
+  }
+  savePaymentMethods();
+  show('paymentMethods');
+}
+
+// หน้ารายการวิธีจ่ายเงิน (จาก profile → บัญชี)
+function renderPaymentMethodsScreen() {
+  return `
+    <div class="st-header">
+      <button class="st-back" onclick="show('profile')">←</button>
+      <div class="st-title">${currentLang === 'EN' ? 'Payment methods' : 'วิธีชำระเงิน'}</div>
+    </div>
+
+    <div class="pp-methods-screen">
+      ${paymentMethods.map(pm => `
+        <div class="pp-method-row">
+          <div class="pp-icon">${getPaymentIcon(pm.type)}</div>
+          <div class="pp-info">
+            <div class="pp-label">${pm.label}</div>
+            ${pm.sublabel ? `<div class="pp-sub">${pm.sublabel}</div>` : ''}
+          </div>
+          <button class="pp-del" onclick="deletePaymentMethod('${pm.id}')">${currentLang === 'EN' ? 'Delete' : 'ลบ'}</button>
+        </div>
+      `).join('')}
+    </div>
+
+    <button class="pp-add" style="margin:14px 22px;width:calc(100% - 44px)" onclick="showAddPaymentMethod()">
+      + ${currentLang === 'EN' ? 'Add payment method' : 'เพิ่มวิธีจ่ายเงิน'}
+    </button>
+  `;
+}
+// ====== Payment System end ======
+
+// ====== Vehicles System ======
+const VEHICLES_KEY = 'coolpar_vehicles';
+let myVehicles = [];
+try {
+  const saved = localStorage.getItem(VEHICLES_KEY);
+  if (saved) myVehicles = JSON.parse(saved);
+} catch (e) {}
+
+function saveVehicles() {
+  try { localStorage.setItem(VEHICLES_KEY, JSON.stringify(myVehicles)); } catch (e) {}
+}
+
+function renderVehiclesScreen() {
+  return `
+    <div class="st-header">
+      <button class="st-back" onclick="show('profile')">←</button>
+      <div class="st-title">${currentLang === 'EN' ? 'My vehicles' : 'รถของฉัน'}</div>
+    </div>
+
+    <div class="vehicles-list">
+      ${myVehicles.length === 0 ? `
+        <div style="text-align:center;padding:40px 20px;color:var(--text-muted)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48" style="opacity:0.4;margin:0 auto;display:block">
+            <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+            <circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>
+          </svg>
+          <div style="font-size:15px;font-weight:700;margin:12px 0 4px;color:var(--text)">${currentLang === 'EN' ? 'No vehicles yet' : 'ยังไม่มีรถ'}</div>
+          <div style="font-size:13px">${currentLang === 'EN' ? 'Add your vehicle to start posting trips' : 'เพิ่มรถเพื่อเริ่มลงประกาศทริป'}</div>
+        </div>
+      ` : myVehicles.map(v => `
+        <div class="vehicle-card">
+          ${v.photo ? `<div class="vc-photo" style="background-image:url('${v.photo}')"></div>` : `<div class="vc-photo vc-photo-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40" style="opacity:0.3">
+              <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
+              <circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>
+            </svg>
+          </div>`}
+          <div class="vc-info">
+            <div class="vc-name">${v.brand} ${v.model}</div>
+            <div class="vc-meta">${v.year ? v.year + ' · ' : ''}${v.color ? v.color : ''}</div>
+            ${v.plate ? `<div class="vc-plate">${v.plate}</div>` : ''}
+          </div>
+          <button class="vc-del" onclick="deleteVehicle('${v.id}')">${currentLang === 'EN' ? 'Delete' : 'ลบ'}</button>
+        </div>
+      `).join('')}
+    </div>
+
+    <button class="pp-add" style="margin:14px 22px;width:calc(100% - 44px)" onclick="addVehicle()">
+      + ${currentLang === 'EN' ? 'Add vehicle' : 'เพิ่มรถ'}
+    </button>
+  `;
+}
+
+function addVehicle() {
+  const brand = prompt(currentLang === 'EN' ? 'Brand (e.g. Honda):' : 'ยี่ห้อ (เช่น Honda):');
+  if (!brand) return;
+  const model = prompt(currentLang === 'EN' ? 'Model (e.g. CR-V):' : 'รุ่น (เช่น CR-V):');
+  if (!model) return;
+  const year = prompt(currentLang === 'EN' ? 'Year (e.g. 2022):' : 'ปี (เช่น 2022):') || '';
+  const color = prompt(currentLang === 'EN' ? 'Color (e.g. White):' : 'สี (เช่น ขาว):') || '';
+  const plate = prompt(currentLang === 'EN' ? 'License plate:' : 'ทะเบียน:') || '';
+
+  myVehicles.push({
+    id: 'v_' + Date.now(),
+    brand, model, year, color, plate,
+    photo: null
+  });
+  saveVehicles();
+  // ทำให้ profile vehicle step done
+  userProfile.done.vehicle = true;
+  userProfile.car = `${brand} ${model}`;
+  show('vehicles');
+  showToast(currentLang === 'EN' ? '✓ Vehicle added' : '✓ เพิ่มรถแล้ว');
+}
+
+function deleteVehicle(id) {
+  if (!confirm(currentLang === 'EN' ? 'Delete this vehicle?' : 'ลบรถคันนี้?')) return;
+  myVehicles = myVehicles.filter(v => v.id !== id);
+  if (myVehicles.length === 0) {
+    userProfile.done.vehicle = false;
+    userProfile.car = null;
+  }
+  saveVehicles();
+  show('vehicles');
+}
+// ====== Vehicles end ======
+
+// ====== Earnings Dashboard ======
+function renderEarningsScreen() {
+  // คำนวณรายได้จาก myTrips.driver
+  const allDriverTrips = [...myTrips.driver.upcoming, ...myTrips.driver.past];
+  const completedTrips = myTrips.driver.past || [];
+
+  // รายได้รายเดือน 6 เดือนล่าสุด (mock + จริง)
+  const now = new Date();
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const monthName = d.toLocaleDateString(currentLang === 'EN' ? 'en-US' : 'th-TH', { month: 'short' });
+    // mock: เดือนล่าสุด + ปัจจุบันใช้ข้อมูลจริง / เก่ากว่านั้น mock
+    let income;
+    if (i === 0) income = completedTrips.reduce((s, t) => s + (t.price || 0), 0) || 0;
+    else if (i === 1) income = 4200;
+    else if (i === 2) income = 5800;
+    else if (i === 3) income = 3600;
+    else if (i === 4) income = 7100;
+    else income = 5200;
+    months.push({ name: monthName, income });
+  }
+
+  const totalIncome = months.reduce((s, m) => s + m.income, 0);
+  const avgPerMonth = Math.round(totalIncome / months.length);
+  const totalTrips = allDriverTrips.length + 23; // mock past
+  const maxIncome = Math.max(...months.map(m => m.income), 1);
+
+  return `
+    <div class="st-header">
+      <button class="st-back" onclick="show('trips')">←</button>
+      <div class="st-title">${currentLang === 'EN' ? 'Fuel cost received' : 'ค่าน้ำมันที่ได้รับ'}</div>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="earnings-summary">
+      <div class="earn-card earn-card-primary">
+        <div class="earn-label">${currentLang === 'EN' ? 'Total received (6 mo)' : 'รวม 6 เดือน'}</div>
+        <div class="earn-value">฿${totalIncome.toLocaleString()}</div>
+      </div>
+      <div class="earn-row">
+        <div class="earn-card">
+          <div class="earn-label">${currentLang === 'EN' ? 'Avg/month' : 'เฉลี่ย/เดือน'}</div>
+          <div class="earn-value-sm">฿${avgPerMonth.toLocaleString()}</div>
+        </div>
+        <div class="earn-card">
+          <div class="earn-label">${currentLang === 'EN' ? 'Total trips' : 'ทริปทั้งหมด'}</div>
+          <div class="earn-value-sm">${totalTrips}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bar chart -->
+    <div class="earn-chart-section">
+      <div class="earn-chart-title">${currentLang === 'EN' ? 'Monthly earnings' : 'รายรับรายเดือน'}</div>
+      <div class="earn-chart">
+        ${months.map(m => `
+          <div class="earn-bar-col">
+            <div class="earn-bar-wrap">
+              <div class="earn-bar" style="height:${(m.income / maxIncome) * 100}%"></div>
+            </div>
+            <div class="earn-bar-amount">฿${(m.income / 1000).toFixed(1)}k</div>
+            <div class="earn-bar-label">${m.name}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- Recent trips -->
+    <div class="earn-recent">
+      <div class="earn-chart-title">${currentLang === 'EN' ? 'Recent trips' : 'ทริปล่าสุด'}</div>
+      ${completedTrips.length === 0
+        ? `<div style="text-align:center;padding:30px;color:var(--text-muted);font-size:13px">${currentLang === 'EN' ? 'No completed trips yet' : 'ยังไม่มีทริปที่เสร็จสมบูรณ์'}</div>`
+        : completedTrips.slice(0, 5).map(t => `
+            <div class="earn-trip-row">
+              <div class="earn-trip-info">
+                <div class="earn-trip-route">${currentLang === 'EN' ? (t.fromEN || t.from) : t.from} → ${currentLang === 'EN' ? (t.toEN || t.to) : t.to}</div>
+                <div class="earn-trip-date">${currentLang === 'EN' ? (t.timeEN || t.time) : t.time}</div>
+              </div>
+              <div class="earn-trip-amount">+฿${(t.price || 0).toLocaleString()}</div>
+            </div>
+          `).join('')
+      }
+    </div>
+
+    <button class="pp-add" style="margin:18px 22px;width:calc(100% - 44px)" onclick="showToast('${currentLang === 'EN' ? 'Withdrawal will be available after backend integration' : 'การถอนเงินจะใช้ได้หลังเชื่อม backend'}')">
+      ${currentLang === 'EN' ? 'Withdraw earnings' : 'ถอนเงินรายได้'}
+    </button>
+  `;
+}
+// ====== Earnings end ======
+
+// ====== Advanced Search Filters ======
+const searchFilters = {
+  sortBy: 'best',     // 'best' | 'price' | 'time' | 'rating'
+  maxPrice: null,
+  minRating: 0,
+  timeRange: 'any'    // 'any' | 'morning' | 'afternoon' | 'evening'
+};
+
+function showSearchFilters() {
+  showSheet(`
+    <div class="sheet-grab"></div>
+    <div class="search-filters">
+      <div class="pp-title">${currentLang === 'EN' ? 'Filters & Sort' : 'กรอง & เรียง'}</div>
+
+      <div class="sf-section">
+        <div class="sf-label">${currentLang === 'EN' ? 'Sort by' : 'เรียงตาม'}</div>
+        <div class="sf-options">
+          ${['best', 'price', 'time', 'rating'].map(s => {
+            const labels = {
+              best: currentLang === 'EN' ? 'Best match' : 'ดีที่สุด',
+              price: currentLang === 'EN' ? 'Lowest price' : 'ราคาถูกสุด',
+              time: currentLang === 'EN' ? 'Earliest' : 'เร็วที่สุด',
+              rating: currentLang === 'EN' ? 'Highest rating' : 'เรตติ้งสูง'
+            };
+            return `<button class="sf-pill ${searchFilters.sortBy === s ? 'active' : ''}" onclick="setSort('${s}')">${labels[s]}</button>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="sf-section">
+        <div class="sf-label">${currentLang === 'EN' ? 'Departure time' : 'ช่วงเวลาออก'}</div>
+        <div class="sf-options">
+          ${['any', 'morning', 'afternoon', 'evening'].map(t => {
+            const labels = {
+              any: currentLang === 'EN' ? 'Any time' : 'ทั้งวัน',
+              morning: currentLang === 'EN' ? 'Morning' : 'เช้า',
+              afternoon: currentLang === 'EN' ? 'Afternoon' : 'บ่าย',
+              evening: currentLang === 'EN' ? 'Evening' : 'เย็น'
+            };
+            return `<button class="sf-pill ${searchFilters.timeRange === t ? 'active' : ''}" onclick="setTimeRange('${t}')">${labels[t]}</button>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="sf-section">
+        <div class="sf-label">${currentLang === 'EN' ? 'Minimum rating' : 'เรตติ้งขั้นต่ำ'}</div>
+        <div class="sf-options">
+          ${[0, 4.0, 4.5, 4.8].map(r => {
+            const label = r === 0 ? (currentLang === 'EN' ? 'Any' : 'ไม่กำหนด') : '★ ' + r.toFixed(1);
+            return `<button class="sf-pill ${searchFilters.minRating === r ? 'active' : ''}" onclick="setMinRating(${r})">${label}</button>`;
+          }).join('')}
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="applyFilters()" style="margin-top:14px">
+        ${currentLang === 'EN' ? 'Apply filters' : 'ใช้ตัวกรอง'}
+      </button>
+      <button class="bc-secondary" onclick="resetFilters()">
+        ${currentLang === 'EN' ? 'Reset' : 'รีเซ็ต'}
+      </button>
+    </div>
+  `);
+}
+
+function setSort(s) {
+  searchFilters.sortBy = s;
+  document.querySelectorAll('.sf-section').forEach((sec, i) => {
+    if (i === 0) {
+      sec.querySelectorAll('.sf-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.includes(
+          s === 'best' ? (currentLang === 'EN' ? 'Best' : 'ดีที่สุด') :
+          s === 'price' ? (currentLang === 'EN' ? 'Lowest' : 'ราคา') :
+          s === 'time' ? (currentLang === 'EN' ? 'Earliest' : 'เร็ว') :
+          (currentLang === 'EN' ? 'Highest' : 'เรตติ้ง')
+        ));
+      });
+    }
+  });
+}
+
+function setTimeRange(t) {
+  searchFilters.timeRange = t;
+  showSearchFilters();
+}
+
+function setMinRating(r) {
+  searchFilters.minRating = r;
+  showSearchFilters();
+}
+
+function resetFilters() {
+  searchFilters.sortBy = 'best';
+  searchFilters.maxPrice = null;
+  searchFilters.minRating = 0;
+  searchFilters.timeRange = 'any';
+  showSearchFilters();
+}
+
+function applyFilters() {
+  closeSheet();
+  // refresh search trip list
+  if (typeof refreshSTTrips === 'function') refreshSTTrips();
+  show('searchTrip');
+}
+
+// แทน filter ใน search ให้ใช้ filter เพิ่ม
+function applySearchFiltersToTrips(trips) {
+  let result = [...trips];
+
+  // กรองเรตติ้ง
+  if (searchFilters.minRating > 0) {
+    result = result.filter(t => (t.rating || 0) >= searchFilters.minRating);
+  }
+
+  // กรองช่วงเวลา (อิงจาก field time ที่มี HH:MM)
+  if (searchFilters.timeRange !== 'any') {
+    result = result.filter(t => {
+      const timeStr = (t.time || '').toString();
+      const match = timeStr.match(/(\d{1,2}):(\d{2})/);
+      if (!match) return true;
+      const hour = parseInt(match[1]);
+      if (searchFilters.timeRange === 'morning') return hour >= 5 && hour < 12;
+      if (searchFilters.timeRange === 'afternoon') return hour >= 12 && hour < 17;
+      if (searchFilters.timeRange === 'evening') return hour >= 17 || hour < 5;
+      return true;
+    });
+  }
+
+  // เรียง
+  if (searchFilters.sortBy === 'price') {
+    result.sort((a, b) => (a.price || 0) - (b.price || 0));
+  } else if (searchFilters.sortBy === 'rating') {
+    result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  } else if (searchFilters.sortBy === 'time') {
+    result.sort((a, b) => {
+      const aTime = (a.time || '').match(/(\d+):(\d+)/);
+      const bTime = (b.time || '').match(/(\d+):(\d+)/);
+      const aMin = aTime ? parseInt(aTime[1]) * 60 + parseInt(aTime[2]) : 9999;
+      const bMin = bTime ? parseInt(bTime[1]) * 60 + parseInt(bTime[2]) : 9999;
+      return aMin - bMin;
+    });
+  }
+  // 'best' = default sort (ไม่ทำอะไร)
+
+  return result;
+}
+// ====== Advanced Search end ======
+
+// ====== Escrow System ======
+// แอปถือเงินไว้ก่อน → คนขับกด "รับผู้โดยสาร" → โอนเงินอัตโนมัติ
+const ESCROW_KEY = 'coolpar_escrow';
+let escrowTransactions = [];
+try {
+  const saved = localStorage.getItem(ESCROW_KEY);
+  if (saved) escrowTransactions = JSON.parse(saved);
+} catch (e) {}
+
+function saveEscrow() {
+  try { localStorage.setItem(ESCROW_KEY, JSON.stringify(escrowTransactions)); } catch (e) {}
+}
+
+// ผู้โดยสารจ่ายเงิน → เข้า escrow
+function holdInEscrow(tripId, amount, payment, fromUserId, toDriver) {
+  const tx = {
+    id: 'esc_' + Date.now(),
+    tripId,
+    amount,
+    paymentType: payment.type,
+    paymentLabel: payment.label,
+    paymentSublabel: payment.sublabel || '',
+    fromUserId,
+    toDriver,
+    status: 'held',         // 'held' | 'released' | 'refunded'
+    heldAt: Date.now(),
+    releasedAt: null
+  };
+  escrowTransactions.push(tx);
+  saveEscrow();
+  return tx;
+}
+
+// คนขับยืนยันรับผู้โดยสาร → ปล่อยเงินให้คนขับ
+function releaseEscrow(tripId) {
+  const tx = escrowTransactions.find(t => t.tripId === tripId && t.status === 'held');
+  if (!tx) return null;
+  tx.status = 'released';
+  tx.releasedAt = Date.now();
+  saveEscrow();
+  return tx;
+}
+
+// คืนเงินถ้ายกเลิก
+function refundEscrow(tripId) {
+  const tx = escrowTransactions.find(t => t.tripId === tripId && t.status === 'held');
+  if (!tx) return null;
+  tx.status = 'refunded';
+  tx.releasedAt = Date.now();
+  saveEscrow();
+  return tx;
+}
+
+// คนขับกดยืนยัน "รับผู้โดยสารแล้ว"
+function confirmPickupAsDriver(tripId) {
+  const trip = myTrips.driver.upcoming.find(t => t.id === tripId);
+  if (!trip) return;
+
+  if (!confirm(currentLang === 'EN'
+      ? `Confirm you picked up the passenger?\nThe payment of ฿${(trip.price || 0).toLocaleString()} will be transferred to you immediately.`
+      : `ยืนยันว่ารับผู้โดยสารแล้ว?\nเงินค่าน้ำมัน ฿${(trip.price || 0).toLocaleString()} จะถูกโอนให้คุณทันที`)) return;
+
+  const tx = releaseEscrow(tripId);
+  if (tx) {
+    trip.status = 'in_progress';
+    trip.escrowReleased = true;
+    saveMyTrips();
+
+    addNotification('booking',
+      `เงิน ฿${tx.amount.toLocaleString()} ถูกโอนเข้าบัญชีของคุณแล้ว`,
+      `฿${tx.amount.toLocaleString()} transferred to your account`);
+
+    showToast(currentLang === 'EN'
+      ? `✓ Payment ฿${tx.amount.toLocaleString()} released`
+      : `✓ รับเงิน ฿${tx.amount.toLocaleString()} แล้ว`);
+
+    show('trips');
+  }
+}
+
+// ====== Monthly Trip Limit (กันคนทำเป็นอาชีพ) ======
+const MONTHLY_LIMIT = 12;  // ขับได้ 12 ทริป/เดือน
+
+function getDriverTripsThisMonth() {
+  const now = new Date();
+  const monthKey = `${now.getFullYear()}-${now.getMonth()}`;
+  return [...myTrips.driver.upcoming, ...myTrips.driver.past].filter(t => {
+    // ใช้ id timestamp ถ้ามี
+    if (!t.id) return false;
+    const ts = parseInt(t.id.replace(/[^0-9]/g, '').slice(0, 13));
+    if (!ts) return false;
+    const tripDate = new Date(ts);
+    return tripDate.getFullYear() === now.getFullYear() && tripDate.getMonth() === now.getMonth();
+  }).length;
+}
+
+function checkMonthlyLimit() {
+  const count = getDriverTripsThisMonth();
+  return { count, remaining: MONTHLY_LIMIT - count, atLimit: count >= MONTHLY_LIMIT };
+}
+// ====== Escrow + Limit end ======
+
 function bookSeat() {
   if (!requireLogin(currentLang === 'EN' ? 'book a seat' : 'จองที่นั่ง')) return;
 
-  // mock: ทริปนี้คือกรุงเทพ → เชียงใหม่ คนขับสมชาย
+  // ตรวจ payment ก่อน
+  showPaymentPicker((paymentMethod) => {
+    doBookSeat(paymentMethod);
+  });
+}
+
+function doBookSeat(paymentMethod) {
   const mockTrip = {
     from: currentLang === 'EN' ? 'Bangkok' : 'กรุงเทพฯ',
     fromEN: 'Bangkok',
@@ -8849,30 +10357,64 @@ function bookSeat() {
   const pickupName = passengerSelectedPickup ? passengerSelectedPickup.name : mockTrip.from;
   const km = passengerSelectedPickup ? passengerSelectedPickup.remainKm.toFixed(0) : '696';
 
-  // เพิ่มเข้า myTrips.passenger.upcoming
   const bookingId = genTripId();
+
+  // จ่ายเงิน → เข้า escrow (แอป Coolpar ถือเงินไว้)
+  const escrowTx = holdInEscrow(
+    bookingId,
+    price,
+    paymentMethod,
+    authState.user ? (authState.user.email || authState.user.phone) : 'guest',
+    mockTrip.other
+  );
+
   myTrips.passenger.upcoming.unshift({
     id: bookingId,
     time: currentLang === 'EN' ? 'Tomorrow 07:00' : 'พรุ่งนี้ 07:00',
     timeEN: 'Tomorrow 07:00',
-    from: pickupName,
-    fromEN: pickupName,
-    to: mockTrip.to,
-    toEN: mockTrip.toEN,
-    other: mockTrip.other,
-    otherEN: mockTrip.otherEN,
+    from: pickupName, fromEN: pickupName,
+    to: mockTrip.to, toEN: mockTrip.toEN,
+    other: mockTrip.other, otherEN: mockTrip.otherEN,
     price: price,
     pickupName: pickupName,
     distKm: km,
+    paymentType: paymentMethod.type,
+    paymentLabel: paymentMethod.label,
+    escrowId: escrowTx.id,
+    escrowStatus: 'held',  // เงินถูก hold ไว้
     status: 'pending'
   });
   saveMyTrips();
 
-  showBookingConfirmation(bookingId, pickupName, mockTrip.to, price, km, mockTrip.other);
+  addNotification('booking',
+    `จ่ายแล้ว ฿${price.toLocaleString()} · รอคนขับรับ`,
+    `Paid ฿${price.toLocaleString()} · waiting for driver pickup`);
+
+  showBookingConfirmation(bookingId, pickupName, mockTrip.to, price, km, mockTrip.other, paymentMethod);
 }
 
 // หน้า booking confirmation
-function showBookingConfirmation(bookingId, from, to, price, km, driver) {
+function showBookingConfirmation(bookingId, from, to, price, km, driver, paymentMethod) {
+  const pmRow = paymentMethod
+    ? `<div class="bc-row"><span class="bc-label">${currentLang === 'EN' ? 'Paid via' : 'จ่ายผ่าน'}</span><span class="bc-val">${paymentMethod.label}${paymentMethod.sublabel ? ' · ' + paymentMethod.sublabel : ''}</span></div>`
+    : '';
+
+  const escrowNote = `
+    <div class="escrow-note">
+      <div class="escrow-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+      <div class="escrow-text">
+        <div class="escrow-title">${currentLang === 'EN' ? 'Your payment is secured' : 'เงินของคุณถูกถือไว้อย่างปลอดภัย'}</div>
+        <div class="escrow-sub">${currentLang === 'EN'
+          ? `We'll hold ฿${price.toLocaleString()} until ${driver} picks you up.`
+          : `Coolpar จะถือเงิน ฿${price.toLocaleString()} ไว้ จนกว่า ${driver} จะรับคุณ จึงจะโอนให้คนขับ`}</div>
+      </div>
+    </div>
+  `;
+
   showSheet(`
     <div class="sheet-grab"></div>
     <div class="booking-confirm">
@@ -8885,8 +10427,11 @@ function showBookingConfirmation(bookingId, from, to, price, km, driver) {
         <div class="bc-row"><span class="bc-label">${currentLang === 'EN' ? 'To' : 'ปลายทาง'}</span><span class="bc-val">${to}</span></div>
         <div class="bc-row"><span class="bc-label">${currentLang === 'EN' ? 'Driver' : 'คนขับ'}</span><span class="bc-val">${driver}</span></div>
         <div class="bc-row"><span class="bc-label">${currentLang === 'EN' ? 'Distance' : 'ระยะ'}</span><span class="bc-val">${km} ${currentLang === 'EN' ? 'km' : 'กม.'}</span></div>
-        <div class="bc-row bc-total"><span class="bc-label">${currentLang === 'EN' ? 'Total' : 'ยอดรวม'}</span><span class="bc-val">฿${price.toLocaleString()}</span></div>
+        ${pmRow}
+        <div class="bc-row bc-total"><span class="bc-label">${currentLang === 'EN' ? 'Fuel share' : 'แชร์ค่าน้ำมัน'}</span><span class="bc-val">฿${price.toLocaleString()}</span></div>
       </div>
+
+      ${escrowNote}
 
       <button class="btn-primary" onclick="closeSheet();show('trips');">
         ${currentLang === 'EN' ? 'View my trips' : 'ดูการเดินทางของฉัน'}
@@ -8900,11 +10445,22 @@ function showBookingConfirmation(bookingId, from, to, price, km, driver) {
 
 // ยกเลิกทริป (ลบจาก myTrips)
 function cancelMyTrip(tripId, role) {
-  const confirmMsg = currentLang === 'EN' ? 'Cancel this trip?' : 'ยกเลิกทริปนี้?';
+  const confirmMsg = role === 'passenger'
+    ? (currentLang === 'EN' ? 'Cancel & refund?' : 'ยกเลิก + ขอเงินคืน?')
+    : (currentLang === 'EN' ? 'Cancel this trip?' : 'ยกเลิกทริปนี้?');
   if (!confirm(confirmMsg)) return;
 
+  // ถ้าผู้โดยสารยกเลิก → refund
+  if (role === 'passenger') {
+    const tx = refundEscrow(tripId);
+    if (tx) {
+      addNotification('booking',
+        `คืนเงิน ฿${tx.amount.toLocaleString()} แล้ว`,
+        `Refunded ฿${tx.amount.toLocaleString()}`);
+    }
+  }
+
   myTrips[role].upcoming = myTrips[role].upcoming.filter(tr => tr.id !== tripId);
-  // ถ้าเป็น driver ลบจาก userPostedTrips ด้วย
   if (role === 'driver') {
     userPostedTrips = userPostedTrips.filter(tr => tr.id !== tripId);
     saveUserPostedTrips();
@@ -8913,6 +10469,168 @@ function cancelMyTrip(tripId, role) {
   showToast(currentLang === 'EN' ? '✓ Trip canceled' : '✓ ยกเลิกแล้ว');
   show('trips');
 }
+
+// ====== Notification System ======
+const NOTIF_KEY = 'coolpar_notifs';
+
+// Mock notifications เริ่มต้น (สมจริงในแอป carpool)
+let notifications = [
+  { id: 'n1', type: 'booking', titleTH: 'สมชายยืนยันการจองของคุณ', titleEN: 'Somchai confirmed your booking', timeTH: 'เมื่อกี้', timeEN: 'Just now', unread: true, ago: 0 },
+  { id: 'n2', type: 'msg', titleTH: 'วรพล: เจอกันที่ปั๊ม ปตท. นะครับ', titleEN: 'Worapon: See you at PTT gas station', timeTH: '5 นาทีก่อน', timeEN: '5 min ago', unread: true, ago: 5 },
+  { id: 'n3', type: 'trip', titleTH: 'ทริปของคุณจะเริ่มในอีก 1 ชม.', titleEN: 'Your trip starts in 1 hour', timeTH: '1 ชม. ก่อน', timeEN: '1 hr ago', unread: true, ago: 60 },
+  { id: 'n4', type: 'rating', titleTH: 'นภัทรให้คะแนนคุณ 5 ดาว', titleEN: 'Napat rated you 5 stars', timeTH: '2 ชม. ก่อน', timeEN: '2 hr ago', unread: false, ago: 120 },
+  { id: 'n5', type: 'system', titleTH: 'ยินดีต้อนรับสู่ Coolpar!', titleEN: 'Welcome to Coolpar!', timeTH: '2 วันก่อน', timeEN: '2 days ago', unread: false, ago: 2880 }
+];
+
+try {
+  const saved = localStorage.getItem(NOTIF_KEY);
+  if (saved) notifications = JSON.parse(saved);
+} catch (e) {}
+
+function saveNotifications() {
+  try { localStorage.setItem(NOTIF_KEY, JSON.stringify(notifications)); } catch (e) {}
+}
+
+function getUnreadCount() {
+  return notifications.filter(n => n.unread).length;
+}
+
+// อัปเดต badge บน bell
+function updateBellBadge() {
+  const count = getUnreadCount();
+  const badge = document.getElementById('bell-badge');
+  if (!badge) return;
+  if (count > 0) {
+    badge.textContent = count > 9 ? '9+' : count;
+    badge.style.display = 'flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+// SVG icons สำหรับ notification types
+function getNotifIcon(type) {
+  const icons = {
+    booking: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M20 6 9 17l-5-5"/></svg>',
+    msg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>',
+    trip: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+    rating: '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0" width="18" height="18"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+    system: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>'
+  };
+  return icons[type] || icons.system;
+}
+
+function openNotifications() {
+  // ลบ panel เก่า
+  document.querySelectorAll('.notif-overlay').forEach(el => el.remove());
+
+  const phone = document.querySelector('.phone');
+  if (!phone) return;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'notif-overlay';
+  overlay.innerHTML = `
+    <div class="notif-panel" onclick="event.stopPropagation()">
+      <div class="notif-header">
+        <button class="notif-back" onclick="closeNotifications()">←</button>
+        <div class="notif-title">${currentLang === 'EN' ? 'Notifications' : 'การแจ้งเตือน'}</div>
+        ${notifications.length > 0 ? `<button class="notif-clear" onclick="clearAllNotifs()">${currentLang === 'EN' ? 'Clear all' : 'ล้างทั้งหมด'}</button>` : ''}
+      </div>
+      <div class="notif-list" id="notif-list">${renderNotifList()}</div>
+    </div>
+  `;
+  overlay.onclick = closeNotifications;
+  phone.appendChild(overlay);
+  setTimeout(() => overlay.classList.add('show'), 10);
+
+  // mark ว่าเปิด panel แล้ว → ค่อย mark read หลังจากนั้น 1 วินาที
+  setTimeout(() => {
+    notifications.forEach(n => n.unread = false);
+    saveNotifications();
+    updateBellBadge();
+    const list = document.getElementById('notif-list');
+    if (list) list.innerHTML = renderNotifList();
+  }, 1000);
+}
+
+function renderNotifList() {
+  if (notifications.length === 0) {
+    return `
+      <div class="notif-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48" style="opacity:0.4;margin:0 auto;display:block">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+        </svg>
+        <div class="notif-empty-title">${currentLang === 'EN' ? 'No notifications' : 'ยังไม่มีการแจ้งเตือน'}</div>
+        <div class="notif-empty-sub">${currentLang === 'EN' ? 'When you have updates, they\'ll appear here' : 'การแจ้งเตือนใหม่จะปรากฏที่นี่'}</div>
+      </div>
+    `;
+  }
+  return notifications.map(n => {
+    const title = currentLang === 'EN' ? n.titleEN : n.titleTH;
+    const time = currentLang === 'EN' ? n.timeEN : n.timeTH;
+    return `
+      <div class="notif-item ${n.unread ? 'unread' : ''}" onclick="onNotifClick('${n.id}','${n.type}')">
+        <div class="notif-icon notif-icon-${n.type}">${getNotifIcon(n.type)}</div>
+        <div class="notif-body">
+          <div class="notif-msg">${title}</div>
+          <div class="notif-time">${time}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function closeNotifications() {
+  document.querySelectorAll('.notif-overlay').forEach(el => {
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 300);
+  });
+}
+
+function onNotifClick(id, type) {
+  // mark read
+  const notif = notifications.find(n => n.id === id);
+  if (notif) { notif.unread = false; saveNotifications(); updateBellBadge(); }
+
+  closeNotifications();
+
+  // นำทางตามประเภท
+  setTimeout(() => {
+    if (type === 'msg') show('messages');
+    else if (type === 'booking' || type === 'trip') show('trips');
+    else if (type === 'rating') show('profile');
+  }, 350);
+}
+
+function clearAllNotifs() {
+  const confirmMsg = currentLang === 'EN' ? 'Clear all notifications?' : 'ล้างการแจ้งเตือนทั้งหมด?';
+  if (!confirm(confirmMsg)) return;
+  notifications = [];
+  saveNotifications();
+  updateBellBadge();
+  const list = document.getElementById('notif-list');
+  if (list) list.innerHTML = renderNotifList();
+  // ลบปุ่ม clear ด้วย
+  document.querySelectorAll('.notif-clear').forEach(b => b.remove());
+}
+
+// ฟังก์ชันเรียกตอนมี event → เพิ่ม notification ใหม่
+function addNotification(type, titleTH, titleEN) {
+  const newNotif = {
+    id: 'n_' + Date.now(),
+    type, titleTH, titleEN,
+    timeTH: 'เมื่อกี้', timeEN: 'Just now',
+    unread: true,
+    ago: 0
+  };
+  notifications.unshift(newNotif);
+  // จำกัด 50 อันล่าสุด
+  if (notifications.length > 50) notifications = notifications.slice(0, 50);
+  saveNotifications();
+  updateBellBadge();
+}
+// ====== Notification end ======
 
 // ====== Auth System ======
 const AUTH_KEY = 'coolpar_auth';
@@ -8970,6 +10688,8 @@ function initApp() {
       const welcome = document.getElementById('welcome-screen');
       if (welcome) welcome.style.display = 'block';
     }
+    // อัปเดต badge การแจ้งเตือน
+    updateBellBadge();
   }, 2100);
 }
 
