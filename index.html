@@ -11,6 +11,7 @@
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
@@ -3948,6 +3949,61 @@
     font-family: 'Manrope', sans-serif;
   }
 
+  /* Email auth sheet */
+  .email-auth { padding: 8px 0; }
+  .ea-tabs {
+    display: flex;
+    background: var(--bg-soft);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 18px;
+  }
+  .ea-tab {
+    flex: 1;
+    padding: 9px;
+    border: none;
+    background: transparent;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    transition: all 0.15s;
+  }
+  .ea-tab.active {
+    background: var(--bg);
+    color: var(--primary);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .ea-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin: 12px 0 5px;
+  }
+  .ea-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    box-sizing: border-box;
+    transition: border 0.15s;
+  }
+  .ea-input:focus { border-color: var(--primary); }
+  .ea-error {
+    color: #DC2626;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 10px 0 0;
+    min-height: 18px;
+  }
+  .email-auth .btn-primary { margin-top: 16px; }
+
   /* Booking confirmation */
   .booking-confirm { text-align: center; padding: 8px 0; }
   .bc-icon {
@@ -5291,6 +5347,19 @@
 </div>
 
 <script>
+// ====== Supabase Client ======
+const SUPABASE_URL = 'https://aiddtndvyarkwaimilhh.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_kLkfFgcf95EZ9STNREsbww_-Bg1fgPM';
+let sb = null;
+try {
+  if (window.supabase && window.supabase.createClient) {
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log('Supabase connected');
+  }
+} catch (e) {
+  console.warn('Supabase init failed:', e);
+}
+
 // ====== ระบบแปลภาษา (i18n) ======
 let currentLang = 'TH';
 
@@ -10673,6 +10742,36 @@ function saveAuthSession() {
 // แสดง splash + ตัดสินใจไปหน้าไหน
 function initApp() {
   loadAuthSession();
+
+  // เช็ค Supabase session (ถ้า login ค้างไว้)
+  if (sb) {
+    sb.auth.getSession().then(async ({ data }) => {
+      if (data && data.session && data.session.user) {
+        const user = data.session.user;
+        let profile = null;
+        try {
+          const { data: p } = await sb.from('profiles').select('*').eq('id', user.id).single();
+          profile = p;
+        } catch (e) {}
+        authState.isLoggedIn = true;
+        authState.isGuest = false;
+        authState.user = {
+          id: user.id,
+          name: profile?.name || 'ผู้ใช้',
+          nameEN: profile?.name_en || 'User',
+          email: user.email || '',
+          phone: profile?.phone || '',
+          provider: 'email'
+        };
+        if (authState.user.name) userProfile.name = authState.user.name;
+        if (authState.user.nameEN) userProfile.nameEN = authState.user.nameEN;
+        if (authState.user.email) { userProfile.email = authState.user.email; userProfile.done.email = true; }
+        if (profile?.photo_url) { userProfile.photo = profile.photo_url; userProfile.done.photo = true; }
+        saveAuthSession();
+      }
+    }).catch(() => {});
+  }
+
   // splash จะ fade out auto จาก CSS animation
   setTimeout(() => {
     const splash = document.getElementById('splash-screen');
@@ -10769,12 +10868,12 @@ function enterGuestMode() {
 function logout() {
   const msg = currentLang === 'EN' ? 'Log out?' : 'ออกจากระบบใช่ไหม?';
   if (!confirm(msg)) return;
+  // Supabase signOut
+  if (sb) { try { sb.auth.signOut(); } catch (e) {} }
   authState = { isLoggedIn: false, isGuest: false, user: null };
   try { localStorage.removeItem(AUTH_KEY); } catch (e) {}
-  // reset profile photo
   userProfile.photo = null;
   userProfile.done = { photo: false, id: false, email: false, phone: false, vehicle: false };
-  // โชว์ welcome อีกครั้ง
   const welcome = document.getElementById('welcome-screen');
   if (welcome) {
     welcome.style.display = 'block';
@@ -10833,22 +10932,147 @@ function goToLogin() {
 
 // หน้า login ด้วยอีเมล (popup ง่ายๆ)
 function showEmailLogin() {
-  const email = prompt(currentLang === 'EN' ? 'Email:' : 'อีเมล:');
-  if (!email) return;
-  const pw = prompt(currentLang === 'EN' ? 'Password:' : 'รหัสผ่าน:');
-  if (!pw) return;
+  // ถ้าไม่มี Supabase → fallback mock เดิม
+  if (!sb) {
+    const email = prompt(currentLang === 'EN' ? 'Email:' : 'อีเมล:');
+    if (!email) return;
+    const pw = prompt(currentLang === 'EN' ? 'Password:' : 'รหัสผ่าน:');
+    if (!pw) return;
+    authState.isLoggedIn = true;
+    authState.isGuest = false;
+    authState.user = { name: 'วีรนุช', nameEN: 'Weeranuch', email, phone: '', provider: 'email' };
+    userProfile.email = email;
+    userProfile.done.email = true;
+    saveAuthSession();
+    document.getElementById('welcome-screen').style.display = 'none';
+    show('home');
+    return;
+  }
+
+  // UI sheet สำหรับ login/signup จริง
+  showSheet(`
+    <div class="sheet-grab"></div>
+    <div class="email-auth">
+      <div class="ea-tabs">
+        <button class="ea-tab active" id="ea-tab-login" onclick="switchEmailTab('login')">${currentLang === 'EN' ? 'Sign in' : 'เข้าสู่ระบบ'}</button>
+        <button class="ea-tab" id="ea-tab-signup" onclick="switchEmailTab('signup')">${currentLang === 'EN' ? 'Sign up' : 'สมัครสมาชิก'}</button>
+      </div>
+
+      <div id="ea-signup-name-wrap" style="display:none">
+        <label class="ea-label">${currentLang === 'EN' ? 'Name' : 'ชื่อ'}</label>
+        <input class="ea-input" id="ea-name" placeholder="${currentLang === 'EN' ? 'Your name' : 'ชื่อของคุณ'}"/>
+      </div>
+
+      <label class="ea-label">${currentLang === 'EN' ? 'Email' : 'อีเมล'}</label>
+      <input class="ea-input" id="ea-email" type="email" placeholder="you@example.com" autocomplete="email"/>
+
+      <label class="ea-label">${currentLang === 'EN' ? 'Password' : 'รหัสผ่าน'}</label>
+      <input class="ea-input" id="ea-password" type="password" placeholder="••••••••" autocomplete="current-password"/>
+
+      <div id="ea-error" class="ea-error"></div>
+
+      <button class="btn-primary" id="ea-submit" onclick="submitEmailAuth()">${currentLang === 'EN' ? 'Sign in' : 'เข้าสู่ระบบ'}</button>
+    </div>
+  `);
+  window._emailAuthMode = 'login';
+}
+
+function switchEmailTab(mode) {
+  window._emailAuthMode = mode;
+  document.getElementById('ea-tab-login').classList.toggle('active', mode === 'login');
+  document.getElementById('ea-tab-signup').classList.toggle('active', mode === 'signup');
+  document.getElementById('ea-signup-name-wrap').style.display = mode === 'signup' ? 'block' : 'none';
+  const submitBtn = document.getElementById('ea-submit');
+  submitBtn.textContent = mode === 'signup'
+    ? (currentLang === 'EN' ? 'Create account' : 'สมัครเลย')
+    : (currentLang === 'EN' ? 'Sign in' : 'เข้าสู่ระบบ');
+  document.getElementById('ea-error').textContent = '';
+}
+
+async function submitEmailAuth() {
+  const email = document.getElementById('ea-email')?.value.trim();
+  const password = document.getElementById('ea-password')?.value;
+  const errorEl = document.getElementById('ea-error');
+  const submitBtn = document.getElementById('ea-submit');
+  const mode = window._emailAuthMode || 'login';
+
+  errorEl.textContent = '';
+
+  if (!email || !password) {
+    errorEl.textContent = currentLang === 'EN' ? 'Please fill all fields' : 'กรุณากรอกให้ครบ';
+    return;
+  }
+  if (password.length < 6) {
+    errorEl.textContent = currentLang === 'EN' ? 'Password must be 6+ characters' : 'รหัสผ่านต้อง 6 ตัวขึ้นไป';
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = currentLang === 'EN' ? 'Please wait...' : 'รอสักครู่...';
+
+  try {
+    if (mode === 'signup') {
+      const name = document.getElementById('ea-name')?.value.trim() || 'ผู้ใช้ใหม่';
+      const { data, error } = await sb.auth.signUp({
+        email, password,
+        options: { data: { name: name, full_name: name } }
+      });
+      if (error) throw error;
+      // signup สำเร็จ → login เลย
+      await finishSupabaseLogin(data.user, { name, email });
+    } else {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      await finishSupabaseLogin(data.user, { email });
+    }
+  } catch (e) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = mode === 'signup'
+      ? (currentLang === 'EN' ? 'Create account' : 'สมัครเลย')
+      : (currentLang === 'EN' ? 'Sign in' : 'เข้าสู่ระบบ');
+    // แปล error เป็นภาษาคน
+    let msg = e.message || 'Error';
+    if (msg.includes('Invalid login')) msg = currentLang === 'EN' ? 'Wrong email or password' : 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+    else if (msg.includes('already registered')) msg = currentLang === 'EN' ? 'Email already registered' : 'อีเมลนี้สมัครแล้ว';
+    else if (msg.includes('Email not confirmed')) msg = currentLang === 'EN' ? 'Please confirm your email first' : 'กรุณายืนยันอีเมลก่อน';
+    errorEl.textContent = msg;
+  }
+}
+
+// หลัง login/signup สำเร็จ → ดึง profile + เข้าแอป
+async function finishSupabaseLogin(user, fallback) {
+  if (!user) return;
+
+  // ดึง profile จาก database
+  let profile = null;
+  try {
+    const { data } = await sb.from('profiles').select('*').eq('id', user.id).single();
+    profile = data;
+  } catch (e) {}
 
   authState.isLoggedIn = true;
   authState.isGuest = false;
-  authState.user = { name: 'วีรนุช', nameEN: 'Weeranuch', email, phone: '', provider: 'email' };
-  userProfile.name = 'วีรนุช';
-  userProfile.nameEN = 'Weeranuch';
-  userProfile.email = email;
-  userProfile.done.email = true;
+  authState.user = {
+    id: user.id,
+    name: profile?.name || fallback?.name || 'ผู้ใช้',
+    nameEN: profile?.name_en || fallback?.name || 'User',
+    email: user.email || fallback?.email || '',
+    phone: profile?.phone || '',
+    provider: 'email'
+  };
+
+  // sync userProfile
+  if (authState.user.name) userProfile.name = authState.user.name;
+  if (authState.user.nameEN) userProfile.nameEN = authState.user.nameEN;
+  if (authState.user.email) { userProfile.email = authState.user.email; userProfile.done.email = true; }
+  if (profile?.photo_url) { userProfile.photo = profile.photo_url; userProfile.done.photo = true; }
+
   saveAuthSession();
+  closeSheet();
   const welcome = document.getElementById('welcome-screen');
   if (welcome) welcome.style.display = 'none';
   show('home');
+  showToast(currentLang === 'EN' ? '✓ Signed in' : '✓ เข้าสู่ระบบแล้ว');
 }
 
 // หน้า login ด้วยเบอร์ + OTP
