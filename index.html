@@ -1230,6 +1230,7 @@
     font-weight: 500;
   }
   .trips-empty-emoji { font-size: 48px; margin-bottom: 12px; }
+  .trips-empty-icon { color: var(--text-light); margin-bottom: 12px; opacity: 0.5; display: flex; justify-content: center; }
 
   .status-pill {
     font-size: 11px;
@@ -4004,6 +4005,57 @@
   }
   .email-auth .btn-primary { margin-top: 16px; }
 
+  /* server status indicator */
+  .server-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+  }
+  .server-status.online { color: var(--primary); }
+  .server-status.offline { color: var(--text-light); }
+  .ss-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .server-status.online .ss-dot {
+    background: #10B981;
+    box-shadow: 0 0 0 0 rgba(16,185,129,0.5);
+    animation: ss-pulse 2s infinite;
+  }
+  .server-status.offline .ss-dot { background: #CBD5E1; }
+  @keyframes ss-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
+    70% { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+    100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+  }
+
+  /* Coolpar Star empty state */
+  .star-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+  }
+  .star-empty svg { color: #FFC107; margin: 0 auto 12px; display: block; }
+  .star-empty-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 4px;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+  }
+  .star-empty-sub { font-size: 13px; }
+
+  /* Create post form */
+  .create-post { padding: 8px 0; }
+  .create-post textarea.ea-input {
+    font-family: inherit;
+    line-height: 1.5;
+  }
+
   /* Booking confirmation */
   .booking-confirm { text-align: center; padding: 8px 0; }
   .bc-icon {
@@ -4564,6 +4616,7 @@
     margin-bottom: 16px;
   }
   .return-no-trips-emoji { font-size: 36px; margin-bottom: 8px; }
+  .return-no-trips-icon { color: var(--text-light); margin-bottom: 8px; opacity: 0.5; display: flex; justify-content: center; }
   .return-no-trips-text {
     font-size: 13px;
     color: var(--text-muted);
@@ -5380,7 +5433,7 @@ const i18n = {
   promoSub2: { TH: '/กม.', EN: '/km' },
 
   // CO2 card
-  co2Label: { TH: 'ปริมาณคาร์บอนที่ลดไปวันนี้', EN: 'CO₂ reduced today' },
+  co2Label: { TH: 'คาร์บอนที่คุณช่วยลด (สะสม)', EN: 'CO₂ you saved (total)' },
   tripsLabel: { TH: 'ทริปวันนี้', EN: 'Trips today' },
   distanceLabel: { TH: 'ระยะทางรวม', EN: 'Total distance' },
   km: { TH: ' กม.', EN: ' km' },
@@ -5755,10 +5808,16 @@ function renderTripsScreen() {
 
   let tripsHtml;
   if (trips.length === 0) {
+    const ctaBtn = (tab === 'upcoming')
+      ? `<button class="btn-primary" style="max-width:220px;margin:16px auto 0" onclick="${role === 'driver' ? "show('post')" : "show('searchTrip')"}">${role === 'driver' ? (currentLang === 'EN' ? 'Post a trip' : 'ลงประกาศทริป') : (currentLang === 'EN' ? 'Find a ride' : 'ค้นหาทริป')}</button>`
+      : '';
     tripsHtml = `
       <div class="trips-empty">
-        <div class="trips-empty-emoji">${tab === 'upcoming' ? '🗓️' : '📭'}</div>
+        <div class="trips-empty-icon">${tab === 'upcoming'
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="44" height="44"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>'
+          : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="44" height="44"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>'}</div>
         ${tab === 'upcoming' ? t('noUpcoming') : t('noPast')}
+        ${ctaBtn}
       </div>
     `;
   } else {
@@ -5917,58 +5976,8 @@ const mockUsers = {
   }
 };
 
-const chatRooms = {
-  somchai: {
-    userId: 'somchai', unread: 2,
-    lastTimeTH: '10:24', lastTimeEN: '10:24',
-    lastMsgTH: 'ครับ เจอกันที่หมอชิต 06:50 นะครับ',
-    lastMsgEN: 'OK, see you at Mo Chit at 06:50',
-    messagesTH: [
-      { from: 'them', text: 'สวัสดีครับ พรุ่งนี้เจอกันที่หมอชิตนะครับ', time: '09:15' },
-      { from: 'me', text: 'ครับ ออกกี่โมงครับ?', time: '09:18' },
-      { from: 'them', text: '07:00 ตรงครับ ขอเจอกัน 06:50', time: '09:20' },
-      { from: 'them', text: 'ผมจะจอดตรงทางออก 2 นะครับ รถ Honda CR-V สีเทา', time: '09:21' },
-      { from: 'me', text: 'รับทราบครับ ผมจะเอากระเป๋าใบใหญ่มาด้วย ไหวไหมครับ?', time: '10:20' },
-      { from: 'them', text: 'ครับ เจอกันที่หมอชิต 06:50 นะครับ', time: '10:24' }
-    ],
-    messagesEN: [
-      { from: 'them', text: 'Hi, see you at Mo Chit tomorrow', time: '09:15' },
-      { from: 'me', text: 'OK, what time?', time: '09:18' },
-      { from: 'them', text: '07:00 sharp, meet at 06:50', time: '09:20' },
-      { from: 'them', text: "I'll park at exit 2, grey Honda CR-V", time: '09:21' },
-      { from: 'me', text: 'Got it. I have a big bag, is that OK?', time: '10:20' },
-      { from: 'them', text: 'Sure, see you at Mo Chit at 06:50', time: '10:24' }
-    ]
-  },
-  worapon: {
-    userId: 'worapon', unread: 0,
-    lastTimeTH: 'เมื่อวาน', lastTimeEN: 'Yesterday',
-    lastMsgTH: 'ที่นั่งยังว่างอยู่ไหมครับ?',
-    lastMsgEN: 'Are there still seats available?',
-    messagesTH: [
-      { from: 'them', text: 'สวัสดีครับ', time: 'เมื่อวาน 14:00' },
-      { from: 'them', text: 'ที่นั่งยังว่างอยู่ไหมครับ?', time: 'เมื่อวาน 14:01' }
-    ],
-    messagesEN: [
-      { from: 'them', text: 'Hello', time: 'Yesterday 14:00' },
-      { from: 'them', text: 'Are there still seats available?', time: 'Yesterday 14:01' }
-    ]
-  },
-  napat: {
-    userId: 'napat', unread: 0,
-    lastTimeTH: '2 วันก่อน', lastTimeEN: '2 days ago',
-    lastMsgTH: 'ขอบคุณสำหรับทริปที่ดีนะครับ ⭐',
-    lastMsgEN: 'Thanks for the great trip ⭐',
-    messagesTH: [
-      { from: 'me', text: 'ขอบคุณสำหรับทริปที่ดีนะครับ ⭐', time: '2 วันก่อน 18:30' },
-      { from: 'them', text: 'ขอบคุณเช่นกันครับ แล้วเจอกันใหม่ครับ', time: '2 วันก่อน 18:35' }
-    ],
-    messagesEN: [
-      { from: 'me', text: 'Thanks for the great trip ⭐', time: '2 days ago 18:30' },
-      { from: 'them', text: 'Thanks too! See you next time', time: '2 days ago 18:35' }
-    ]
-  }
-};
+// ห้องแชท — มาจากข้อความจริงใน database เท่านั้น (ไม่มี mock)
+const chatRooms = {};
 
 let activeChatRoom = null;
 let viewingUser = null;
@@ -5978,6 +5987,44 @@ function openChat(userId) {
   activeChatRoom = userId;
   if (chatRooms[userId]) chatRooms[userId].unread = 0;
   show('chat');
+  // เริ่มฟังข้อความใหม่แบบ realtime
+  subscribeToMessages();
+}
+
+// ===== Realtime Chat =====
+let _chatChannel = null;
+
+function subscribeToMessages() {
+  if (!sb || !authState.user || !authState.user.id) return;
+  // ยกเลิก subscription เก่า
+  if (_chatChannel) { try { sb.removeChannel(_chatChannel); } catch (e) {} _chatChannel = null; }
+
+  _chatChannel = sb
+    .channel('messages-realtime')
+    .on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'messages',
+      filter: `to_user_id=eq.${authState.user.id}`
+    }, (payload) => {
+      const msg = payload.new;
+      // ไม่แสดงข้อความที่เราส่งเอง (กันซ้ำ)
+      if (msg.from_user_id === authState.user.id) return;
+      const now = new Date(msg.created_at);
+      const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+      const feed = document.getElementById('chat-feed');
+      if (feed && activeChatRoom) {
+        feed.innerHTML += `<div class="bubble them">${msg.text}<div class="bubble-time">${timeStr}</div></div>`;
+        feed.scrollTop = feed.scrollHeight;
+      }
+      // แจ้งเตือนถ้าไม่ได้อยู่หน้าแชท
+      addNotification('msg', `ข้อความใหม่: ${msg.text}`, `New message: ${msg.text}`);
+    })
+    .subscribe();
+}
+
+function unsubscribeMessages() {
+  if (_chatChannel && sb) { try { sb.removeChannel(_chatChannel); } catch (e) {} _chatChannel = null; }
 }
 
 function openUserProfile(userId) {
@@ -5992,7 +6039,6 @@ function renderMessagesList() {
       <h2>${t('messagesTitle')}</h2>
       <p class="subtitle">${t('messagesSub')}</p>
       <div class="trips-empty">
-        <div class="trips-empty-emoji">💬</div>
         ${currentLang === 'EN' ? 'No messages yet' : 'ยังไม่มีข้อความ'}
       </div>
     `;
@@ -6093,6 +6139,18 @@ function sendMessage() {
   if (feed) {
     feed.innerHTML += `<div class="bubble me">${text}<div class="bubble-time">${timeStr}</div></div>`;
     feed.scrollTop = feed.scrollHeight;
+  }
+
+  // บันทึกข้อความลง DB (เก็บประวัติจริง)
+  if (sb && authState.user && authState.user.id) {
+    sb.from('messages').insert({
+      from_user_id: authState.user.id,
+      to_user_id: authState.user.id,  // demo: ส่งหาตัวเอง (ในโปรดักชันใช้ id คนขับจริง)
+      text: text,
+      read: false
+    }).then(({ error }) => {
+      if (error) console.warn('Save message failed:', error.message);
+    });
   }
 
   // จำลองคนตอบกลับ
@@ -6363,6 +6421,12 @@ function renderProfileAccount2() {
       ${row(currentLang === 'EN' ? 'Help' : 'ความช่วยเหลือ', "openProfileDetail('help')")}
       ${row(currentLang === 'EN' ? 'Terms & conditions' : 'ข้อกำหนดและเงื่อนไข', "openProfileDetail('terms')")}
       ${row(currentLang === 'EN' ? 'Data protection' : 'การคุ้มครองข้อมูล', "openProfileDetail('privacy')")}
+      <div class="pf2-acc-row" style="cursor:default">
+        <span>${currentLang === 'EN' ? 'Server status' : 'สถานะเซิร์ฟเวอร์'}</span>
+        <span class="server-status ${sb ? 'online' : 'offline'}">
+          <span class="ss-dot"></span>${sb ? (currentLang === 'EN' ? 'Connected' : 'เชื่อมต่อแล้ว') : (currentLang === 'EN' ? 'Offline' : 'ออฟไลน์')}
+        </span>
+      </div>
     </div>
 
     ${isGuest ? '' : `
@@ -6669,12 +6733,28 @@ function saveProfile() {
     userProfile.done.vehicle = true;
   }
 
-  // อัปเดต greeting บน home ด้วย
-  if (typeof updateHome === 'function') {
-    // จะ refresh ที่ home next time
+  // อัปเดต authState + บันทึก session
+  if (authState.user) {
+    authState.user.name = userProfile.name;
+    authState.user.nameEN = userProfile.nameEN;
+    authState.user.email = userProfile.email;
+    authState.user.phone = userProfile.phone;
+    saveAuthSession();
   }
 
-  alert(t('saved'));
+  // อัปเดต DB
+  if (sb && authState.user && authState.user.id) {
+    sb.from('profiles').update({
+      name: userProfile.name,
+      name_en: userProfile.nameEN,
+      phone: userProfile.phone
+    }).eq('id', authState.user.id).then(({ error }) => {
+      if (error) console.warn('Update profile failed:', error.message);
+      else console.log('Profile updated in DB');
+    });
+  }
+
+  showToast(t('saved'));
   show('profile');
 }
 // ====== Edit Profile end ======
@@ -6897,200 +6977,174 @@ function shuffle(arr) {
 
 // ====== Coolpar Star: รีวิวจังหวัด ======
 // เรียงจากความนิยมมากไปน้อย (likes)
-const travelPosts = [
-  { authorTH: 'พลอย ส.', authorEN: 'Ploy S.', avatar: 'พล', avatarEN: 'PS', avClass: 'av-2', followers: '12.4k followers',
-    provinceTH: 'ปาย', provinceEN: 'Pai',
-    titleTH: 'ปาย 3 วัน 2 คืน หนีกรุงเทพ ดื่มกาแฟ ดูหมอกที่ภูเขา',
-    titleEN: '3 Days in Pai: Escape Bangkok, Coffee & Mountain Mist',
-    likes: 4832, comments: 287, img: img('pai thailand mountain mist') },
-  { authorTH: 'นัท ก.', authorEN: 'Nat K.', avatar: 'นั', avatarEN: 'NK', avClass: 'av-1', followers: '8.9k followers',
-    provinceTH: 'น่าน', provinceEN: 'Nan',
-    titleTH: 'น่าน เมืองแห่งความเงียบสงบ ที่จะทำให้คุณตกหลุมรัก',
-    titleEN: "Nan: The Peaceful Town You'll Fall in Love With",
-    likes: 3914, comments: 213, img: img('nan thailand temple') },
-  { authorTH: 'เก่ง ว.', authorEN: 'Keng W.', avatar: 'เก', avatarEN: 'KW', avClass: 'av-3', followers: '15.2k followers',
-    provinceTH: 'เกาะช้าง', provinceEN: 'Koh Chang',
-    titleTH: 'เกาะช้าง 5 จุดดำน้ำที่ห้ามพลาด ทะเลใสมาก',
-    titleEN: 'Koh Chang: 5 Must-Try Snorkeling Spots',
-    likes: 3521, comments: 412, img: img('koh chang trat thailand beach') },
-  { authorTH: 'มิ้น พ.', authorEN: 'Min P.', avatar: 'มิ', avatarEN: 'MP', avClass: 'av-2', followers: '6.1k followers',
-    provinceTH: 'อยุธยา', provinceEN: 'Ayutthaya',
-    titleTH: 'อยุธยา One day trip ปั่นจักรยานชมโบราณสถาน',
-    titleEN: 'Ayutthaya One-Day Trip: Cycling Through Ancient Ruins',
-    likes: 2876, comments: 156, img: img('ayutthaya buddha temple ruins') },
-  { authorTH: 'บอย ร.', authorEN: 'Boy R.', avatar: 'บอ', avatarEN: 'BR', avClass: 'av-1', followers: '22k followers',
-    provinceTH: 'เชียงราย', provinceEN: 'Chiang Rai',
-    titleTH: 'วัดร่องขุ่น วัดร่องเสือเต้น วัดห้วยปลากั้ง 3 วัดต้องไป',
-    titleEN: 'Chiang Rai: 3 Must-See Temples (White, Blue & Sky Temples)',
-    likes: 2654, comments: 198, img: img('chiang rai white temple') },
-  { authorTH: 'แอน จ.', authorEN: 'Ann J.', avatar: 'แอ', avatarEN: 'AJ', avClass: 'av-3', followers: '4.7k followers',
-    provinceTH: 'กระบี่', provinceEN: 'Krabi',
-    titleTH: 'ทะเลแหวก 4 เกาะ ทริปทะเลที่คุ้มที่สุด',
-    titleEN: 'Krabi 4-Islands Tour: Best Value Sea Trip',
-    likes: 2401, comments: 167, img: img('krabi beach thailand') },
-  { authorTH: 'ต่อ ม.', authorEN: 'Tor M.', avatar: 'ต่', avatarEN: 'TM', avClass: 'av-1', followers: '9.8k followers',
-    provinceTH: 'แม่ฮ่องสอน', provinceEN: 'Mae Hong Son',
-    titleTH: 'หมู่บ้านกะเหรี่ยงคอยาว และทะเลหมอกปางอุ๋ง',
-    titleEN: 'Long Neck Villages & Pang Oung Misty Lake',
-    likes: 2189, comments: 134, img: img('mae hong son pang oung lake') },
-  { authorTH: 'จูน ก.', authorEN: 'June K.', avatar: 'จู', avatarEN: 'JK', avClass: 'av-2', followers: '7.3k followers',
-    provinceTH: 'หัวหิน', provinceEN: 'Hua Hin',
-    titleTH: 'หัวหิน Weekend Trip ตลาดน้ำ + คาเฟ่ทะเล',
-    titleEN: 'Hua Hin Weekend: Floating Markets & Beach Cafés',
-    likes: 1987, comments: 142, img: img('hua hin beach thailand') },
-  { authorTH: 'นิว ส.', authorEN: 'New S.', avatar: 'นิ', avatarEN: 'NS', avClass: 'av-3', followers: '5.4k followers',
-    provinceTH: 'เขาใหญ่', provinceEN: 'Khao Yai',
-    titleTH: 'เขาใหญ่ Camping ใต้ดาว + ส่องสัตว์ป่ากลางคืน',
-    titleEN: 'Khao Yai Camping: Stars Above & Night Safari',
-    likes: 1854, comments: 98, img: img('khao yai national park') },
-  { authorTH: 'เอม ป.', authorEN: 'Aim P.', avatar: 'เอ', avatarEN: 'AP', avClass: 'av-1', followers: '11.6k followers',
-    provinceTH: 'สมุย', provinceEN: 'Koh Samui',
-    titleTH: 'เกาะสมุย 4 วัน 3 คืน หาดทรายขาว น้ำใสปิ๊ง',
-    titleEN: 'Koh Samui 4D3N: White Sand & Crystal Waters',
-    likes: 1722, comments: 156, img: img('koh samui thailand beach') },
-  { authorTH: 'แพร อ.', authorEN: 'Prae A.', avatar: 'แพ', avatarEN: 'PA', avClass: 'av-2', followers: '3.8k followers',
-    provinceTH: 'เลย', provinceEN: 'Loei',
-    titleTH: 'ภูกระดึง เดินขึ้น 5.5 กิโล ทะเลหมอกสวยที่สุด',
-    titleEN: 'Phu Kradueng: 5.5km Hike to the Best Sea of Mist',
-    likes: 1654, comments: 187, img: img('phu kradueng loei mountain') },
-  { authorTH: 'หมิว ท.', authorEN: 'Miu T.', avatar: 'หม', avatarEN: 'MT', avClass: 'av-3', followers: '6.9k followers',
-    provinceTH: 'กาญจนบุรี', provinceEN: 'Kanchanaburi',
-    titleTH: 'น้ำตกเอราวัณ 7 ชั้น สะพานข้ามแม่น้ำแคว',
-    titleEN: 'Erawan 7-Tier Waterfall & River Kwai Bridge',
-    likes: 1521, comments: 102, img: img('erawan waterfall kanchanaburi') },
-  { authorTH: 'อาร์ม ว.', authorEN: 'Arm W.', avatar: 'อา', avatarEN: 'AW', avClass: 'av-1', followers: '8.2k followers',
-    provinceTH: 'อุดรธานี', provinceEN: 'Udon Thani',
-    titleTH: 'ทะเลบัวแดง หนองหานกุมภวาปี โหดมาก',
-    titleEN: 'Red Lotus Sea at Nong Han Lake: Mind-Blowing',
-    likes: 1432, comments: 89, img: img('udon thani red lotus lake') },
-  { authorTH: 'ฟ้า ช.', authorEN: 'Fah C.', avatar: 'ฟ้', avatarEN: 'FC', avClass: 'av-2', followers: '4.1k followers',
-    provinceTH: 'นครปฐม', provinceEN: 'Nakhon Pathom',
-    titleTH: 'องค์พระปฐมเจดีย์ + ตลาดน้ำดอนหวาย',
-    titleEN: 'Phra Pathom Chedi & Don Wai Floating Market',
-    likes: 1287, comments: 76, img: img('nakhon pathom pagoda') },
-  { authorTH: 'ปั้น ก.', authorEN: 'Pan K.', avatar: 'ปั', avatarEN: 'PK', avClass: 'av-3', followers: '5.7k followers',
-    provinceTH: 'จันทบุรี', provinceEN: 'Chanthaburi',
-    titleTH: 'ตึกแถวเก่าจันทบุรี + น้ำตกพลิ้ว ทุเรียนนนท์',
-    titleEN: 'Chanthaburi Old Town + Phlio Waterfall + Durian Season',
-    likes: 1198, comments: 134, img: img('chanthaburi old town thailand') },
-  { authorTH: 'เจน อ.', authorEN: 'Jane A.', avatar: 'เจ', avatarEN: 'JA', avClass: 'av-1', followers: '3.2k followers',
-    provinceTH: 'ตรัง', provinceEN: 'Trang',
-    titleTH: 'อันดามันลับ ทะเลตรัง เกาะมุก เกาะกระดาน',
-    titleEN: "Hidden Andaman: Trang's Koh Muk & Koh Kradan",
-    likes: 1054, comments: 91, img: img('trang thailand beach koh muk') },
-  { authorTH: 'โบ พ.', authorEN: 'Bo P.', avatar: 'โบ', avatarEN: 'BP', avClass: 'av-2', followers: '4.6k followers',
-    provinceTH: 'บุรีรัมย์', provinceEN: 'Buriram',
-    titleTH: 'ปราสาทพนมรุ้ง ดูแสงลอดประตู 4 ครั้งต่อปี',
-    titleEN: 'Phanom Rung Castle: Sun Aligns Through 15 Doors',
-    likes: 987, comments: 73, img: img('phanom rung castle buriram') },
-  { authorTH: 'ตาล ม.', authorEN: 'Tan M.', avatar: 'ตา', avatarEN: 'TM', avClass: 'av-3', followers: '2.9k followers',
-    provinceTH: 'ลำปาง', provinceEN: 'Lampang',
-    titleTH: 'นั่งรถม้าชมเมืองลำปาง วัดพระธาตุลำปางหลวง',
-    titleEN: 'Lampang by Horse Carriage & Phra That Lampang Luang',
-    likes: 854, comments: 65, img: img('lampang horse carriage thailand') },
-  { authorTH: 'แต๊งกิ้ว ร.', authorEN: 'Thank R.', avatar: 'แต', avatarEN: 'TR', avClass: 'av-1', followers: '6.3k followers',
-    provinceTH: 'พังงา', provinceEN: 'Phang Nga',
-    titleTH: 'อ่าวพังงา เกาะปันหยี เกาะตะปู James Bond Island',
-    titleEN: 'Phang Nga Bay: Koh Panyee & James Bond Island',
-    likes: 743, comments: 54, img: img('phang nga bay james bond island') },
-  { authorTH: 'พีท ส.', authorEN: 'Pete S.', avatar: 'พี', avatarEN: 'PS', avClass: 'av-2', followers: '1.8k followers',
-    provinceTH: 'ระยอง', provinceEN: 'Rayong',
-    titleTH: 'เกาะเสม็ด หาดทรายแก้ว สุดยอดของฝั่งตะวันออก',
-    titleEN: 'Koh Samet: Crystal Sand Beach, Best of the East',
-    likes: 612, comments: 41, img: img('koh samet rayong beach') }
-];
+// โพสต์ Coolpar Star — มาจาก database จริงเท่านั้น (ไม่มี mock)
+let travelPosts = [];
+let dbPosts = [];
+
+// ดึงโพสต์จาก database
+async function fetchPostsFromDB() {
+  if (!sb) return;
+  try {
+    const { data, error } = await sb
+      .from('posts')
+      .select('*, profiles:author_id(name, name_en, photo_url)')
+      .order('created_at', { ascending: false })
+      .limit(50);
+    if (error) { console.warn('Fetch posts failed:', error.message); return; }
+    if (data) {
+      dbPosts = data.map(p => {
+        const authorName = p.profiles?.name || 'ผู้ใช้';
+        return {
+          id: p.id,
+          dbId: p.id,
+          authorId: p.author_id,
+          authorTH: authorName,
+          authorEN: p.profiles?.name_en || authorName,
+          avatar: authorName.slice(0, 2),
+          avatarEN: (p.profiles?.name_en || authorName).slice(0, 2),
+          avClass: 'av-' + ((parseInt(p.id.slice(-1), 16) % 3) + 1),
+          provinceTH: p.province || '',
+          provinceEN: p.province || '',
+          titleTH: p.title,
+          titleEN: p.title,
+          contentTH: p.content || '',
+          contentEN: p.content || '',
+          img: p.image_url || '',
+          photoUrl: p.profiles?.photo_url || null
+        };
+      });
+      travelPosts = dbPosts;
+      console.log('Loaded', dbPosts.length, 'posts from database');
+      // refresh ถ้าอยู่หน้า home
+      if (typeof updateHome === 'function') {
+        const starSection = document.getElementById('star-section-wrap');
+        if (starSection) updateHome();
+      }
+    }
+  } catch (e) {
+    console.warn('fetchPostsFromDB error:', e);
+  }
+}
 
 // helpers สำหรับ post i18n
-function postAuthor(p) { return currentLang === 'EN' ? p.authorEN : p.authorTH; }
+function postAuthor(p) { return currentLang === 'EN' ? (p.authorEN || p.authorTH) : p.authorTH; }
 function postAvatar(p) { return currentLang === 'EN' ? (p.avatarEN || p.avatar) : p.avatar; }
-function postProvince(p) { return currentLang === 'EN' ? p.provinceEN : p.provinceTH; }
-function postTitle(p) { return currentLang === 'EN' ? p.titleEN : p.titleTH; }
+function postProvince(p) { return currentLang === 'EN' ? (p.provinceEN || p.provinceTH) : p.provinceTH; }
+function postTitle(p) { return currentLang === 'EN' ? (p.titleEN || p.titleTH) : p.titleTH; }
+function postContent(p) { return currentLang === 'EN' ? (p.contentEN || p.contentTH) : p.contentTH; }
+
+// ===== สร้างโพสต์ Coolpar Star จริง =====
+function showCreatePost() {
+  if (!requireLogin(currentLang === 'EN' ? 'create a post' : 'สร้างโพสต์')) return;
+  showSheet(`
+    <div class="sheet-grab"></div>
+    <div class="create-post">
+      <div class="pp-title">${currentLang === 'EN' ? 'Write a travel guide' : 'เขียนรีวิวการเดินทาง'}</div>
+
+      <label class="ea-label">${currentLang === 'EN' ? 'Province / place' : 'จังหวัด / สถานที่'}</label>
+      <input class="ea-input" id="cp-province" placeholder="${currentLang === 'EN' ? 'e.g. Chiang Mai' : 'เช่น เชียงใหม่'}"/>
+
+      <label class="ea-label">${currentLang === 'EN' ? 'Title' : 'หัวข้อ'}</label>
+      <input class="ea-input" id="cp-title" placeholder="${currentLang === 'EN' ? 'e.g. 3 days in Chiang Mai' : 'เช่น เที่ยวเชียงใหม่ 3 วัน'}"/>
+
+      <label class="ea-label">${currentLang === 'EN' ? 'Image URL (optional)' : 'ลิงก์รูปภาพ (ไม่บังคับ)'}</label>
+      <input class="ea-input" id="cp-image" placeholder="https://..."/>
+
+      <label class="ea-label">${currentLang === 'EN' ? 'Your story' : 'เล่าเรื่องราว'}</label>
+      <textarea class="ea-input" id="cp-content" rows="6" style="resize:vertical;min-height:120px" placeholder="${currentLang === 'EN' ? 'Share your trip details, tips, places to visit...' : 'แชร์รายละเอียดทริป เคล็ดลับ จุดที่ต้องไป...'}"></textarea>
+
+      <div id="cp-error" class="ea-error"></div>
+
+      <button class="btn-primary" id="cp-submit" onclick="submitPost()">${currentLang === 'EN' ? 'Publish' : 'เผยแพร่'}</button>
+    </div>
+  `);
+}
+
+async function submitPost() {
+  const province = document.getElementById('cp-province')?.value.trim();
+  const title = document.getElementById('cp-title')?.value.trim();
+  const image = document.getElementById('cp-image')?.value.trim();
+  const content = document.getElementById('cp-content')?.value.trim();
+  const errorEl = document.getElementById('cp-error');
+  const submitBtn = document.getElementById('cp-submit');
+
+  if (!title) {
+    if (errorEl) errorEl.textContent = currentLang === 'EN' ? 'Please enter a title' : 'กรุณากรอกหัวข้อ';
+    return;
+  }
+  if (!content) {
+    if (errorEl) errorEl.textContent = currentLang === 'EN' ? 'Please write your story' : 'กรุณาเล่าเรื่องราว';
+    return;
+  }
+
+  if (!sb || !authState.user || !authState.user.id) {
+    if (errorEl) errorEl.textContent = currentLang === 'EN' ? 'Please sign in first' : 'กรุณาเข้าสู่ระบบก่อน';
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = currentLang === 'EN' ? 'Publishing...' : 'กำลังเผยแพร่...';
+
+  try {
+    const { data, error } = await sb.from('posts').insert({
+      author_id: authState.user.id,
+      province: province || null,
+      title: title,
+      content: content,
+      image_url: image || null
+    }).select().single();
+    if (error) throw error;
+
+    closeSheet();
+    showToast(currentLang === 'EN' ? '✓ Posted!' : '✓ เผยแพร่แล้ว!');
+    // โหลดโพสต์ใหม่ + refresh
+    await fetchPostsFromDB();
+    updateHome();
+  } catch (e) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = currentLang === 'EN' ? 'Publish' : 'เผยแพร่';
+    if (errorEl) errorEl.textContent = e.message || 'Error';
+  }
+}
 
 // ====== Post Detail Page ======
-let currentPostIndex = null;
+let currentPostId = null;
 
-function openPostDetail(index) {
-  currentPostIndex = index;
+function openPostDetail(postId) {
+  currentPostId = postId;
   show('postDetail');
 }
 
-// gen เนื้อหาอัตโนมัติจากข้อมูลโพส (สมมุติ ตัวอย่าง)
-function generatePostContent(p) {
-  const province = postProvince(p);
-  if (currentLang === 'EN') {
+function renderPostDetail() {
+  if (currentPostId === null) return '';
+  const p = (travelPosts || []).find(x => x.id == currentPostId || x.dbId == currentPostId);
+  if (!p) {
     return `
-      <p>I just got back from <span class="highlight">${province}</span> and I have to say — this trip exceeded all my expectations! Let me share everything I learned.</p>
-
-      <h3>Best time to visit</h3>
-      <p>The weather is amazing from <span class="highlight">November to February</span>. Cool, dry, and perfect for outdoor activities. If you can avoid the rainy season (June-October), do it.</p>
-
-      <h3>How to get there</h3>
-      <p>I carpooled with <strong>${postAuthor(p)}</strong> through Coolpar — saved about ฿1,200 vs flying! The drive was scenic and we made several stops along the way for coffee and food.</p>
-
-      <h3>Budget breakdown</h3>
-      <p>For 3 days 2 nights:</p>
-      <p>• Transport: ฿650<br>• Accommodation: ฿1,500/night<br>• Food: ~฿500/day<br>• Activities: ฿800<br><strong>Total: ~฿5,500 per person</strong></p>
-
-      <h3>Must-visit spots</h3>
-      <p>The viewpoints in ${province} are absolutely stunning, especially during sunrise. Bring a camera and arrive early — the morning light is magical.</p>
-
-      <h3>Where to eat</h3>
-      <p>Local street food is incredible. Try the night market — everything is fresh and inexpensive. Don't miss the local specialties unique to this region.</p>
-
-      <h3>Tips & tricks</h3>
-      <p>1. Book accommodation 2-3 weeks ahead during peak season<br>2. Cash is king — many small shops don't accept cards<br>3. Download offline maps before leaving<br>4. Pack light layers — weather changes fast in the mountains</p>
-
-      <p>Overall, this was one of the best trips I've taken this year. ${province} has so much to offer beyond the typical tourist spots. Happy travels!</p>
+      <div class="post-detail">
+        <button class="post-detail-back" onclick="show('home')">← ${t('back').replace('← ','')}</button>
+        <div style="text-align:center;padding:60px 20px;color:var(--text-muted)">
+          ${currentLang === 'EN' ? 'Post not found' : 'ไม่พบโพสต์นี้'}
+        </div>
+      </div>
     `;
   }
-  return `
-    <p>เพิ่งกลับจาก <span class="highlight">${province}</span> มาครับ ทริปนี้เกินคาดมากๆ ขอแชร์ทุกอย่างที่ได้เรียนรู้ให้ฟังกัน</p>
 
-    <h3>ช่วงไหนไปดีที่สุด</h3>
-    <p>อากาศกำลังดีช่วง <span class="highlight">พฤศจิกายน - กุมภาพันธ์</span> เย็นสบาย แห้ง ทำกิจกรรมกลางแจ้งได้สบาย ถ้าเลี่ยงหน้าฝน (มิ.ย.-ต.ค.) ได้จะดีมาก</p>
+  const content = postContent(p);
+  const province = postProvince(p);
+  const tags = province
+    ? (currentLang === 'EN' ? [province, 'Thailand', 'Travel'] : [province, 'ประเทศไทย', 'ท่องเที่ยว'])
+    : [];
 
-    <h3>ไปยังไง</h3>
-    <p>ผมแชร์รถกับ <strong>${postAuthor(p)}</strong> ผ่าน Coolpar ประหยัดไปประมาณ ฿1,200 เทียบกับนั่งเครื่อง วิวระหว่างทางสวยมาก แวะถ่ายรูป กินกาแฟกันเรื่อยๆ</p>
-
-    <h3>งบประมาณ</h3>
-    <p>สำหรับทริป 3 วัน 2 คืน:</p>
-    <p>• ค่าเดินทาง: ฿650<br>• ที่พัก: ฿1,500/คืน<br>• อาหาร: ประมาณ ฿500/วัน<br>• กิจกรรม: ฿800<br><strong>รวม: ประมาณ ฿5,500/คน</strong></p>
-
-    <h3>จุดต้องไป</h3>
-    <p>จุดชมวิวที่ ${province} สวยมากๆ โดยเฉพาะตอนพระอาทิตย์ขึ้น เอากล้องไปด้วย และไปให้เช้าหน่อย แสงเช้าสวยที่สุด</p>
-
-    <h3>กินที่ไหนดี</h3>
-    <p>street food ดีมาก ลองไปตลาดกลางคืนสิ ทุกอย่างสด ราคาไม่แพง อย่าพลาดอาหารพื้นเมืองของแต่ละจังหวัด รสชาติเฉพาะตัว</p>
-
-    <h3>ทริค & เคล็ดลับ</h3>
-    <p>1. จองที่พักล่วงหน้า 2-3 สัปดาห์ในช่วง high season<br>2. พกเงินสดเยอะหน่อย ร้านเล็กๆ ไม่รับบัตร<br>3. โหลด offline map ก่อนไป<br>4. ใส่เสื้อแบบเลเยอร์ อากาศบนเขาเปลี่ยนเร็ว</p>
-
-    <p>โดยรวมเป็นทริปที่ดีที่สุดของปีนี้เลย ${province} มีอะไรน่าสนใจมากกว่าที่คิด หวังว่าจะเป็นประโยชน์นะครับ! 🌍</p>
-  `;
-}
-
-function renderPostDetail() {
-  if (currentPostIndex === null) return '';
-  const p = travelPosts[currentPostIndex];
-  if (!p) return '';
-
-  const content = generatePostContent(p);
-  const tags = currentLang === 'EN'
-    ? [postProvince(p), 'Thailand', 'Travel', 'Road trip', 'Photography']
-    : [postProvince(p), 'ประเทศไทย', 'ท่องเที่ยว', 'โรดทริป', 'ถ่ายรูป'];
-
-  // related posts (3 อันถัดไป ที่ไม่ใช่ตัวเอง)
-  const related = travelPosts
-    .filter((_, i) => i !== currentPostIndex)
+  // related posts (โพสต์อื่นล่าสุด 3 อัน)
+  const related = (travelPosts || [])
+    .filter(x => (x.id != currentPostId && x.dbId != currentPostId))
     .slice(0, 3);
 
-  const relatedHtml = related.map((rp, i) => {
-    const realIdx = travelPosts.indexOf(rp);
-    return `
-      <div class="post-card" onclick="openPostDetail(${realIdx})">
+  const relatedHtml = related.length === 0 ? '' : related.map((rp) => `
+      <div class="post-card" onclick="openPostDetail('${rp.id}')">
         <div class="post-cover">
-          <img src="${rp.img}" alt="${postProvince(rp)}" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>
-          <div class="post-province-tag">${postProvince(rp)}</div>
+          ${rp.img ? `<img src="${rp.img}" alt="${postProvince(rp)}" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>` : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#00A082,#007A63)"></div>`}
+          ${postProvince(rp) ? `<div class="post-province-tag">${postProvince(rp)}</div>` : ''}
         </div>
         <div class="post-body">
           <div class="post-author">
@@ -7100,23 +7154,18 @@ function renderPostDetail() {
             </div>
           </div>
           <div class="post-title">${postTitle(rp)}</div>
-          <div class="post-stats">
-            <span class="post-stat liked">♥ ${formatLikes(rp.likes)}</span>
-            <span class="post-stat">${rp.comments}</span>
-          </div>
         </div>
       </div>
-    `;
-  }).join('');
+    `).join('');
 
   return `
     <div class="post-detail">
       <div style="position:relative">
         <button class="post-detail-back" onclick="show('home')">← ${t('back').replace('← ','')}</button>
         <div class="post-hero">
-          <img src="${p.img}" alt="${postProvince(p)}" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>
+          ${p.img ? `<img src="${p.img}" alt="${province}" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>` : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#00A082,#007A63)"></div>`}
           <div class="post-hero-overlay"></div>
-          <div class="post-hero-province">${postProvince(p)}</div>
+          ${province ? `<div class="post-hero-province">${province}</div>` : ''}
         </div>
       </div>
 
@@ -7127,46 +7176,28 @@ function renderPostDetail() {
           <div class="avatar ${p.avClass}">${postAvatar(p)}</div>
           <div class="pda-info">
             <div class="pda-name">${postAuthor(p)}</div>
-            <div class="pda-followers">${p.followers}</div>
-          </div>
-          <button class="pda-follow-btn" onclick="event.stopPropagation();this.textContent=this.textContent==='${t('pdFollow')}'?'✓':'${t('pdFollow')}'">${t('pdFollow')}</button>
-        </div>
-
-        <div class="post-stats-bar">
-          <div class="pst-item liked">
-            <div class="pst-icon">♥</div>
-            <div class="pst-val">${formatLikes(p.likes)}</div>
-            <div class="pst-label">${t('pdLikes')}</div>
-          </div>
-          <div class="pst-item">
-            <div class="pst-icon">💬</div>
-            <div class="pst-val">${p.comments}</div>
-            <div class="pst-label">${t('pdComments')}</div>
-          </div>
-          <div class="pst-item">
-            <div class="pst-icon">↗</div>
-            <div class="pst-val">${Math.round(p.likes / 12)}</div>
-            <div class="pst-label">${t('pdShares')}</div>
           </div>
         </div>
 
-        <div class="post-content">${content}</div>
+        <div class="post-content"><p>${(content || '').replace(/\n/g, '<br>')}</p></div>
 
-        <div class="post-tags">
-          ${tags.map(tag => `<span class="post-tag">#${tag}</span>`).join('')}
-        </div>
+        ${tags.length ? `<div class="post-tags">${tags.map(tag => `<span class="post-tag">#${tag}</span>`).join('')}</div>` : ''}
 
         <div class="post-actions">
           <button class="post-action-btn" id="like-btn" onclick="toggleLike(this)">${t('pdLike')}</button>
-          <button class="post-action-btn">${t('pdComment')}</button>
-          <button class="post-action-btn">${t('pdShare')}</button>
+          <button class="post-action-btn" onclick="openChatFromPost('${p.authorId || ''}','${postAuthor(p)}')">${t('pdComment')}</button>
         </div>
 
-        <div class="post-related-title">${t('pdRelated')}</div>
-        <div class="posts-grid">${relatedHtml}</div>
+        ${relatedHtml ? `<div class="post-related-title">${t('pdRelated')}</div><div class="posts-grid">${relatedHtml}</div>` : ''}
       </div>
     </div>
   `;
+}
+
+// ติดต่อคนเขียนโพสต์ (เปิดแชท)
+function openChatFromPost(authorId, authorName) {
+  showToast(currentLang === 'EN' ? 'Opening chat...' : 'กำลังเปิดแชท...');
+  show('messages');
 }
 
 function toggleLike(btn) {
@@ -7240,22 +7271,25 @@ function renderStarSection() {
 
   let postsHtml;
   if (filteredPosts.length === 0) {
-    postsHtml = `
-      <div class="no-results">
-        
-        ${t('noResults1')}${postSearch.query}${t('noResults2')}<br>
-        ${t('noResultsHint')}
-      </div>
-    `;
+    postsHtml = postSearch.query
+      ? `<div class="no-results">${t('noResults1')}${postSearch.query}${t('noResults2')}<br>${t('noResultsHint')}</div>`
+      : `
+        <div class="star-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="48" height="48" style="opacity:0.4">
+            <path d="M12 2 15.09 8.26 22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          <div class="star-empty-title">${currentLang === 'EN' ? 'No travel guides yet' : 'ยังไม่มีรีวิวการเดินทาง'}</div>
+          <div class="star-empty-sub">${currentLang === 'EN' ? 'Be the first to share your trip!' : 'เป็นคนแรกที่แชร์ทริปของคุณ!'}</div>
+          <button class="btn-primary" style="max-width:200px;margin:14px auto 0" onclick="showCreatePost()">${currentLang === 'EN' ? 'Write a guide' : 'เขียนรีวิว'}</button>
+        </div>
+      `;
   } else {
-    postsHtml = `<div class="posts-grid">` + filteredPosts.map((p, i) => {
-      const realIdx = travelPosts.indexOf(p);
+    postsHtml = `<div class="posts-grid">` + filteredPosts.map((p) => {
       return `
-      <div class="post-card" onclick="openPostDetail(${realIdx})">
+      <div class="post-card" onclick="openPostDetail('${p.id}')">
         <div class="post-cover">
-          <img src="${p.img}" alt="${postProvince(p)}" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>
-          <div class="post-rank ${i < 3 && !postSearch.query && postSearch.activeChip === 'all' ? 'top' : ''}">#${i + 1}</div>
-          <div class="post-province-tag">${postProvince(p)}</div>
+          ${p.img ? `<img src="${p.img}" alt="${postProvince(p)}" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>` : `<div style="width:100%;height:100%;background:linear-gradient(135deg,#00A082,#007A63)"></div>`}
+          ${postProvince(p) ? `<div class="post-province-tag">${postProvince(p)}</div>` : ''}
         </div>
         <div class="post-body">
           <div class="post-author">
@@ -7265,10 +7299,6 @@ function renderStarSection() {
             </div>
           </div>
           <div class="post-title">${postTitle(p)}</div>
-          <div class="post-stats">
-            <span class="post-stat liked">♥ ${formatLikes(p.likes)}</span>
-            <span class="post-stat">${p.comments}</span>
-          </div>
         </div>
       </div>
     `;}).join('') + `</div>`;
@@ -7279,7 +7309,7 @@ function renderStarSection() {
       <div class="star-title">
         <span class="star">★</span> Coolpar Star
       </div>
-      <button class="create-guide-btn" onclick="alert(${JSON.stringify(t('createGuide'))})">
+      <button class="create-guide-btn" onclick="showCreatePost()">
         ${t('starCreate')}
       </button>
     </div>
@@ -7358,21 +7388,8 @@ function scrollHomeToTop() {
   setTimeout(() => updateHome(), 400);
 }
 
-// ทริปจริง (mock) เมื่อกรอกครบทั้งต้น-ปลาย — มี pricePerKm สำหรับจัดอันดับ
-const mockTrips = [
-  {
-    time: '09:30 → 19:00', meta: '9.5 ชม.', price: 626, pricePerKm: 0.9, distance: 696,
-    driver: 'นภัทร', initials: 'นภ', car: 'Toyota Camry', rating: 4.9, seats: 3, av: 'av-2'
-  },
-  {
-    time: '07:00 → 16:00', meta: '9 ชม.', price: 836, pricePerKm: 1.2, distance: 696,
-    driver: 'สมชาย', initials: 'สม', car: 'Honda CR-V', rating: 4.8, seats: 2, av: 'av-1'
-  },
-  {
-    time: '14:00 → 23:30', meta: '9.5 ชม.', price: 1184, pricePerKm: 1.7, distance: 696,
-    driver: 'วรพล', initials: 'วร', car: 'Mazda CX-5', rating: 4.7, seats: 1, av: 'av-3'
-  }
-];
+// ทริปแสดงในหน้าแรกตอนกรอกครบ — มาจากทริปจริง (DB) เท่านั้น ไม่มี mock
+const mockTrips = [];
 
 // คะแนนรวมสำหรับจัดอันดับ — ราคาถูก+เรตติ้งสูง = คะแนนสูง = อยู่บนสุด
 // ราคาถูก (1.0) = 50 คะแนน, ราคาแพง (2.0) = 0 คะแนน
@@ -7384,16 +7401,8 @@ function getTripScore(tr) {
 }
 
 // ทริปที่เปิดรับ (mock) ใช้แสดงใน search sheet
-const availableTrips = [
-  { from: 'กรุงเทพ', fromEN: 'Bangkok', to: 'เชียงใหม่', toEN: 'Chiang Mai', date: 'พรุ่งนี้ 07:00', dateEN: 'Tmr 07:00', seats: 2, price: 650, driver: 'สมชาย', driverEN: 'Somchai', initials: 'สม', initialsEN: 'SC', av: 'av-1', rating: 4.8 },
-  { from: 'กรุงเทพ', fromEN: 'Bangkok', to: 'พัทยา', toEN: 'Pattaya', date: 'พรุ่งนี้ 14:00', dateEN: 'Tmr 14:00', seats: 3, price: 250, driver: 'นภัทร', driverEN: 'Napat', initials: 'นภ', initialsEN: 'NP', av: 'av-2', rating: 4.9 },
-  { from: 'เชียงใหม่', fromEN: 'Chiang Mai', to: 'ปาย', toEN: 'Pai', date: 'พรุ่งนี้ 09:00', dateEN: 'Tmr 09:00', seats: 2, price: 250, driver: 'วรพล', driverEN: 'Worapon', initials: 'วร', initialsEN: 'WP', av: 'av-3', rating: 4.7 },
-  { from: 'กรุงเทพ', fromEN: 'Bangkok', to: 'หัวหิน', toEN: 'Hua Hin', date: '25 พ.ค. 08:00', dateEN: 'May 25, 08:00', seats: 1, price: 350, driver: 'พลอย', driverEN: 'Ploy', initials: 'พล', initialsEN: 'PL', av: 'av-2', rating: 5.0 },
-  { from: 'ภูเก็ต', fromEN: 'Phuket', to: 'กระบี่', toEN: 'Krabi', date: '26 พ.ค. 10:00', dateEN: 'May 26, 10:00', seats: 4, price: 250, driver: 'เอม', driverEN: 'Aim', initials: 'เอ', initialsEN: 'AM', av: 'av-1', rating: 4.6 },
-  { from: 'กรุงเทพ', fromEN: 'Bangkok', to: 'เขาใหญ่', toEN: 'Khao Yai', date: 'เสาร์ 06:30', dateEN: 'Sat 06:30', seats: 2, price: 280, driver: 'นิว', driverEN: 'New', initials: 'นิ', initialsEN: 'NW', av: 'av-3', rating: 4.8 },
-  { from: 'เชียงใหม่', fromEN: 'Chiang Mai', to: 'กรุงเทพ', toEN: 'Bangkok', date: 'อาทิตย์ 20:00', dateEN: 'Sun 20:00', seats: 3, price: 650, driver: 'บอย', driverEN: 'Boy', initials: 'บอ', initialsEN: 'BY', av: 'av-1', rating: 4.9 },
-  { from: 'กรุงเทพ', fromEN: 'Bangkok', to: 'อยุธยา', toEN: 'Ayutthaya', date: 'พรุ่งนี้ 10:00', dateEN: 'Tmr 10:00', seats: 4, price: 150, driver: 'จูน', driverEN: 'June', initials: 'จู', initialsEN: 'JN', av: 'av-2', rating: 4.7 }
-];
+// ทริปทั้งหมดมาจาก database จริง (Supabase) เท่านั้น — ไม่มีข้อมูลปลอม
+const availableTrips = [];
 
 // helpers สำหรับ trip i18n
 function tripFrom(tr) { return currentLang === 'EN' ? (tr.fromEN || tr.from) : tr.from; }
@@ -7403,9 +7412,97 @@ function tripDriver(tr) { return currentLang === 'EN' ? (tr.driverEN || tr.drive
 function tripInitials(tr) { return currentLang === 'EN' ? (tr.initialsEN || tr.initials) : tr.initials; }
 
 // กรองทริปตาม homeSearch (ถ้ามี)
+// ทริปจาก database (Supabase) — โหลดเข้ามา cache
+let dbTrips = [];
+
+// ดึงทริปทั้งหมดจาก database
+async function fetchTripsFromDB() {
+  if (!sb) return;
+  try {
+    const { data, error } = await sb
+      .from('trips')
+      .select('*, profiles:driver_id(name, name_en, photo_url, rating)')
+      .eq('status', 'open')
+      .order('created_at', { ascending: false })
+      .limit(50);
+    if (error) { console.warn('Fetch trips failed:', error.message); return; }
+    if (data) {
+      // แปลงรูปแบบ DB → รูปแบบที่ UI ใช้
+      dbTrips = data.map(t => ({
+        id: t.id,
+        dbId: t.id,
+        from: t.from_location,
+        to: t.to_location,
+        date: t.trip_date,
+        time: t.trip_time || '07:00',
+        driver: t.profiles?.name || 'คนขับ',
+        driverEN: t.profiles?.name_en || 'Driver',
+        av: 'av-1',
+        rating: t.profiles?.rating || 5.0,
+        seats: t.seats_left || 3,
+        price: t.price_per_seat,
+        pricePerKm: t.price_per_km || 1.2,
+        distKm: t.distance_km || 0,
+        routeCoords: t.route_coords || null,
+        fromDB: true
+      }));
+      console.log('Loaded', dbTrips.length, 'trips from database');
+    }
+  } catch (e) {
+    console.warn('fetchTripsFromDB error:', e);
+  }
+}
+
+// ดึงการจอง (passenger) จาก DB → ใส่เข้า myTrips.passenger
+async function fetchBookingsFromDB() {
+  if (!sb || !authState.user || !authState.user.id) return;
+  try {
+    const { data, error } = await sb
+      .from('bookings')
+      .select('*')
+      .eq('passenger_id', authState.user.id)
+      .order('created_at', { ascending: false });
+    if (error) { console.warn('Fetch bookings failed:', error.message); return; }
+    if (data) {
+      // เก็บ id ของ booking ที่อยู่ใน local แล้ว (กันซ้ำ)
+      const localDbIds = new Set(
+        [...myTrips.passenger.upcoming, ...myTrips.passenger.past]
+          .filter(t => t.dbId).map(t => t.dbId)
+      );
+      data.forEach(b => {
+        if (localDbIds.has(b.id)) return; // มีแล้ว ข้าม
+        const isPast = (b.status === 'completed' || b.status === 'in_progress');
+        const bucket = isPast ? 'past' : 'upcoming';
+        myTrips.passenger[bucket].push({
+          id: 'b_' + b.id,
+          dbId: b.id,
+          time: 'จองไว้',
+          timeEN: 'Booked',
+          from: b.pickup_location || '—',
+          fromEN: b.pickup_location || '—',
+          to: '—', toEN: '—',
+          other: 'คนขับ', otherEN: 'Driver',
+          price: b.price || 0,
+          distKm: b.distance_km || 0,
+          paymentLabel: b.payment_label || '',
+          escrowStatus: b.escrow_status || 'held',
+          status: b.status || 'pending'
+        });
+      });
+      saveMyTrips();
+      console.log('Loaded', data.length, 'bookings from database');
+    }
+  } catch (e) {
+    console.warn('fetchBookingsFromDB error:', e);
+  }
+}
+
 function getAllTrips() {
-  // รวม mock + ทริปที่ผู้ใช้โพสต์เอง (ใหม่ที่สุดอยู่บน)
-  return [...userPostedTrips, ...availableTrips];
+  // รวม: ทริปจาก DB + ที่ผู้ใช้โพสต์ (local) + mock
+  // กรอง duplicate (ทริปที่ผู้ใช้โพสต์อาจอยู่ทั้ง local และ DB)
+  const dbIds = new Set(dbTrips.map(t => t.dbId));
+  const localUnsaved = userPostedTrips.filter(t => !t.dbId || !dbIds.has(t.dbId));
+  return [...dbTrips, ...localUnsaved, ...availableTrips];
 }
 
 function filterAvailableTrips() {
@@ -7424,21 +7521,30 @@ function filterAvailableTrips() {
 // อิงค่ามาตรฐาน: รถยนต์ปล่อย CO2 ~170 ก./กม.
 // ผู้โดยสารแชร์เฉลี่ย 2 คน/ทริป → ลดรถที่จะวิ่งแยก = ลด CO2 50%
 function getTodayCO2Stats() {
-  // ข้อมูลรวมในวันนี้ (mock - ในแอปจริงจะดึงจาก backend)
-  const totalTrips = 234;        // ทริปที่วิ่งวันนี้
-  const totalDistance = 48520;   // กม. รวม
-  const avgSharedRiders = 2.1;   // ผู้โดยสารเฉลี่ยต่อทริป
+  // คำนวณจากทริปจริงของผู้ใช้ (ทั้งที่จอง + ที่ขับ) — ไม่ใช่ตัวเลขปลอม
+  const co2PerKm = 170; // กรัม/กม. (ค่ามาตรฐานรถยนต์)
 
-  // CO2 ที่ลดได้ = ระยะทาง × ปริมาณปล่อย × (จำนวนคนแชร์ - 1)
-  // เพราะถ้าไม่แชร์ ทุกคนต้องขับรถของตัวเอง → ปล่อย CO2 หลายเท่า
-  const co2PerKm = 170; // กรัม/กม.
-  const co2SavedGrams = totalDistance * co2PerKm * (avgSharedRiders - 1);
+  const allTrips = [
+    ...(myTrips.passenger?.upcoming || []),
+    ...(myTrips.passenger?.past || []),
+    ...(myTrips.driver?.upcoming || []),
+    ...(myTrips.driver?.past || [])
+  ];
+
+  let totalDistance = 0;
+  allTrips.forEach(t => {
+    const km = parseFloat(t.distKm) || 0;
+    totalDistance += km;
+  });
+
+  // CO2 ที่ประหยัด = ระยะ × ปริมาณปล่อย (แชร์รถ = ลดรถวิ่งแยก 1 คัน/ทริป)
+  const co2SavedGrams = totalDistance * co2PerKm;
   const co2SavedKg = co2SavedGrams / 1000;
 
   return {
     co2Kg: Math.round(co2SavedKg),
-    trips: totalTrips,
-    distance: totalDistance,
+    trips: allTrips.length,
+    distance: Math.round(totalDistance),
     treesEquivalent: Math.round(co2SavedKg / 21) // ต้นไม้ดูดซับ CO2 ~21 kg/ปี
   };
 }
@@ -7624,8 +7730,8 @@ function renderCO2Card() {
       </svg>
       <div class="co2-header">
         <div class="co2-badge">
-          <span class="co2-live-dot"></span>
-          <span>LIVE</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>
+          <span>${currentLang === 'EN' ? 'YOUR IMPACT' : 'ของคุณ'}</span>
         </div>
         <span class="co2-date">${today}</span>
       </div>
@@ -7951,6 +8057,13 @@ function refreshSTTrips() {
 function openSearchSheet() {
   // เปิดเป็นหน้าใหม่เต็มจอแทน bottom sheet
   show('searchTrip');
+  // โหลดทริปล่าสุดจาก database
+  if (sb) {
+    fetchTripsFromDB().then(() => {
+      const list = document.getElementById('st-trips-list');
+      if (list && typeof refreshSTTrips === 'function') refreshSTTrips();
+    });
+  }
 }
 
 function closeSearchSheet() {
@@ -8150,38 +8263,61 @@ function updateHome() {
     return;
   }
 
-  // กรณี 3: กรอกครบทั้งต้น-ปลาย → แสดงทริปที่มี (เรียงตามคะแนน)
-  const sortedTrips = [...mockTrips].sort((a, b) => getTripScore(b) - getTripScore(a));
+  // กรณี 3: กรอกครบทั้งต้น-ปลาย → แสดงทริปจริงที่ match (จาก DB)
+  const matchedTrips = getAllTrips().filter(tr => {
+    const matchFrom = tr.from && (tr.from.includes(from) || from.includes(tr.from));
+    const matchTo = tr.to && (tr.to.includes(to) || to.includes(tr.to));
+    return matchFrom && matchTo;
+  });
+  const sortedTrips = applySearchFiltersToTrips(matchedTrips);
+
+  if (sortedTrips.length === 0) {
+    results.innerHTML = `
+      <div class="section-title-row">
+        <p class="section-title">${from} → ${to}</p>
+        <button class="section-back-btn" onclick="resetHomeSearch()">← ${t('back').replace('← ','')}</button>
+      </div>
+      <div class="search-empty" style="text-align:center;padding:40px 20px;color:var(--text-muted)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="44" height="44" style="opacity:0.4;margin:0 auto;display:block"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <div style="font-size:15px;font-weight:700;margin:12px 0 4px;color:var(--text)">${currentLang === 'EN' ? 'No trips on this route yet' : 'ยังไม่มีทริปเส้นทางนี้'}</div>
+        <div style="font-size:13px;margin-bottom:14px">${currentLang === 'EN' ? 'Be the first to post a trip!' : 'เป็นคนแรกที่ลงประกาศทริปนี้!'}</div>
+        <button class="btn-primary" style="max-width:220px;margin:0 auto" onclick="show('post')">${currentLang === 'EN' ? 'Post a trip' : 'ลงประกาศทริป'}</button>
+      </div>
+      ${renderStarSection()}
+    `;
+    return;
+  }
+
   let tripCards = sortedTrips.map((tr, idx) => {
-    // badge: อันดับ 1 = best deal, อันดับ 2 = recommended
     let badge = '';
     if (idx === 0) {
       badge = `<div class="trip-rank-badge best">${t('bestDeal')}</div>`;
     } else if (idx === 1) {
       badge = `<div class="trip-rank-badge recommended">${t('recommended')}</div>`;
     }
+    const initials = (tr.driver || '?').slice(0, 2);
     return `
     <div class="trip-card" data-screen="detail">
       ${badge}
       <div class="trip-top">
         <div>
-          <div class="trip-time">${tr.time}</div>
-          <div class="trip-route">${tr.meta}</div>
+          <div class="trip-time">${tr.time || ''}</div>
+          <div class="trip-route">${tripFrom(tr)} → ${tripTo(tr)}</div>
         </div>
-        <div class="trip-price">฿${tr.price}</div>
+        <div class="trip-price">฿${(tr.price || 0).toLocaleString()}</div>
       </div>
       <div class="trip-driver">
-        <div class="avatar ${tr.av}">${tr.initials}</div>
+        <div class="avatar ${tr.av || 'av-1'}">${initials}</div>
         <div class="driver-info">
-          <div>${tr.driver} • ${tr.car}</div>
-          <div class="driver-meta">★ ${tr.rating} • ${tr.seats}${t('seatsAvail')}</div>
+          <div>${tripDriver(tr)}</div>
+          <div class="driver-meta">★ ${tr.rating || 5.0} • ${tr.seats || 3}${t('seatsAvail')}</div>
         </div>
       </div>
     </div>
   `;}).join('');
   results.innerHTML = `
     <div class="section-title-row">
-      <p class="section-title">${from} → ${to}${t('found')}${mockTrips.length}${t('foundTrips')}${t('closeP')}</p>
+      <p class="section-title">${from} → ${to}${t('found')}${sortedTrips.length}${t('foundTrips')}${t('closeP')}</p>
       <button class="section-back-btn" onclick="resetHomeSearch()">← ${t('back').replace('← ','')}</button>
     </div>
     ${tripCards}
@@ -8592,7 +8728,7 @@ function renderQuickLocations() {
 // ใช้ตำแหน่งปัจจุบันจาก GPS
 function useCurrentLocation() {
   if (!navigator.geolocation) {
-    alert(t('locationError'));
+    showToast(t('locationError'));
     return;
   }
 
@@ -8629,7 +8765,7 @@ function useCurrentLocation() {
       }
     },
     (err) => {
-      alert(t('locationError'));
+      showToast(t('locationError'));
       if (btn) {
         btn.classList.remove('loading');
         btn.innerHTML = `<span class="ql-icon">📍</span><span>${t('myLocation')}</span>`;
@@ -8642,7 +8778,7 @@ function useCurrentLocation() {
 // บันทึกตำแหน่งปัจจุบันเป็นบ้าน/ที่ทำงาน
 function setSavedPlace(key) {
   if (!navigator.geolocation) {
-    alert(t('locationError'));
+    showToast(t('locationError'));
     return;
   }
 
@@ -8675,7 +8811,7 @@ function setSavedPlace(key) {
         renderQuickLocations();
       }
     },
-    () => alert(t('locationError')),
+    () => showToast(t('locationError')),
     { enableHighAccuracy: true, timeout: 10000 }
   );
 }
@@ -8962,9 +9098,36 @@ function confirmPost() {
     posted: Date.now()
   };
 
-  // 1. เพิ่มเข้า userPostedTrips (สำหรับให้คนอื่นค้นเจอ)
+  // 1. เพิ่มเข้า userPostedTrips (local cache)
   userPostedTrips.unshift(newTrip);
   saveUserPostedTrips();
+
+  // 1b. บันทึกลง Supabase database (ให้คนอื่นเห็นข้ามเครื่อง)
+  if (sb && authState.user && authState.user.id) {
+    sb.from('trips').insert({
+      driver_id: authState.user.id,
+      from_location: fromVal,
+      to_location: toVal,
+      trip_date: dateVal,
+      trip_time: timeVal,
+      price_per_seat: pricePerSeat,
+      price_per_km: pricePerKm,
+      distance_km: distKm,
+      total_seats: 3,
+      seats_left: 3,
+      route_coords: tripData.selectedRouteCoords || null,
+      status: 'open'
+    }).select().single().then(({ data, error }) => {
+      if (error) {
+        console.warn('Save trip to DB failed:', error.message);
+      } else if (data) {
+        // อัปเดต local trip ให้มี db id จริง
+        newTrip.dbId = data.id;
+        saveUserPostedTrips();
+        console.log('Trip saved to database:', data.id);
+      }
+    });
+  }
 
   // 2. เพิ่มเข้า myTrips.driver.upcoming (เห็นในหน้าทริปของฉัน)
   const displayTime = formatTripDate(dateVal, timeVal);
@@ -9008,7 +9171,7 @@ function showReturnDialog() {
   if (returnTrips.length === 0) {
     tripsHtml = `
       <div class="return-no-trips">
-        <div class="return-no-trips-emoji">🔍</div>
+        <div class="return-no-trips-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="40" height="40"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
         <div class="return-no-trips-text">${t('returnNoTrips')}</div>
         <button class="return-quick-btn active" onclick="setAlert()">${t('returnAlert')}</button>
       </div>
@@ -9090,12 +9253,12 @@ function setReturnDate(daysAfter) {
 }
 
 function setAlert() {
-  alert(t('alertSet'));
+  showToast(t('alertSet'));
 }
 
 function confirmReturnTrip() {
   closeReturnDialog(false);
-  alert(t('bookedBoth'));
+  showToast(t('bookedBoth'));
   show('trips');
 }
 
@@ -9103,7 +9266,7 @@ function closeReturnDialog(goToTrips) {
   const overlay = document.getElementById('return-overlay');
   if (overlay) overlay.remove();
   if (goToTrips) {
-    alert(t('postSuccess'));
+    showToast(t('postSuccess'));
     show('trips');
   }
 }
@@ -9986,6 +10149,25 @@ function saveVehicles() {
   try { localStorage.setItem(VEHICLES_KEY, JSON.stringify(myVehicles)); } catch (e) {}
 }
 
+// ดึงรถจาก DB
+async function fetchVehiclesFromDB() {
+  if (!sb || !authState.user || !authState.user.id) return;
+  try {
+    const { data, error } = await sb.from('vehicles').select('*').eq('owner_id', authState.user.id).order('created_at', { ascending: false });
+    if (error) { console.warn('Fetch vehicles failed:', error.message); return; }
+    if (data) {
+      myVehicles = data.map(v => ({
+        id: v.id, dbId: v.id,
+        brand: v.brand, model: v.model,
+        year: v.year || '', color: v.color || '', plate: v.plate || '',
+        photo: v.photo_url || null
+      }));
+      saveVehicles();
+      if (myVehicles.length > 0) { userProfile.done.vehicle = true; userProfile.car = `${myVehicles[0].brand} ${myVehicles[0].model}`; }
+    }
+  } catch (e) { console.warn('fetchVehicles error:', e); }
+}
+
 function renderVehiclesScreen() {
   return `
     <div class="st-header">
@@ -10036,21 +10218,40 @@ function addVehicle() {
   const color = prompt(currentLang === 'EN' ? 'Color (e.g. White):' : 'สี (เช่น ขาว):') || '';
   const plate = prompt(currentLang === 'EN' ? 'License plate:' : 'ทะเบียน:') || '';
 
-  myVehicles.push({
-    id: 'v_' + Date.now(),
-    brand, model, year, color, plate,
-    photo: null
-  });
+  const localId = 'v_' + Date.now();
+  myVehicles.push({ id: localId, brand, model, year, color, plate, photo: null });
   saveVehicles();
-  // ทำให้ profile vehicle step done
   userProfile.done.vehicle = true;
   userProfile.car = `${brand} ${model}`;
+
+  // บันทึกลง DB
+  if (sb && authState.user && authState.user.id) {
+    sb.from('vehicles').insert({
+      owner_id: authState.user.id,
+      brand, model, year, color, plate
+    }).select().single().then(({ data, error }) => {
+      if (error) console.warn('Save vehicle failed:', error.message);
+      else if (data) {
+        const v = myVehicles.find(x => x.id === localId);
+        if (v) { v.dbId = data.id; saveVehicles(); }
+        console.log('Vehicle saved to DB');
+      }
+    });
+  }
+
   show('vehicles');
   showToast(currentLang === 'EN' ? '✓ Vehicle added' : '✓ เพิ่มรถแล้ว');
 }
 
 function deleteVehicle(id) {
   if (!confirm(currentLang === 'EN' ? 'Delete this vehicle?' : 'ลบรถคันนี้?')) return;
+  const v = myVehicles.find(x => x.id === id);
+  // ลบจาก DB
+  if (sb && v && v.dbId) {
+    sb.from('vehicles').delete().eq('id', v.dbId).then(({ error }) => {
+      if (error) console.warn('Delete vehicle failed:', error.message);
+    });
+  }
   myVehicles = myVehicles.filter(v => v.id !== id);
   if (myVehicles.length === 0) {
     userProfile.done.vehicle = false;
@@ -10369,6 +10570,20 @@ function confirmPickupAsDriver(tripId) {
     trip.escrowReleased = true;
     saveMyTrips();
 
+    // อัปเดต DB: payment status → released
+    if (sb && trip.dbId) {
+      sb.from('payments').update({
+        status: 'released',
+        released_at: new Date().toISOString(),
+        to_driver_id: authState.user?.id
+      }).eq('booking_id', trip.dbId).then(({ error }) => {
+        if (error) console.warn('Release escrow DB failed:', error.message);
+        else console.log('Escrow released in DB');
+      });
+      sb.from('bookings').update({ escrow_status: 'released', status: 'in_progress' })
+        .eq('id', trip.dbId).then(() => {});
+    }
+
     addNotification('booking',
       `เงิน ฿${tx.amount.toLocaleString()} ถูกโอนเข้าบัญชีของคุณแล้ว`,
       `฿${tx.amount.toLocaleString()} transferred to your account`);
@@ -10454,6 +10669,40 @@ function doBookSeat(paymentMethod) {
     status: 'pending'
   });
   saveMyTrips();
+
+  // บันทึกลง Supabase (booking + payment/escrow)
+  if (sb && authState.user && authState.user.id) {
+    sb.from('bookings').insert({
+      passenger_id: authState.user.id,
+      pickup_location: pickupName,
+      price: price,
+      distance_km: parseFloat(km) || null,
+      payment_method: paymentMethod.type,
+      payment_label: paymentMethod.label,
+      escrow_status: 'held',
+      status: 'pending'
+    }).select().single().then(({ data, error }) => {
+      if (error) { console.warn('Save booking failed:', error.message); return; }
+      if (data) {
+        console.log('Booking saved:', data.id);
+        // บันทึก payment escrow record
+        sb.from('payments').insert({
+          booking_id: data.id,
+          amount: price,
+          payment_type: paymentMethod.type,
+          payment_label: paymentMethod.label,
+          from_user_id: authState.user.id,
+          status: 'held'
+        }).then(({ error: payErr }) => {
+          if (payErr) console.warn('Save payment failed:', payErr.message);
+          else console.log('Payment escrow recorded');
+        });
+        // อัปเดต booking id ใน local
+        const localBooking = myTrips.passenger.upcoming.find(t => t.id === bookingId);
+        if (localBooking) { localBooking.dbId = data.id; saveMyTrips(); }
+      }
+    });
+  }
 
   addNotification('booking',
     `จ่ายแล้ว ฿${price.toLocaleString()} · รอคนขับรับ`,
@@ -10542,14 +10791,8 @@ function cancelMyTrip(tripId, role) {
 // ====== Notification System ======
 const NOTIF_KEY = 'coolpar_notifs';
 
-// Mock notifications เริ่มต้น (สมจริงในแอป carpool)
-let notifications = [
-  { id: 'n1', type: 'booking', titleTH: 'สมชายยืนยันการจองของคุณ', titleEN: 'Somchai confirmed your booking', timeTH: 'เมื่อกี้', timeEN: 'Just now', unread: true, ago: 0 },
-  { id: 'n2', type: 'msg', titleTH: 'วรพล: เจอกันที่ปั๊ม ปตท. นะครับ', titleEN: 'Worapon: See you at PTT gas station', timeTH: '5 นาทีก่อน', timeEN: '5 min ago', unread: true, ago: 5 },
-  { id: 'n3', type: 'trip', titleTH: 'ทริปของคุณจะเริ่มในอีก 1 ชม.', titleEN: 'Your trip starts in 1 hour', timeTH: '1 ชม. ก่อน', timeEN: '1 hr ago', unread: true, ago: 60 },
-  { id: 'n4', type: 'rating', titleTH: 'นภัทรให้คะแนนคุณ 5 ดาว', titleEN: 'Napat rated you 5 stars', timeTH: '2 ชม. ก่อน', timeEN: '2 hr ago', unread: false, ago: 120 },
-  { id: 'n5', type: 'system', titleTH: 'ยินดีต้อนรับสู่ Coolpar!', titleEN: 'Welcome to Coolpar!', timeTH: '2 วันก่อน', timeEN: '2 days ago', unread: false, ago: 2880 }
-];
+// การแจ้งเตือน — มาจาก event จริง + database เท่านั้น (ไม่มี mock)
+let notifications = [];
 
 try {
   const saved = localStorage.getItem(NOTIF_KEY);
@@ -10619,7 +10862,30 @@ function openNotifications() {
     updateBellBadge();
     const list = document.getElementById('notif-list');
     if (list) list.innerHTML = renderNotifList();
+    // mark read ใน DB
+    if (sb && authState.user && authState.user.id) {
+      sb.from('notifications').update({ unread: false }).eq('user_id', authState.user.id).eq('unread', true).then(() => {});
+    }
   }, 1000);
+}
+
+// ดึง notifications จาก DB
+async function fetchNotificationsFromDB() {
+  if (!sb || !authState.user || !authState.user.id) return;
+  try {
+    const { data, error } = await sb.from('notifications').select('*').eq('user_id', authState.user.id).order('created_at', { ascending: false }).limit(50);
+    if (error) { console.warn('Fetch notifs failed:', error.message); return; }
+    if (data && data.length > 0) {
+      notifications = data.map(n => ({
+        id: n.id, type: n.type,
+        titleTH: n.title_th, titleEN: n.title_en,
+        timeTH: 'ก่อนหน้านี้', timeEN: 'Earlier',
+        unread: n.unread
+      }));
+      saveNotifications();
+      updateBellBadge();
+    }
+  } catch (e) { console.warn('fetchNotifs error:', e); }
 }
 
 function renderNotifList() {
@@ -10694,10 +10960,20 @@ function addNotification(type, titleTH, titleEN) {
     ago: 0
   };
   notifications.unshift(newNotif);
-  // จำกัด 50 อันล่าสุด
   if (notifications.length > 50) notifications = notifications.slice(0, 50);
   saveNotifications();
   updateBellBadge();
+
+  // บันทึกลง DB
+  if (sb && authState.user && authState.user.id) {
+    sb.from('notifications').insert({
+      user_id: authState.user.id,
+      type, title_th: titleTH, title_en: titleEN,
+      unread: true
+    }).then(({ error }) => {
+      if (error) console.warn('Save notification failed:', error.message);
+    });
+  }
 }
 // ====== Notification end ======
 
@@ -10768,6 +11044,11 @@ function initApp() {
         if (authState.user.email) { userProfile.email = authState.user.email; userProfile.done.email = true; }
         if (profile?.photo_url) { userProfile.photo = profile.photo_url; userProfile.done.photo = true; }
         saveAuthSession();
+        // โหลดข้อมูลผู้ใช้
+        fetchVehiclesFromDB();
+        fetchBookingsFromDB();
+        fetchNotificationsFromDB();
+        subscribeToMessages();
       }
     }).catch(() => {});
   }
@@ -10782,6 +11063,14 @@ function initApp() {
       const welcome = document.getElementById('welcome-screen');
       if (welcome) welcome.style.display = 'none';
       show('home');
+      // โหลดทริป + โพสต์จาก database (background)
+      fetchTripsFromDB().then(() => {
+        if (typeof refreshSTTrips === 'function') {
+          const list = document.getElementById('st-trips-list');
+          if (list) refreshSTTrips();
+        }
+      });
+      fetchPostsFromDB();
     } else {
       // โชว์ welcome
       const welcome = document.getElementById('welcome-screen');
@@ -10835,21 +11124,45 @@ function loginWith(provider) {
     return;
   }
 
+  // Google / Apple / Facebook → Supabase OAuth จริง
+  if ((provider === 'google' || provider === 'apple' || provider === 'facebook') && sb) {
+    sb.auth.signInWithOAuth({
+      provider: provider,
+      options: { redirectTo: window.location.href.split('#')[0] }
+    }).then(({ error }) => {
+      if (error) {
+        console.warn('OAuth failed:', error.message);
+        // ถ้า provider ยังไม่ได้เปิดใน Supabase → แจ้ง + fallback mock
+        if (error.message.includes('not enabled') || error.message.includes('provider')) {
+          showToast(currentLang === 'EN'
+            ? `${provider} login not set up yet — using demo mode`
+            : `ยังไม่ได้ตั้งค่า ${provider} — ใช้โหมดสาธิต`);
+          loginWithMock(provider);
+        } else {
+          showToast(currentLang === 'EN' ? 'Login failed' : 'เข้าสู่ระบบไม่สำเร็จ');
+        }
+      }
+      // ถ้าสำเร็จ → browser redirect ไป Google/Apple แล้วกลับมา (initApp จะจับ session เอง)
+    });
+    return;
+  }
+
+  // fallback mock (ถ้าไม่มี Supabase)
+  loginWithMock(provider);
+}
+
+// mock login (ใช้ตอน Supabase ไม่พร้อม หรือ provider ยังไม่ได้ตั้งค่า)
+function loginWithMock(provider) {
   const user = mockUsers[provider];
   if (!user) return;
-
   authState.isLoggedIn = true;
   authState.isGuest = false;
   authState.user = user;
-  // sync กับ userProfile
   userProfile.name = user.name;
   userProfile.nameEN = user.nameEN;
   userProfile.email = user.email;
-  userProfile.done.email = true; // จาก provider แล้ว verify ในตัว
-
+  userProfile.done.email = true;
   saveAuthSession();
-
-  // hide welcome → home
   const welcome = document.getElementById('welcome-screen');
   if (welcome) welcome.style.display = 'none';
   show('home');
@@ -11073,6 +11386,14 @@ async function finishSupabaseLogin(user, fallback) {
   if (welcome) welcome.style.display = 'none';
   show('home');
   showToast(currentLang === 'EN' ? '✓ Signed in' : '✓ เข้าสู่ระบบแล้ว');
+
+  // โหลดข้อมูลของผู้ใช้จาก DB
+  fetchTripsFromDB();
+  fetchPostsFromDB();
+  fetchVehiclesFromDB();
+  fetchBookingsFromDB();
+  fetchNotificationsFromDB();
+  subscribeToMessages();
 }
 
 // หน้า login ด้วยเบอร์ + OTP
