@@ -2,8 +2,17 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Coolpar</title>
+<!-- PWA: ติดตั้งเป็นแอปได้ -->
+<meta name="theme-color" content="#00A082">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Coolpar">
+<meta name="description" content="Coolpar — ทางเดียวกัน ไปด้วยกัน แชร์รถ ประหยัด ปลอดภัย">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%2300A082'/%3E%3Ctext x='90' y='120' font-family='Arial,sans-serif' font-size='100' font-weight='800' fill='white' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2300A082'/%3E%3Ctext x='32' y='44' font-family='Arial,sans-serif' font-size='38' font-weight='800' fill='white' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -32,6 +41,26 @@
     --warning: #FFA630;
     --warning-bg: #FFF1DC;
   }
+  [data-theme="dark"] {
+    --primary: #1AC09B;
+    --primary-dark: #00A082;
+    --primary-light: #15302B;
+    --primary-soft: #1B3A33;
+    --accent: #E8EAF0;
+    --text: #ECEEF2;
+    --text-muted: #9CA3AF;
+    --text-light: #6B7280;
+    --bg: #15171C;
+    --bg-soft: #1E2128;
+    --border: #2A2E37;
+    --border-strong: #383D48;
+    --success: #1AC09B;
+    --success-bg: #15302B;
+    --warning: #FFA630;
+    --warning-bg: #3A2E1A;
+  }
+  [data-theme="dark"] .phone { box-shadow: 0 30px 70px rgba(0,0,0,0.6); }
+  [data-theme="dark"] img { filter: brightness(0.92); }
   body {
     font-family: 'IBM Plex Sans Thai', 'Manrope', -apple-system, sans-serif;
     background: linear-gradient(135deg, #00A082 0%, #006B5C 100%);
@@ -4046,6 +4075,42 @@
   }
   .email-auth .btn-primary { margin-top: 16px; }
 
+  /* หน้าเนื้อหา (terms/privacy/help/faq) */
+  .content-page { padding: 4px 0 10px; }
+  .content-page-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    color: var(--text);
+  }
+  .content-page-body { font-size: 14px; line-height: 1.7; color: var(--text-muted); }
+  .content-page-body p { margin-bottom: 14px; }
+  .content-page-body strong { color: var(--text); font-weight: 700; }
+
+  /* dark mode toggle pill */
+  .theme-pill {
+    width: 46px; height: 26px;
+    background: var(--border-strong);
+    border-radius: 99px;
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .theme-pill.on { background: var(--primary); }
+  .theme-knob {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 22px; height: 22px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .theme-pill.on .theme-knob { transform: translateX(20px); }
+
   /* server status indicator */
   .server-status {
     display: inline-flex;
@@ -4096,6 +4161,27 @@
     font-family: inherit;
     line-height: 1.5;
   }
+
+  /* ปุ่มติดต่อคนขับ */
+  .contact-driver-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 13px;
+    margin: 4px 0 4px;
+    background: var(--bg);
+    color: var(--primary);
+    border: 1.5px solid var(--primary);
+    border-radius: 13px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Manrope', 'IBM Plex Sans Thai', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .contact-driver-btn:active { transform: scale(0.98); background: var(--bg-soft); }
 
   /* Booking confirmation */
   .booking-confirm { text-align: center; padding: 8px 0; }
@@ -5285,16 +5371,16 @@
 
       <!-- Hero illustration -->
       <div class="welcome-hero">
-        <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+        <svg viewBox="0 -12 200 132" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%" preserveAspectRatio="xMidYMid meet">
           <defs>
             <linearGradient id="welcomeCarBody" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#1AC09B"/>
               <stop offset="100%" stop-color="#00A082"/>
             </linearGradient>
           </defs>
-          <ellipse cx="40" cy="20" rx="14" ry="5" fill="#E0F4FF"/>
-          <ellipse cx="50" cy="18" rx="10" ry="4" fill="#E0F4FF"/>
-          <ellipse cx="150" cy="22" rx="14" ry="5" fill="#E0F4FF"/>
+          <ellipse cx="40" cy="12" rx="14" ry="5" fill="#E0F4FF"/>
+          <ellipse cx="50" cy="10" rx="10" ry="4" fill="#E0F4FF"/>
+          <ellipse cx="150" cy="14" rx="14" ry="5" fill="#E0F4FF"/>
           <line x1="20" y1="92" x2="180" y2="92" stroke="#E0E0E0" stroke-width="1"/>
           <g transform="translate(100, 75)">
             <ellipse cx="0" cy="14" rx="32" ry="3" fill="#000000" opacity="0.15"/>
@@ -5720,6 +5806,29 @@ function t(key) {
   return entry[currentLang] || entry.TH;
 }
 
+// ====== Dark Mode ======
+let isDarkMode = false;
+try { isDarkMode = localStorage.getItem('coolpar_theme') === 'dark'; } catch (e) {}
+
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+}
+applyTheme(); // ใช้ทันทีตอนโหลด
+
+function toggleDarkMode() {
+  isDarkMode = !isDarkMode;
+  try { localStorage.setItem('coolpar_theme', isDarkMode ? 'dark' : 'light'); } catch (e) {}
+  applyTheme();
+  // refresh หน้าโปรไฟล์ถ้าอยู่
+  if (typeof show === 'function' && document.getElementById('screen-profile')) {
+    const active = document.querySelector('.screen.active');
+    if (active && active.id === 'screen-profile') show('profile');
+  }
+  showToast(isDarkMode
+    ? (currentLang === 'EN' ? '🌙 Dark mode on' : '🌙 โหมดมืดเปิด')
+    : (currentLang === 'EN' ? '☀️ Light mode on' : '☀️ โหมดสว่างเปิด'));
+}
+
 function toggleLang() {
   currentLang = currentLang === 'TH' ? 'EN' : 'TH';
   const toggle = document.getElementById('lang-toggle');
@@ -5755,24 +5864,15 @@ function applyLang() {
 const tripsView = { role: 'passenger', tab: 'upcoming' };
 
 // ทริปของผู้ใช้ (mock)
+// เดินทางของฉัน — มาจากการจอง/โพสต์จริงเท่านั้น (ไม่มี mock)
 let myTrips = {
   passenger: {
-    upcoming: [
-      { id: 'p1', time: 'พรุ่งนี้ 07:00', timeEN: 'Tomorrow 07:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'เชียงใหม่', toEN: 'Chiang Mai', other: 'สมชาย', otherEN: 'Somchai', price: 650, status: 'confirmed' },
-      { id: 'p2', time: '28 พ.ค. 14:00', timeEN: 'May 28, 14:00', from: 'เชียงใหม่', fromEN: 'Chiang Mai', to: 'กรุงเทพฯ', toEN: 'Bangkok', other: 'วรพล', otherEN: 'Worapon', price: 700, status: 'pending' }
-    ],
-    past: [
-      { id: 'p3', time: '15 พ.ค. 09:00', timeEN: 'May 15, 09:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'พัทยา', toEN: 'Pattaya', other: 'นภัทร', otherEN: 'Napat', price: 250, status: 'completed' },
-      { id: 'p4', time: '5 พ.ค. 16:00', timeEN: 'May 5, 16:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'หัวหิน', toEN: 'Hua Hin', other: 'พลอย', otherEN: 'Ploy', price: 350, status: 'completed' }
-    ]
+    upcoming: [],
+    past: []
   },
   driver: {
-    upcoming: [
-      { id: 'd1', time: '30 พ.ค. 06:00', timeEN: 'May 30, 06:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'เชียงใหม่', toEN: 'Chiang Mai', other: 'ผู้โดยสาร 3 คน', otherEN: '3 passengers', price: 2400, status: 'confirmed' }
-    ],
-    past: [
-      { id: 'd2', time: '10 พ.ค. 08:00', timeEN: 'May 10, 08:00', from: 'กรุงเทพฯ', fromEN: 'Bangkok', to: 'อยุธยา', toEN: 'Ayutthaya', other: 'ผู้โดยสาร 2 คน', otherEN: '2 passengers', price: 320, status: 'completed' }
-    ]
+    upcoming: [],
+    past: []
   }
 };
 
@@ -5875,7 +5975,7 @@ function renderTripsScreen() {
 
       const isPast = tab === 'past';
       const rateBtn = isPast ? `
-          <button class="trip-rate-btn" onclick="event.stopPropagation();showTripRating('${tr.other}','${tr.otherEN || tr.other}')">
+          <button class="trip-rate-btn" onclick="event.stopPropagation();showTripRating('${tr.other}','${tr.otherEN || tr.other}','${tr.otherId || ''}','${tr.dbId || ''}')">
             ${currentLang === 'EN' ? 'Rate this trip' : 'ให้คะแนนทริปนี้'}
           </button>
       ` : '';
@@ -5955,89 +6055,109 @@ function renderTripsScreen() {
 
 // state ของหน้าทริป end
 
-// ====== Chat & User System (mock) ======
-const mockUsers = {
-  somchai: {
-    id: 'somchai', nameTH: 'สมชาย จ.', nameEN: 'Somchai J.',
-    avTH: 'สม', avEN: 'SC', avClass: 'av-1',
-    rating: 4.8, totalTrips: 124, reviewsCount: 89, yearsActive: 3,
-    online: true, verified: true,
-    bioTH: 'ขับมาตั้งแต่ปี 2566 ชอบฟังเพลงเก่าระหว่างทาง ไม่สูบบุหรี่ในรถ',
-    bioEN: 'Driving since 2023. Love listening to oldies on the road. No smoking in car.',
-    car: 'Honda CR-V 2022 · สีเทา',
-    carEN: 'Honda CR-V 2022 · Grey',
-    reviewsTH: [
-      { from: 'นัท ก.', rating: 5, text: 'ขับขี่ปลอดภัย คุยสนุก แนะนำเลย' },
-      { from: 'มิ้น พ.', rating: 5, text: 'ตรงเวลา เปิดแอร์เย็น น่ารักมาก' },
-      { from: 'บอย ร.', rating: 4, text: 'ดีมาก แต่หาที่จอดยากนิดหน่อย' }
-    ],
-    reviewsEN: [
-      { from: 'Nat K.', rating: 5, text: 'Safe driver, great conversation, highly recommended' },
-      { from: 'Min P.', rating: 5, text: 'On time, comfortable AC, very nice person' },
-      { from: 'Boy R.', rating: 4, text: 'Great trip, but parking was a bit tricky' }
-    ]
-  },
-  worapon: {
-    id: 'worapon', nameTH: 'วรพล ส.', nameEN: 'Worapon S.',
-    avTH: 'วร', avEN: 'WP', avClass: 'av-3',
-    rating: 4.7, totalTrips: 67, reviewsCount: 52, yearsActive: 2,
-    online: false, verified: true,
-    bioTH: 'นักศึกษาขับ part-time ไปมหาวิทยาลัย ชอบขับเย็นๆ ไม่รีบ',
-    bioEN: 'Part-time university student driver. Prefer relaxed pace, no rush.',
-    car: 'Mazda CX-5 2021 · สีขาว',
-    carEN: 'Mazda CX-5 2021 · White',
-    reviewsTH: [
-      { from: 'เอม ป.', rating: 5, text: 'ใจดี ขับนิ่งมาก' },
-      { from: 'แอน จ.', rating: 4, text: 'โอเคครับ มาตรงเวลา' }
-    ],
-    reviewsEN: [
-      { from: 'Aim P.', rating: 5, text: 'Kind and very steady driver' },
-      { from: 'Ann J.', rating: 4, text: 'Good, arrived on time' }
-    ]
-  },
-  napat: {
-    id: 'napat', nameTH: 'นภัทร ป.', nameEN: 'Napat P.',
-    avTH: 'นภ', avEN: 'NP', avClass: 'av-2',
-    rating: 4.9, totalTrips: 201, reviewsCount: 156, yearsActive: 4,
-    online: true, verified: true,
-    bioTH: 'ขับรถ carpool มา 4 ปี ชอบช่วยคนประหยัด คุยสนุก รับฟังเพลย์ลิสต์ของลูกค้า',
-    bioEN: '4 years of carpooling. Love helping people save money. Happy to play your playlist!',
-    car: 'Toyota Camry 2023 · สีน้ำเงิน',
-    carEN: 'Toyota Camry 2023 · Blue',
-    reviewsTH: [
-      { from: 'พลอย ส.', rating: 5, text: 'สุดยอด! ขับนิ่ม ปลอดภัย คุยถูกคอ' },
-      { from: 'จูน ก.', rating: 5, text: 'เป็นทริปที่ดีที่สุดที่เคยใช้' },
-      { from: 'นิว ส.', rating: 5, text: 'รถใหม่ สะอาด คนขับสุภาพมาก' }
-    ],
-    reviewsEN: [
-      { from: 'Ploy S.', rating: 5, text: 'Amazing! Smooth, safe, great chat' },
-      { from: 'June K.', rating: 5, text: 'Best trip experience ever' },
-      { from: 'New S.', rating: 5, text: 'New, clean car, very polite driver' }
-    ]
-  }
-};
+// ====== Chat & User System ======
 
-// ห้องแชท — มาจากข้อความจริงใน database เท่านั้น (ไม่มี mock)
-const chatRooms = {};
-
-let activeChatRoom = null;
+// ====== Real Chat System (2 คนจริง ผ่าน database) ======
+let chatPartners = {};   // { userId: {name, nameEN, avClass} }
+let chatMessages = {};   // { userId: [{from:'me'|'them', text, time}] }
+let activeChatRoom = null;       // user id ของอีกฝ่าย
+let chatPartnerInfo = { name: '', nameEN: '' };
 let viewingUser = null;
 
-function openChat(userId) {
-  if (!requireLogin(currentLang === 'EN' ? 'send messages' : 'ส่งข้อความ')) return;
-  activeChatRoom = userId;
-  if (chatRooms[userId]) chatRooms[userId].unread = 0;
-  show('chat');
-  // เริ่มฟังข้อความใหม่แบบ realtime
-  subscribeToMessages();
+// avatar class จาก id (คงที่)
+function avClassFromId(id) {
+  if (!id) return 'av-1';
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h + id.charCodeAt(i)) % 3;
+  return 'av-' + (h + 1);
 }
 
-// ===== Realtime Chat =====
+// เปิดแชทกับผู้ใช้คนนึง (id จริง)
+function openChat(otherUserId, name, nameEN) {
+  if (!requireLogin(currentLang === 'EN' ? 'send messages' : 'ส่งข้อความ')) return;
+  if (!otherUserId) {
+    showToast(currentLang === 'EN' ? 'Cannot open chat' : 'เปิดแชทไม่ได้');
+    return;
+  }
+  activeChatRoom = otherUserId;
+  chatPartnerInfo = {
+    name: name || chatPartners[otherUserId]?.name || (currentLang === 'EN' ? 'User' : 'ผู้ใช้'),
+    nameEN: nameEN || chatPartners[otherUserId]?.nameEN || name || 'User'
+  };
+  show('chat');
+  subscribeToMessages();
+  loadChatMessages(otherUserId);
+}
+
+// โหลดข้อความระหว่างเรากับอีกฝ่ายจาก DB
+async function loadChatMessages(otherUserId) {
+  if (!sb || !authState.user || !authState.user.id) return;
+  const me = authState.user.id;
+  try {
+    // ถ้ายังไม่รู้ชื่ออีกฝ่าย → ดึงจาก profiles
+    if (!chatPartners[otherUserId]) {
+      const { data: prof } = await sb.from('profiles').select('name, name_en, photo_url').eq('id', otherUserId).single();
+      if (prof) {
+        chatPartners[otherUserId] = {
+          name: prof.name || 'ผู้ใช้',
+          nameEN: prof.name_en || prof.name || 'User',
+          avClass: avClassFromId(otherUserId),
+          photo: prof.photo_url || null
+        };
+        chatPartnerInfo = { name: chatPartners[otherUserId].name, nameEN: chatPartners[otherUserId].nameEN };
+      }
+    }
+    // ดึงข้อความ 2 ทาง
+    const { data, error } = await sb.from('messages')
+      .select('*')
+      .or(`and(from_user_id.eq.${me},to_user_id.eq.${otherUserId}),and(from_user_id.eq.${otherUserId},to_user_id.eq.${me})`)
+      .order('created_at', { ascending: true })
+      .limit(200);
+    if (error) { console.warn('Load messages failed:', error.message); return; }
+    chatMessages[otherUserId] = (data || []).map(m => {
+      const d = new Date(m.created_at);
+      return {
+        from: m.from_user_id === me ? 'me' : 'them',
+        text: m.text,
+        time: d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0')
+      };
+    });
+    // mark ว่าอ่านแล้ว
+    sb.from('messages').update({ read: true }).eq('from_user_id', otherUserId).eq('to_user_id', me).eq('read', false).then(() => {});
+    // re-render feed ถ้ายังอยู่หน้านี้
+    if (activeChatRoom === otherUserId) {
+      const feed = document.getElementById('chat-feed');
+      if (feed) {
+        feed.innerHTML = renderBubbles(chatMessages[otherUserId]);
+        feed.scrollTop = feed.scrollHeight;
+      }
+      const nameBlock = document.getElementById('chat-partner-name');
+      if (nameBlock) nameBlock.textContent = currentLang === 'EN' ? chatPartnerInfo.nameEN : chatPartnerInfo.name;
+    }
+  } catch (e) { console.warn('loadChatMessages error:', e); }
+}
+
+function renderBubbles(msgs) {
+  if (!msgs || msgs.length === 0) {
+    return `<div style="text-align:center;color:var(--text-muted);font-size:13px;padding:30px 10px">${currentLang === 'EN' ? 'Say hello 👋' : 'ทักทายกันได้เลย 👋'}</div>`;
+  }
+  return msgs.map(m => `
+    <div class="bubble ${m.from}">
+      ${escapeHtml(m.text)}
+      ${m.time ? `<div class="bubble-time">${m.time}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+function escapeHtml(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ===== Realtime =====
 let _chatChannel = null;
 
 function subscribeToMessages() {
   if (!sb || !authState.user || !authState.user.id) return;
-  // ยกเลิก subscription เก่า
   if (_chatChannel) { try { sb.removeChannel(_chatChannel); } catch (e) {} _chatChannel = null; }
 
   _chatChannel = sb
@@ -6049,17 +6169,26 @@ function subscribeToMessages() {
       filter: `to_user_id=eq.${authState.user.id}`
     }, (payload) => {
       const msg = payload.new;
-      // ไม่แสดงข้อความที่เราส่งเอง (กันซ้ำ)
-      if (msg.from_user_id === authState.user.id) return;
+      const fromId = msg.from_user_id;
       const now = new Date(msg.created_at);
       const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-      const feed = document.getElementById('chat-feed');
-      if (feed && activeChatRoom) {
-        feed.innerHTML += `<div class="bubble them">${msg.text}<div class="bubble-time">${timeStr}</div></div>`;
-        feed.scrollTop = feed.scrollHeight;
+
+      // ถ้ากำลังเปิดแชทกับคนที่ส่งมาพอดี → เด้งเข้า feed
+      if (activeChatRoom && fromId === activeChatRoom) {
+        if (!chatMessages[fromId]) chatMessages[fromId] = [];
+        chatMessages[fromId].push({ from: 'them', text: msg.text, time: timeStr });
+        const feed = document.getElementById('chat-feed');
+        if (feed) {
+          feed.innerHTML = renderBubbles(chatMessages[fromId]);
+          feed.scrollTop = feed.scrollHeight;
+        }
+        // mark อ่านแล้ว
+        sb.from('messages').update({ read: true }).eq('id', msg.id).then(() => {});
+      } else {
+        // ไม่ได้เปิดอยู่ → แจ้งเตือน + refresh รายการ
+        addNotification('msg', `ข้อความใหม่: ${msg.text}`, `New message: ${msg.text}`);
+        if (document.getElementById('messages-list-wrap')) fetchConversations();
       }
-      // แจ้งเตือนถ้าไม่ได้อยู่หน้าแชท
-      addNotification('msg', `ข้อความใหม่: ${msg.text}`, `New message: ${msg.text}`);
     })
     .subscribe();
 }
@@ -6073,83 +6202,123 @@ function openUserProfile(userId) {
   show('userProfile');
 }
 
-function renderMessagesList() {
-  const userKeys = Object.keys(chatRooms);
-  if (userKeys.length === 0) {
-    return `
-      <h2>${t('messagesTitle')}</h2>
-      <p class="subtitle">${t('messagesSub')}</p>
-      <div class="trips-empty">
-        ${currentLang === 'EN' ? 'No messages yet' : 'ยังไม่มีข้อความ'}
-      </div>
-    `;
+// ดึงรายการบทสนทนาทั้งหมด (group ตามคู่สนทนา)
+async function fetchConversations() {
+  if (!sb || !authState.user || !authState.user.id) return;
+  const me = authState.user.id;
+  try {
+    const { data, error } = await sb.from('messages')
+      .select('*')
+      .or(`from_user_id.eq.${me},to_user_id.eq.${me}`)
+      .order('created_at', { ascending: false })
+      .limit(300);
+    if (error) { console.warn('Fetch conversations failed:', error.message); return; }
+
+    // group ตามคู่สนทนา (เอาข้อความล่าสุดของแต่ละคน)
+    const convos = {};
+    (data || []).forEach(m => {
+      const other = m.from_user_id === me ? m.to_user_id : m.from_user_id;
+      if (other === me) return; // ข้ามข้อความหาตัวเอง (demo เก่า)
+      if (!convos[other]) {
+        const d = new Date(m.created_at);
+        convos[other] = {
+          otherId: other,
+          lastMsg: m.text,
+          lastTime: d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0'),
+          unread: (m.to_user_id === me && !m.read) ? 1 : 0
+        };
+      }
+    });
+
+    const otherIds = Object.keys(convos);
+    // ดึงชื่อคู่สนทนาที่ยังไม่รู้จัก
+    const unknownIds = otherIds.filter(id => !chatPartners[id]);
+    if (unknownIds.length > 0) {
+      const { data: profs } = await sb.from('profiles').select('id, name, name_en, photo_url').in('id', unknownIds);
+      (profs || []).forEach(p => {
+        chatPartners[p.id] = {
+          name: p.name || 'ผู้ใช้',
+          nameEN: p.name_en || p.name || 'User',
+          avClass: avClassFromId(p.id),
+          photo: p.photo_url || null
+        };
+      });
+    }
+
+    // เก็บไว้ render
+    window._conversations = otherIds.map(id => ({
+      ...convos[id],
+      name: chatPartners[id]?.name || 'ผู้ใช้',
+      nameEN: chatPartners[id]?.nameEN || 'User',
+      avClass: chatPartners[id]?.avClass || avClassFromId(id)
+    }));
+
+    // re-render ถ้าอยู่หน้า messages
+    const wrap = document.getElementById('messages-list-wrap');
+    if (wrap) wrap.innerHTML = renderConversationItems();
+    updateBellBadge();
+  } catch (e) { console.warn('fetchConversations error:', e); }
+}
+
+function renderConversationItems() {
+  const convos = window._conversations || [];
+  if (convos.length === 0) {
+    return `<div class="trips-empty">${currentLang === 'EN' ? 'No messages yet' : 'ยังไม่มีข้อความ'}<div style="font-size:13px;margin-top:6px;color:var(--text-muted)">${currentLang === 'EN' ? 'Message a driver from a trip to start' : 'เริ่มแชทโดยทักคนขับจากทริป'}</div></div>`;
   }
-
-  const items = userKeys.map(uid => {
-    const room = chatRooms[uid];
-    const user = mockUsers[uid];
-    if (!user) return '';
-    const name = currentLang === 'EN' ? user.nameEN : user.nameTH;
-    const av = currentLang === 'EN' ? user.avEN : user.avTH;
-    const lastMsg = currentLang === 'EN' ? room.lastMsgEN : room.lastMsgTH;
-    const lastTime = currentLang === 'EN' ? room.lastTimeEN : room.lastTimeTH;
-
+  return convos.map(c => {
+    const name = currentLang === 'EN' ? c.nameEN : c.name;
+    const initials = (name || '?').slice(0, 2);
     return `
-      <div class="chat-item" onclick="openChat('${uid}')">
-        <div class="avatar ${user.avClass}" onclick="event.stopPropagation();openUserProfile('${uid}')">${av}</div>
+      <div class="chat-item" onclick="openChat('${c.otherId}', '${(c.name||'').replace(/'/g,"\\'")}', '${(c.nameEN||'').replace(/'/g,"\\'")}')">
+        <div class="avatar ${c.avClass}" onclick="event.stopPropagation();openUserProfile('${c.otherId}')">${initials}</div>
         <div class="chat-body">
           <div class="chat-top">
-            <div class="chat-name">${name}${user.verified ? ' <span style="color:var(--primary);font-size:11px">✓</span>' : ''}</div>
-            <div class="chat-time">${lastTime}</div>
+            <div class="chat-name">${name}</div>
+            <div class="chat-time">${c.lastTime}</div>
           </div>
-          <div class="chat-last">${lastMsg}</div>
+          <div class="chat-last">${escapeHtml(c.lastMsg)}</div>
         </div>
-        ${room.unread > 0 ? `<span class="badge">${room.unread}</span>` : ''}
+        ${c.unread > 0 ? `<span class="badge">${c.unread}</span>` : ''}
       </div>
     `;
   }).join('');
+}
 
+function renderMessagesList() {
+  // โหลดบทสนทนาจาก DB (async)
+  setTimeout(fetchConversations, 30);
   return `
     <h2>${t('messagesTitle')}</h2>
     <p class="subtitle">${t('messagesSub')}</p>
-    ${items}
+    <div id="messages-list-wrap">
+      <div class="trips-empty">${currentLang === 'EN' ? 'Loading...' : 'กำลังโหลด...'}</div>
+    </div>
   `;
 }
 
 function renderChatScreen() {
-  if (!activeChatRoom) activeChatRoom = 'somchai';
-  const room = chatRooms[activeChatRoom];
-  const user = mockUsers[activeChatRoom];
-  if (!user || !room) return `<div>Error</div>`;
-
-  const name = currentLang === 'EN' ? user.nameEN : user.nameTH;
-  const av = currentLang === 'EN' ? user.avEN : user.avTH;
-  const msgs = currentLang === 'EN' ? room.messagesEN : room.messagesTH;
-
-  const bubblesHtml = msgs.map(m => `
-    <div class="bubble ${m.from}">
-      ${m.text}
-      ${m.time ? `<div class="bubble-time">${m.time}</div>` : ''}
-    </div>
-  `).join('');
-
-  const onlineText = user.online
-    ? (currentLang === 'EN' ? '● Online' : '● ออนไลน์')
-    : (currentLang === 'EN' ? '○ Offline' : '○ ออฟไลน์');
+  if (!activeChatRoom) {
+    return `
+      <button class="back-btn-inline" data-screen="messages">${t('back')}</button>
+      <div class="trips-empty" style="margin-top:40px">${currentLang === 'EN' ? 'Select a conversation' : 'เลือกบทสนทนา'}</div>
+    `;
+  }
+  const name = currentLang === 'EN' ? chatPartnerInfo.nameEN : chatPartnerInfo.name;
+  const initials = (name || '?').slice(0, 2);
+  const avClass = chatPartners[activeChatRoom]?.avClass || avClassFromId(activeChatRoom);
+  const msgs = chatMessages[activeChatRoom] || [];
 
   return `
     <button class="back-btn-inline" data-screen="messages">${t('back')}</button>
     <div class="chat-header" onclick="openUserProfile('${activeChatRoom}')" style="cursor:pointer">
-      <div class="avatar ${user.avClass}">${av}</div>
+      <div class="avatar ${avClass}">${initials}</div>
       <div style="flex:1">
-        <div class="chat-name-block">${name}${user.verified ? ' <span style="color:var(--primary);font-size:13px">✓</span>' : ''}</div>
-        <div class="chat-status" style="color:${user.online ? 'var(--primary)' : 'var(--text-muted)'}">${onlineText}</div>
+        <div class="chat-name-block" id="chat-partner-name">${name}</div>
+        <div class="chat-status" style="color:var(--text-muted)">${currentLang === 'EN' ? 'Tap to view profile' : 'แตะดูโปรไฟล์'}</div>
       </div>
-      <div style="font-size:11px;color:var(--text-muted);font-weight:600">
-        ${t('viewProfile')} →
-      </div>
+      <div style="font-size:11px;color:var(--text-muted);font-weight:600">${t('viewProfile')} →</div>
     </div>
-    <div class="chat-feed" id="chat-feed">${bubblesHtml}</div>
+    <div class="chat-feed" id="chat-feed">${renderBubbles(msgs)}</div>
     <div class="chat-input-row">
       <input class="chat-input" id="chat-input" placeholder="${t('typeMsg')}"
              onkeydown="if(event.key==='Enter')sendMessage()"/>
@@ -6164,121 +6333,123 @@ function sendMessage() {
   const text = input.value.trim();
   if (!text) return;
 
-  const room = chatRooms[activeChatRoom];
   const now = new Date();
   const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
 
-  room.messagesTH.push({ from: 'me', text, time: timeStr });
-  room.messagesEN.push({ from: 'me', text, time: timeStr });
-  room.lastMsgTH = text;
-  room.lastMsgEN = text;
-  room.lastTimeTH = timeStr;
-  room.lastTimeEN = timeStr;
-
+  // แสดงทันที
+  if (!chatMessages[activeChatRoom]) chatMessages[activeChatRoom] = [];
+  chatMessages[activeChatRoom].push({ from: 'me', text, time: timeStr });
   input.value = '';
   const feed = document.getElementById('chat-feed');
   if (feed) {
-    feed.innerHTML += `<div class="bubble me">${text}<div class="bubble-time">${timeStr}</div></div>`;
+    feed.innerHTML = renderBubbles(chatMessages[activeChatRoom]);
     feed.scrollTop = feed.scrollHeight;
   }
 
-  // บันทึกข้อความลง DB (เก็บประวัติจริง)
+  // ส่งลง DB หาอีกฝ่ายจริง
   if (sb && authState.user && authState.user.id) {
     sb.from('messages').insert({
       from_user_id: authState.user.id,
-      to_user_id: authState.user.id,  // demo: ส่งหาตัวเอง (ในโปรดักชันใช้ id คนขับจริง)
+      to_user_id: activeChatRoom,
       text: text,
       read: false
     }).then(({ error }) => {
-      if (error) console.warn('Save message failed:', error.message);
+      if (error) console.warn('Send message failed:', error.message);
     });
   }
-
-  // จำลองคนตอบกลับ
-  setTimeout(() => {
-    const replies = currentLang === 'EN'
-      ? ['Got it 👍', 'OK!', 'Thanks!', 'Sure thing', 'Sounds good']
-      : ['รับทราบครับ 👍', 'โอเคครับ', 'ขอบคุณครับ', 'ครับผม', 'ไม่มีปัญหาครับ'];
-    const reply = replies[Math.floor(Math.random() * replies.length)];
-    const replyTime = new Date();
-    const replyTimeStr = replyTime.getHours().toString().padStart(2,'0') + ':' + replyTime.getMinutes().toString().padStart(2,'0');
-
-    if (!chatRooms[activeChatRoom]) return;
-    chatRooms[activeChatRoom].messagesTH.push({ from: 'them', text: reply, time: replyTimeStr });
-    chatRooms[activeChatRoom].messagesEN.push({ from: 'them', text: reply, time: replyTimeStr });
-    chatRooms[activeChatRoom].lastMsgTH = reply;
-    chatRooms[activeChatRoom].lastMsgEN = reply;
-
-    const feed2 = document.getElementById('chat-feed');
-    if (feed2) {
-      feed2.innerHTML += `<div class="bubble them">${reply}<div class="bubble-time">${replyTimeStr}</div></div>`;
-      feed2.scrollTop = feed2.scrollHeight;
-    }
-  }, 1500 + Math.random() * 1500);
 }
+
 
 function renderUserProfile() {
   if (!viewingUser) return '<div>No user</div>';
-  const user = mockUsers[viewingUser];
-  if (!user) return '<div>User not found</div>';
+  // ใช้ข้อมูลที่มีอยู่ (chatPartners) ก่อน + ดึงเพิ่มจาก DB
+  const cached = chatPartners[viewingUser] || {};
+  const name = currentLang === 'EN' ? (cached.nameEN || cached.name || 'User') : (cached.name || 'ผู้ใช้');
+  const initials = (name || '?').slice(0, 2);
+  const avClass = cached.avClass || avClassFromId(viewingUser);
 
-  const name = currentLang === 'EN' ? user.nameEN : user.nameTH;
-  const av = currentLang === 'EN' ? user.avEN : user.avTH;
-  const bio = currentLang === 'EN' ? user.bioEN : user.bioTH;
-  const car = currentLang === 'EN' ? user.carEN : user.car;
-  const reviews = currentLang === 'EN' ? user.reviewsEN : user.reviewsTH;
-
-  const reviewsHtml = reviews.map(r => `
-    <div class="user-review">
-      <div class="user-review-head">
-        <div class="user-review-stars">${'★'.repeat(r.rating)}</div>
-        <div class="user-review-from">${r.from}</div>
-      </div>
-      <div class="user-review-text">${r.text}</div>
-    </div>
-  `).join('');
+  // ดึงโปรไฟล์เต็มจาก DB
+  setTimeout(() => loadUserProfileDetail(viewingUser), 30);
 
   return `
     <button class="back-btn-inline" onclick="show('messages')">${t('back')}</button>
 
     <div class="up-hero">
-      <div class="avatar ${user.avClass}" style="width:88px;height:88px;font-size:24px">${av}</div>
-      <div class="up-name">
-        ${name}
-        ${user.verified ? `<span class="up-verified" title="${t('verified')}">✓</span>` : ''}
-      </div>
-      <div class="up-rating">★ ${user.rating} · ${user.totalTrips} ${t('trips')}</div>
-      <div class="up-online" style="color:${user.online ? 'var(--primary)' : 'var(--text-muted)'}">
-        ${user.online ? (currentLang === 'EN' ? '● Online now' : '● ออนไลน์ตอนนี้') : (currentLang === 'EN' ? '○ Offline' : '○ ออฟไลน์')}
-      </div>
+      <div class="avatar ${avClass}" id="up-avatar" style="width:88px;height:88px;font-size:24px">${initials}</div>
+      <div class="up-name" id="up-name">${name}</div>
+      <div class="up-rating" id="up-rating">★ —</div>
     </div>
 
-    <div class="up-stats-grid">
+    <div class="up-stats-grid" id="up-stats">
       <div class="up-stat">
-        <div class="up-stat-val">${user.totalTrips}</div>
+        <div class="up-stat-val" id="up-trips">—</div>
         <div class="up-stat-label">${t('trips')}</div>
       </div>
       <div class="up-stat">
-        <div class="up-stat-val">${user.reviewsCount}</div>
+        <div class="up-stat-val" id="up-reviews">—</div>
         <div class="up-stat-label">${t('reviewsCount')}</div>
       </div>
       <div class="up-stat">
-        <div class="up-stat-val">${user.yearsActive}</div>
-        <div class="up-stat-label">${t('yearsActive')}</div>
+        <div class="up-stat-val" id="up-rating-num">—</div>
+        <div class="up-stat-label">${currentLang === 'EN' ? 'Rating' : 'คะแนน'}</div>
       </div>
     </div>
 
-    <button class="btn-primary" onclick="openChat('${user.id}')">${t('sendMsg')}</button>
+    <button class="btn-primary" onclick="openChat('${viewingUser}', '${(cached.name||'').replace(/'/g,"\\'")}', '${(cached.nameEN||'').replace(/'/g,"\\'")}')">${t('sendMsg')}</button>
 
     <p class="section-title" style="margin-top:24px">${t('aboutMe')}</p>
-    <div class="up-bio">${bio}</div>
+    <div class="up-bio" id="up-bio">—</div>
 
-    <p class="section-title">${t('vehicleInfo')}</p>
-    <div class="up-bio">${car}</div>
-
-    <p class="section-title">${t('recentReviews')} (${reviews.length})</p>
-    ${reviewsHtml}
+    <p class="section-title">${t('recentReviews')}</p>
+    <div id="up-reviews-list"><div class="trips-empty" style="padding:20px">${currentLang === 'EN' ? 'No reviews yet' : 'ยังไม่มีรีวิว'}</div></div>
   `;
+}
+
+// ดึงโปรไฟล์เต็ม + รีวิวของผู้ใช้
+async function loadUserProfileDetail(userId) {
+  if (!sb || !userId) return;
+  try {
+    const { data: prof } = await sb.from('profiles').select('*').eq('id', userId).single();
+    if (prof) {
+      const nm = currentLang === 'EN' ? (prof.name_en || prof.name) : prof.name;
+      const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+      setText('up-name', nm || (currentLang === 'EN' ? 'User' : 'ผู้ใช้'));
+      setText('up-trips', prof.total_trips || 0);
+      setText('up-rating', `★ ${prof.rating || 5.0}`);
+      setText('up-rating-num', prof.rating || 5.0);
+      setText('up-bio', prof.bio || (currentLang === 'EN' ? 'No bio yet' : 'ยังไม่มีข้อมูล'));
+      // อัปเดต avatar ถ้ามีรูป
+      if (prof.photo_url) {
+        const av = document.getElementById('up-avatar');
+        if (av) { av.style.backgroundImage = `url('${prof.photo_url}')`; av.style.backgroundSize = 'cover'; av.textContent = ''; }
+      }
+    }
+    // ดึงรีวิวที่ผู้ใช้คนนี้ได้รับ
+    const { data: reviews } = await sb.from('ratings')
+      .select('*, profiles:from_user_id(name, name_en)')
+      .eq('to_user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(10);
+    const listEl = document.getElementById('up-reviews-list');
+    const cntEl = document.getElementById('up-reviews');
+    if (reviews && reviews.length > 0) {
+      if (cntEl) cntEl.textContent = reviews.length;
+      if (listEl) listEl.innerHTML = reviews.map(r => {
+        const reviewer = currentLang === 'EN' ? (r.profiles?.name_en || r.profiles?.name || 'User') : (r.profiles?.name || 'ผู้ใช้');
+        return `
+          <div class="user-review">
+            <div class="user-review-head">
+              <div class="user-review-stars">${'★'.repeat(r.stars)}</div>
+              <div class="user-review-from">${reviewer}</div>
+            </div>
+            ${r.comment ? `<div class="user-review-text">${escapeHtml(r.comment)}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    } else {
+      if (cntEl) cntEl.textContent = '0';
+    }
+  } catch (e) { console.warn('loadUserProfileDetail error:', e); }
 }
 // ====== Chat & User System end ======
 
@@ -6458,8 +6629,15 @@ function renderProfileAccount2() {
     <div class="pf2-section-title">${currentLang === 'EN' ? 'App' : 'แอป'}</div>
     <div class="pf2-card pf2-card-flush">
       ${row(currentLang === 'EN' ? 'Language' : 'ภาษา', "toggleLang()")}
+      <div class="pf2-acc-row" onclick="toggleDarkMode()" style="cursor:pointer">
+        <span>${currentLang === 'EN' ? 'Dark mode' : 'โหมดมืด'}</span>
+        <span class="theme-pill ${isDarkMode ? 'on' : ''}">
+          <span class="theme-knob">${isDarkMode ? '🌙' : '☀️'}</span>
+        </span>
+      </div>
       ${row(currentLang === 'EN' ? 'Rate the app' : 'ให้คะแนนแอป', "showRateApp()")}
       ${row(currentLang === 'EN' ? 'Help' : 'ความช่วยเหลือ', "openProfileDetail('help')")}
+      ${row(currentLang === 'EN' ? 'FAQ' : 'คำถามที่พบบ่อย', "openProfileDetail('faq')")}
       ${row(currentLang === 'EN' ? 'Terms & conditions' : 'ข้อกำหนดและเงื่อนไข', "openProfileDetail('terms')")}
       ${row(currentLang === 'EN' ? 'Data protection' : 'การคุ้มครองข้อมูล', "openProfileDetail('privacy')")}
       <div class="pf2-acc-row" style="cursor:default">
@@ -6484,7 +6662,93 @@ function renderProfileAccount2() {
 function openProfileDetail(type) {
   if (type === 'reviews') { showMyReviews(); return; }
   if (type === 'rateapp') { showRateApp(); return; }
+  if (type === 'terms') { showContentPage('terms'); return; }
+  if (type === 'privacy') { showContentPage('privacy'); return; }
+  if (type === 'help') { showContentPage('help'); return; }
+  if (type === 'faq') { showContentPage('faq'); return; }
   showToast(currentLang === 'EN' ? 'Coming soon' : 'กำลังพัฒนา');
+}
+
+// หน้าเนื้อหา (เงื่อนไข/ความเป็นส่วนตัว/ช่วยเหลือ/FAQ)
+function showContentPage(type) {
+  const EN = currentLang === 'EN';
+  let title = '', body = '';
+
+  if (type === 'terms') {
+    title = EN ? 'Terms & Conditions' : 'ข้อกำหนดและเงื่อนไข';
+    body = EN ? `
+      <p><strong>1. About Coolpar</strong><br>Coolpar is a carpooling platform that connects drivers and passengers travelling the same route to share fuel and travel costs. Coolpar is not a taxi or commercial transport service.</p>
+      <p><strong>2. Cost sharing, not profit</strong><br>Payments on Coolpar are intended to share fuel and vehicle costs only. Drivers are limited in the number of trips per month to keep this non-commercial.</p>
+      <p><strong>3. Your responsibilities</strong><br>You agree to provide accurate information, behave respectfully, and follow all traffic and safety laws. You are responsible for your own conduct during trips.</p>
+      <p><strong>4. Payments & escrow</strong><br>Passenger payments are held securely until the driver confirms pickup, then transferred to the driver. Cancellations may be refunded per our cancellation policy.</p>
+      <p><strong>5. Liability</strong><br>Coolpar is a platform that connects users. We are not party to the travel arrangement and are not liable for incidents during trips. Travel at your own risk and ensure proper insurance.</p>
+      <p><strong>6. Account termination</strong><br>We may suspend accounts that violate these terms or misuse the platform.</p>
+      <p style="color:var(--text-light);font-size:12px;margin-top:16px">Last updated: 2025</p>
+    ` : `
+      <p><strong>1. เกี่ยวกับ Coolpar</strong><br>Coolpar เป็นแพลตฟอร์มแชร์รถที่เชื่อมคนขับและผู้โดยสารที่เดินทางเส้นทางเดียวกัน เพื่อแชร์ค่าน้ำมันและค่าเดินทาง ไม่ใช่บริการแท็กซี่หรือรับจ้างขนส่งเชิงพาณิชย์</p>
+      <p><strong>2. แชร์ค่าใช้จ่าย ไม่ใช่กำไร</strong><br>การจ่ายเงินบน Coolpar มีไว้เพื่อแชร์ค่าน้ำมันและค่าสึกหรอรถเท่านั้น คนขับถูกจำกัดจำนวนทริปต่อเดือนเพื่อให้เป็นการแชร์จริงๆ ไม่ใช่อาชีพ</p>
+      <p><strong>3. ความรับผิดชอบของคุณ</strong><br>คุณตกลงให้ข้อมูลที่ถูกต้อง ปฏิบัติต่อกันด้วยความเคารพ และปฏิบัติตามกฎจราจรและความปลอดภัย คุณรับผิดชอบพฤติกรรมของตนเองระหว่างเดินทาง</p>
+      <p><strong>4. การชำระเงิน & escrow</strong><br>เงินของผู้โดยสารจะถูกถือไว้อย่างปลอดภัยจนคนขับยืนยันรับ แล้วจึงโอนให้คนขับ การยกเลิกอาจได้รับเงินคืนตามนโยบาย</p>
+      <p><strong>5. ความรับผิด</strong><br>Coolpar เป็นเพียงแพลตฟอร์มที่เชื่อมผู้ใช้ เราไม่ได้เป็นคู่สัญญาในการเดินทาง และไม่รับผิดชอบเหตุการณ์ระหว่างเดินทาง โปรดเดินทางด้วยความระมัดระวังและมีประกันที่เหมาะสม</p>
+      <p><strong>6. การระงับบัญชี</strong><br>เราอาจระงับบัญชีที่ละเมิดเงื่อนไขหรือใช้งานในทางที่ผิด</p>
+      <p style="color:var(--text-light);font-size:12px;margin-top:16px">อัปเดตล่าสุด: 2025</p>
+    `;
+  } else if (type === 'privacy') {
+    title = EN ? 'Privacy Policy' : 'นโยบายความเป็นส่วนตัว';
+    body = EN ? `
+      <p><strong>1. Data we collect</strong><br>We collect your name, email, phone, profile photo, vehicle info, trips, bookings, messages, and ratings — only what's needed to run the service.</p>
+      <p><strong>2. How we use it</strong><br>To connect you with travel partners, process payments, show your trips and messages, and improve the app.</p>
+      <p><strong>3. Sharing</strong><br>Your name, photo, and rating are visible to other users you travel with. We do not sell your personal data.</p>
+      <p><strong>4. Storage</strong><br>Your data is stored securely with our backend provider (Supabase). Messages and payments are visible only to involved parties.</p>
+      <p><strong>5. Your rights</strong><br>You can edit your profile, delete your trips, or request account deletion at any time.</p>
+      <p><strong>6. Contact</strong><br>For privacy questions, contact us through the app's support.</p>
+      <p style="color:var(--text-light);font-size:12px;margin-top:16px">Last updated: 2025</p>
+    ` : `
+      <p><strong>1. ข้อมูลที่เราเก็บ</strong><br>เราเก็บชื่อ อีเมล เบอร์โทร รูปโปรไฟล์ ข้อมูลรถ ทริป การจอง ข้อความ และคะแนน — เฉพาะที่จำเป็นต่อการให้บริการ</p>
+      <p><strong>2. การใช้ข้อมูล</strong><br>เพื่อเชื่อมคุณกับเพื่อนร่วมทาง ดำเนินการชำระเงิน แสดงทริปและข้อความ และพัฒนาแอป</p>
+      <p><strong>3. การแชร์ข้อมูล</strong><br>ชื่อ รูป และคะแนนของคุณจะแสดงให้ผู้ใช้ที่เดินทางด้วยกันเห็น เราไม่ขายข้อมูลส่วนตัวของคุณ</p>
+      <p><strong>4. การจัดเก็บ</strong><br>ข้อมูลถูกเก็บอย่างปลอดภัยกับผู้ให้บริการ backend (Supabase) ข้อความและการชำระเงินเห็นได้เฉพาะผู้เกี่ยวข้อง</p>
+      <p><strong>5. สิทธิ์ของคุณ</strong><br>คุณแก้ไขโปรไฟล์ ลบทริป หรือขอลบบัญชีได้ตลอดเวลา</p>
+      <p><strong>6. ติดต่อ</strong><br>หากมีคำถามเรื่องความเป็นส่วนตัว ติดต่อเราผ่านหน้าช่วยเหลือในแอป</p>
+      <p style="color:var(--text-light);font-size:12px;margin-top:16px">อัปเดตล่าสุด: 2025</p>
+    `;
+  } else if (type === 'help') {
+    title = EN ? 'Help & Support' : 'ความช่วยเหลือ';
+    body = EN ? `
+      <p><strong>How do I book a ride?</strong><br>Search your route on the home screen, tap a trip, choose your pickup point, and pay. Your money is held safely until the driver picks you up.</p>
+      <p><strong>How do I offer a ride?</strong><br>Go to the Post tab, enter your route, date, and price per seat, then publish. Passengers can find and book it.</p>
+      <p><strong>How does payment work?</strong><br>Passengers pay upfront. The money is held in escrow and released to the driver only after pickup is confirmed.</p>
+      <p><strong>Is it safe?</strong><br>You can view profiles and ratings before travelling, and chat with your driver/passenger in the app.</p>
+      <p><strong>Need more help?</strong><br>Reach out to us — we're happy to assist.</p>
+    ` : `
+      <p><strong>จองรถยังไง?</strong><br>ค้นหาเส้นทางที่หน้าแรก แตะทริปที่ต้องการ เลือกจุดขึ้นรถ แล้วจ่ายเงิน เงินจะถูกถือไว้อย่างปลอดภัยจนคนขับมารับ</p>
+      <p><strong>เสนอรถ (เป็นคนขับ) ยังไง?</strong><br>ไปแท็บประกาศ ใส่เส้นทาง วันที่ และราคาต่อที่นั่ง แล้วเผยแพร่ ผู้โดยสารจะค้นหาและจองได้</p>
+      <p><strong>ระบบจ่ายเงินทำงานยังไง?</strong><br>ผู้โดยสารจ่ายล่วงหน้า เงินถูกถือไว้ (escrow) และโอนให้คนขับหลังยืนยันรับผู้โดยสารแล้วเท่านั้น</p>
+      <p><strong>ปลอดภัยไหม?</strong><br>คุณดูโปรไฟล์และคะแนนได้ก่อนเดินทาง และแชทกับคนขับ/ผู้โดยสารในแอปได้</p>
+      <p><strong>ต้องการความช่วยเหลือเพิ่ม?</strong><br>ติดต่อเราได้เลย ยินดีช่วยเหลือ</p>
+    `;
+  } else if (type === 'faq') {
+    title = EN ? 'FAQ' : 'คำถามที่พบบ่อย';
+    body = EN ? `
+      <p><strong>Is Coolpar free to use?</strong><br>Yes — Coolpar doesn't take commission. You only share actual fuel costs with your travel partner.</p>
+      <p><strong>Why is there a monthly trip limit for drivers?</strong><br>To keep Coolpar a genuine cost-sharing community, not a commercial taxi service.</p>
+      <p><strong>Can I cancel?</strong><br>Yes. If you cancel before pickup, your payment is refunded from escrow.</p>
+      <p><strong>What if the driver doesn't show up?</strong><br>Your money stays in escrow and isn't released until pickup is confirmed, so you're protected.</p>
+    ` : `
+      <p><strong>Coolpar ใช้ฟรีไหม?</strong><br>ฟรี — Coolpar ไม่หักค่าคอมมิชชั่น คุณแค่แชร์ค่าน้ำมันจริงกับเพื่อนร่วมทาง</p>
+      <p><strong>ทำไมคนขับมีลิมิตทริปต่อเดือน?</strong><br>เพื่อให้ Coolpar เป็นชุมชนแชร์ค่าเดินทางจริงๆ ไม่ใช่บริการแท็กซี่เชิงพาณิชย์</p>
+      <p><strong>ยกเลิกได้ไหม?</strong><br>ได้ ถ้ายกเลิกก่อนคนขับมารับ เงินจะถูกคืนจาก escrow</p>
+      <p><strong>ถ้าคนขับไม่มาล่ะ?</strong><br>เงินยังอยู่ใน escrow ไม่ถูกโอนจนกว่าจะยืนยันรับ คุณจึงได้รับการคุ้มครอง</p>
+    `;
+  }
+
+  showSheet(`
+    <div class="sheet-grab"></div>
+    <div class="content-page">
+      <h2 class="content-page-title">${title}</h2>
+      <div class="content-page-body">${body}</div>
+    </div>
+  `);
 }
 
 // Toast เบาๆ
@@ -6555,44 +6819,73 @@ function renderProfileAccount() {
 }
 
 // ====== Rating System ======
-// รีวิวของฉัน (ที่ได้รับ + ที่ให้คนอื่น)
+// รีวิวของฉัน — ดึงจาก ratings table จริง (ไม่มี mock)
 const myReviewsData = {
-  received: [
-    { from: 'สมชาย จ.', fromEN: 'Somchai J.', rating: 5, text: 'ผู้โดยสารน่ารัก ตรงเวลา', textEN: 'Lovely passenger, on time', date: '15 พ.ค.' },
-    { from: 'นภัทร ป.', fromEN: 'Napat P.', rating: 5, text: 'คุยสนุก แนะนำเลย', textEN: 'Fun to talk with, recommended', date: '5 พ.ค.' }
-  ]
+  received: []
 };
 
 function showMyReviews() {
-  const reviews = myReviewsData.received;
-  const avgRating = reviews.length ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1) : '—';
+  // เปิด sheet พร้อม loading → ดึงรีวิวจริง
+  showSheet(`
+    <div class="sheet-grab"></div>
+    <div class="rating-summary">
+      <div class="rating-big" id="my-rating-avg">—</div>
+      <div class="rating-stars-big">★★★★★</div>
+      <div class="rating-count" id="my-rating-count">${currentLang === 'EN' ? 'Loading...' : 'กำลังโหลด...'}</div>
+    </div>
+    <div style="margin-top:16px" id="my-reviews-list">
+      <div class="trips-empty">${currentLang === 'EN' ? 'Loading...' : 'กำลังโหลด...'}</div>
+    </div>
+  `);
+  loadMyReviews();
+}
 
-  const reviewsHtml = reviews.length === 0
-    ? `<div class="trips-empty">${currentLang === 'EN' ? 'No reviews yet' : 'ยังไม่มีรีวิว'}</div>`
-    : reviews.map(r => {
-        const name = currentLang === 'EN' ? (r.fromEN || r.from) : r.from;
-        const text = currentLang === 'EN' ? (r.textEN || r.text) : r.text;
+async function loadMyReviews() {
+  if (!sb || !authState.user || !authState.user.id) {
+    const listEl = document.getElementById('my-reviews-list');
+    if (listEl) listEl.innerHTML = `<div class="trips-empty">${currentLang === 'EN' ? 'No reviews yet' : 'ยังไม่มีรีวิว'}</div>`;
+    const cntEl = document.getElementById('my-rating-count');
+    if (cntEl) cntEl.textContent = `0 ${currentLang === 'EN' ? 'reviews' : 'รีวิว'}`;
+    return;
+  }
+  try {
+    const { data: reviews } = await sb.from('ratings')
+      .select('*, profiles:from_user_id(name, name_en)')
+      .eq('to_user_id', authState.user.id)
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    const listEl = document.getElementById('my-reviews-list');
+    const avgEl = document.getElementById('my-rating-avg');
+    const cntEl = document.getElementById('my-rating-count');
+
+    if (reviews && reviews.length > 0) {
+      const avg = (reviews.reduce((s, r) => s + r.stars, 0) / reviews.length).toFixed(1);
+      if (avgEl) avgEl.textContent = avg;
+      if (cntEl) cntEl.textContent = `${reviews.length} ${currentLang === 'EN' ? 'reviews' : 'รีวิว'}`;
+      if (listEl) listEl.innerHTML = reviews.map(r => {
+        const name = currentLang === 'EN' ? (r.profiles?.name_en || r.profiles?.name || 'User') : (r.profiles?.name || 'ผู้ใช้');
+        const d = new Date(r.created_at);
+        const dateStr = d.toLocaleDateString(currentLang === 'EN' ? 'en-US' : 'th-TH', { day: 'numeric', month: 'short' });
         return `
           <div class="review-card">
             <div class="review-card-head">
-              <div class="review-card-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
-              <div class="review-card-date">${r.date}</div>
+              <div class="review-card-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</div>
+              <div class="review-card-date">${dateStr}</div>
             </div>
-            <div class="review-card-text">${text}</div>
+            ${r.comment ? `<div class="review-card-text">${escapeHtml(r.comment)}</div>` : ''}
             <div class="review-card-from">— ${name}</div>
           </div>
         `;
       }).join('');
-
-  showSheet(`
-    <div class="sheet-grab"></div>
-    <div class="rating-summary">
-      <div class="rating-big">${avgRating}</div>
-      <div class="rating-stars-big">★★★★★</div>
-      <div class="rating-count">${reviews.length} ${currentLang === 'EN' ? 'reviews' : 'รีวิว'}</div>
-    </div>
-    <div style="margin-top:16px">${reviewsHtml}</div>
-  `);
+    } else {
+      if (avgEl) avgEl.textContent = '—';
+      if (cntEl) cntEl.textContent = `0 ${currentLang === 'EN' ? 'reviews' : 'รีวิว'}`;
+      if (listEl) listEl.innerHTML = `<div class="trips-empty">${currentLang === 'EN' ? 'No reviews yet' : 'ยังไม่มีรีวิว'}</div>`;
+    }
+  } catch (e) {
+    console.warn('loadMyReviews error:', e);
+  }
 }
 
 // ให้คะแนนแอป
@@ -7538,6 +7831,7 @@ async function fetchTripsFromDB() {
       dbTrips = data.map(t => ({
         id: t.id,
         dbId: t.id,
+        driverId: t.driver_id,
         from: t.from_location,
         to: t.to_location,
         date: t.trip_date,
@@ -8136,7 +8430,7 @@ function refreshSTTrips() {
     return;
   }
   list.innerHTML = filtered.map(tr => `
-    <div class="search-trip-card" onclick="selectTrip('${tr.from}','${tr.to}','${tr.date}')">
+    <div class="search-trip-card" onclick="openTripDetail('${tr.dbId || tr.id}')">
       <div class="stc-top">
         <div class="stc-time">${tripDate(tr)}</div>
         <div class="stc-price">฿${tr.price}<span>${t('perPerson')}</span></div>
@@ -8217,6 +8511,15 @@ function selectTrip(from, to, date) {
   // ไม่เซ็ตวันที่จาก mock string เพราะ format ไม่ตรง
   closeSearchSheet();
   updateHome();
+}
+
+// ทริปที่เลือกดูรายละเอียด
+let selectedTrip = null;
+
+function openTripDetail(tripId) {
+  // หาทริปจาก id
+  selectedTrip = getAllTrips().find(t => (t.dbId == tripId || t.id == tripId)) || null;
+  show('detail');
 }
 
 function closeSearchSheet() {
@@ -8454,7 +8757,7 @@ function _renderHome() {
     }
     const initials = (tr.driver || '?').slice(0, 2);
     return `
-    <div class="trip-card" data-screen="detail">
+    <div class="trip-card" onclick="openTripDetail('${tr.dbId || tr.id}')">
       ${badge}
       <div class="trip-top">
         <div>
@@ -8515,12 +8818,19 @@ function getScreens() { return {
     <div id="search-pill-wrap"></div>
     <div id="home-results"></div>
   `,
-  detail: `
+  detail: (() => {
+    const tr = selectedTrip;
+    const dName = tr ? (currentLang === 'EN' ? (tr.driverEN || tr.driver) : tr.driver) : (currentLang === 'EN' ? 'Driver' : 'คนขับ');
+    const dInitials = (dName || '?').slice(0, 2);
+    const dRating = tr ? (tr.rating || 5.0) : 5.0;
+    const dSeats = tr ? (tr.seats || 3) : 3;
+    const canContact = tr && tr.driverId && (!authState.user || tr.driverId !== authState.user.id);
+    return `
     <button class="back-btn-inline" data-screen="home">← ${currentLang === 'EN' ? 'Back' : 'กลับ'}</button>
     <div class="driver-profile">
-      <div class="avatar av-1">${currentLang === 'EN' ? 'SC' : 'สม'}</div>
-      <div class="driver-name">${currentLang === 'EN' ? 'Somchai J.' : 'สมชาย จ.'}</div>
-      <div class="driver-rating">★ 4.8 · 124 ${currentLang === 'EN' ? 'trips' : 'เที่ยว'}</div>
+      <div class="avatar av-1">${dInitials}</div>
+      <div class="driver-name">${dName}</div>
+      <div class="driver-rating">★ ${dRating}${tr && tr.from ? ` · ${tripFrom(tr)} → ${tripTo(tr)}` : ''}</div>
     </div>
 
     <div class="detail-map-box">
@@ -8536,14 +8846,21 @@ function getScreens() { return {
 
     <div class="info-grid">
       <div class="info-box">
-        <div class="info-label">${currentLang === 'EN' ? 'Car' : 'รถ'}</div>
-        <div class="info-value">Honda CR-V</div>
+        <div class="info-label">${currentLang === 'EN' ? 'Date' : 'วันที่'}</div>
+        <div class="info-value">${tr && tr.date ? tr.date : (tr && tr.time ? tr.time : '—')}</div>
       </div>
       <div class="info-box">
         <div class="info-label">${currentLang === 'EN' ? 'Seats left' : 'ที่ว่าง'}</div>
-        <div class="info-value">2 ${currentLang === 'EN' ? 'seats' : 'ที่นั่ง'}</div>
+        <div class="info-value">${dSeats} ${currentLang === 'EN' ? 'seats' : 'ที่นั่ง'}</div>
       </div>
     </div>
+
+    ${canContact ? `
+    <button class="contact-driver-btn" onclick="openChat('${tr.driverId}', '${(tr.driver||'').replace(/'/g,"\\'")}', '${(tr.driverEN||'').replace(/'/g,"\\'")}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      ${currentLang === 'EN' ? 'Contact driver' : 'ติดต่อคนขับ'}
+    </button>
+    ` : ''}
 
     <div class="passenger-pickup-section">
       <div class="passenger-pickup-info">
@@ -8566,7 +8883,7 @@ function getScreens() { return {
     </div>
 
     <button class="btn-primary" id="book-btn" onclick="bookSeat()">${currentLang === 'EN' ? 'Book this seat' : 'จองที่นั่งนี้'}</button>
-  `,
+  `;})(),
   post: `
     <h2>${t('postTitle')}</h2>
     <p class="subtitle">${t('postSub')}</p>
@@ -9887,9 +10204,10 @@ let detailTotalKm = null;
 let detailPricePerKm = 1.0; // สมมุติคนขับตั้งราคา ฿1.0/กม.
 
 async function initDetailMap() {
-  // mock: สมมุติทริปคือ กรุงเทพ → เชียงใหม่ ราคา ฿650 ทั้งเส้น
-  const mockTripFrom = currentLang === 'EN' ? 'Bangkok' : 'กรุงเทพ';
-  const mockTripTo = currentLang === 'EN' ? 'Chiang Mai' : 'เชียงใหม่';
+  // ใช้ทริปที่เลือกจริง (fallback กรุงเทพ→เชียงใหม่ ถ้าไม่มี)
+  const tr = selectedTrip;
+  const mockTripFrom = tr ? tr.from : (currentLang === 'EN' ? 'Bangkok' : 'กรุงเทพ');
+  const mockTripTo = tr ? tr.to : (currentLang === 'EN' ? 'Chiang Mai' : 'เชียงใหม่');
 
   const loadingEl = document.getElementById('detail-map-loading');
   const overlay = document.getElementById('detail-map-overlay');
@@ -10427,30 +10745,33 @@ function deleteVehicle(id) {
 
 // ====== Earnings Dashboard ======
 function renderEarningsScreen() {
-  // คำนวณรายได้จาก myTrips.driver
+  // คำนวณค่าน้ำมันที่ได้รับ จากทริปจริงเท่านั้น
   const allDriverTrips = [...myTrips.driver.upcoming, ...myTrips.driver.past];
   const completedTrips = myTrips.driver.past || [];
 
-  // รายได้รายเดือน 6 เดือนล่าสุด (mock + จริง)
+  // รายรับรายเดือน 6 เดือนล่าสุด — จากทริปจริง (จัดกลุ่มตามเดือน)
   const now = new Date();
   const months = [];
   for (let i = 5; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const monthName = d.toLocaleDateString(currentLang === 'EN' ? 'en-US' : 'th-TH', { month: 'short' });
-    // mock: เดือนล่าสุด + ปัจจุบันใช้ข้อมูลจริง / เก่ากว่านั้น mock
-    let income;
-    if (i === 0) income = completedTrips.reduce((s, t) => s + (t.price || 0), 0) || 0;
-    else if (i === 1) income = 4200;
-    else if (i === 2) income = 5800;
-    else if (i === 3) income = 3600;
-    else if (i === 4) income = 7100;
-    else income = 5200;
+    const mYear = d.getFullYear();
+    const mMonth = d.getMonth();
+    // รวมรายรับของทริปจริงที่อยู่ในเดือนนั้น
+    const income = completedTrips.reduce((s, t) => {
+      const td = t.dateObj ? new Date(t.dateObj) : (t.date ? new Date(t.date) : null);
+      if (td && td.getFullYear() === mYear && td.getMonth() === mMonth) {
+        return s + (t.price || 0);
+      }
+      return s;
+    }, 0);
     months.push({ name: monthName, income });
   }
 
-  const totalIncome = months.reduce((s, m) => s + m.income, 0);
-  const avgPerMonth = Math.round(totalIncome / months.length);
-  const totalTrips = allDriverTrips.length + 23; // mock past
+  const totalIncome = completedTrips.reduce((s, t) => s + (t.price || 0), 0);
+  const monthsWithIncome = months.filter(m => m.income > 0).length || 1;
+  const avgPerMonth = Math.round(totalIncome / monthsWithIncome);
+  const totalTrips = completedTrips.length;
   const maxIncome = Math.max(...months.map(m => m.income), 1);
 
   return `
@@ -10462,7 +10783,7 @@ function renderEarningsScreen() {
     <!-- Summary cards -->
     <div class="earnings-summary">
       <div class="earn-card earn-card-primary">
-        <div class="earn-label">${currentLang === 'EN' ? 'Total received (6 mo)' : 'รวม 6 เดือน'}</div>
+        <div class="earn-label">${currentLang === 'EN' ? 'Total received' : 'รวมทั้งหมด'}</div>
         <div class="earn-value">฿${totalIncome.toLocaleString()}</div>
       </div>
       <div class="earn-row">
@@ -10477,6 +10798,12 @@ function renderEarningsScreen() {
       </div>
     </div>
 
+    ${totalIncome === 0 ? `
+      <div style="text-align:center;padding:30px 20px;color:var(--text-muted)">
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">${currentLang === 'EN' ? 'No fuel cost received yet' : 'ยังไม่มีค่าน้ำมันที่ได้รับ'}</div>
+        <div style="font-size:13px">${currentLang === 'EN' ? 'Post a trip and complete it to see earnings here' : 'ลงประกาศทริปและทำให้เสร็จ จะเห็นยอดที่นี่'}</div>
+      </div>
+    ` : `
     <!-- Bar chart -->
     <div class="earn-chart-section">
       <div class="earn-chart-title">${currentLang === 'EN' ? 'Monthly earnings' : 'รายรับรายเดือน'}</div>
@@ -10486,12 +10813,13 @@ function renderEarningsScreen() {
             <div class="earn-bar-wrap">
               <div class="earn-bar" style="height:${(m.income / maxIncome) * 100}%"></div>
             </div>
-            <div class="earn-bar-amount">฿${(m.income / 1000).toFixed(1)}k</div>
+            <div class="earn-bar-amount">${m.income > 0 ? '฿' + (m.income / 1000).toFixed(1) + 'k' : '—'}</div>
             <div class="earn-bar-label">${m.name}</div>
           </div>
         `).join('')}
       </div>
     </div>
+    `}
 
     <!-- Recent trips -->
     <div class="earn-recent">
@@ -10791,18 +11119,21 @@ function bookSeat() {
 }
 
 function doBookSeat(paymentMethod) {
-  const mockTrip = {
-    from: currentLang === 'EN' ? 'Bangkok' : 'กรุงเทพฯ',
-    fromEN: 'Bangkok',
-    to: currentLang === 'EN' ? 'Chiang Mai' : 'เชียงใหม่',
-    toEN: 'Chiang Mai',
-    other: 'สมชาย',
-    otherEN: 'Somchai'
-  };
+  // ใช้ทริปที่เลือกจริง
+  const tr = selectedTrip;
+  const tripFromName = tr ? tr.from : (currentLang === 'EN' ? 'Bangkok' : 'กรุงเทพฯ');
+  const tripToName = tr ? tr.to : (currentLang === 'EN' ? 'Chiang Mai' : 'เชียงใหม่');
+  const driverName = tr ? (tr.driver || 'คนขับ') : 'คนขับ';
+  const driverNameEN = tr ? (tr.driverEN || tr.driver || 'Driver') : 'Driver';
+  const tripDbId = tr ? (tr.dbId || null) : null;
+  const driverId = tr ? (tr.driverId || null) : null;
 
-  const price = passengerSelectedPickup ? passengerSelectedPickup.price : 650;
-  const pickupName = passengerSelectedPickup ? passengerSelectedPickup.name : mockTrip.from;
-  const km = passengerSelectedPickup ? passengerSelectedPickup.remainKm.toFixed(0) : '696';
+  const fallbackPrice = tr ? (tr.price || 650) : 650;
+  const fallbackKm = tr ? String(tr.distKm || 0) : '696';
+
+  const price = passengerSelectedPickup ? passengerSelectedPickup.price : fallbackPrice;
+  const pickupName = passengerSelectedPickup ? passengerSelectedPickup.name : tripFromName;
+  const km = passengerSelectedPickup ? passengerSelectedPickup.remainKm.toFixed(0) : fallbackKm;
 
   const bookingId = genTripId();
 
@@ -10812,16 +11143,17 @@ function doBookSeat(paymentMethod) {
     price,
     paymentMethod,
     authState.user ? (authState.user.email || authState.user.phone) : 'guest',
-    mockTrip.other
+    driverName
   );
 
   myTrips.passenger.upcoming.unshift({
     id: bookingId,
-    time: currentLang === 'EN' ? 'Tomorrow 07:00' : 'พรุ่งนี้ 07:00',
-    timeEN: 'Tomorrow 07:00',
+    time: tr && tr.time ? tr.time : (currentLang === 'EN' ? 'Upcoming' : 'เร็วๆ นี้'),
+    timeEN: tr && tr.time ? tr.time : 'Upcoming',
     from: pickupName, fromEN: pickupName,
-    to: mockTrip.to, toEN: mockTrip.toEN,
-    other: mockTrip.other, otherEN: mockTrip.otherEN,
+    to: tripToName, toEN: tripToName,
+    other: driverName, otherEN: driverNameEN,
+    otherId: driverId,
     price: price,
     pickupName: pickupName,
     distKm: km,
@@ -10836,6 +11168,7 @@ function doBookSeat(paymentMethod) {
   // บันทึกลง Supabase (booking + payment/escrow)
   if (sb && authState.user && authState.user.id) {
     sb.from('bookings').insert({
+      trip_id: tripDbId,
       passenger_id: authState.user.id,
       pickup_location: pickupName,
       price: price,
@@ -10855,11 +11188,27 @@ function doBookSeat(paymentMethod) {
           payment_type: paymentMethod.type,
           payment_label: paymentMethod.label,
           from_user_id: authState.user.id,
+          to_driver_id: driverId,
           status: 'held'
         }).then(({ error: payErr }) => {
           if (payErr) console.warn('Save payment failed:', payErr.message);
           else console.log('Payment escrow recorded');
         });
+        // ลด seats_left ของทริป
+        if (tripDbId && tr) {
+          const newSeats = Math.max(0, (tr.seats || 1) - 1);
+          sb.from('trips').update({ seats_left: newSeats }).eq('id', tripDbId).then(() => {});
+        }
+        // แจ้งคนขับ (notification ในชื่อคนขับ) — ผ่าน DB
+        if (driverId) {
+          sb.from('notifications').insert({
+            user_id: driverId,
+            type: 'booking',
+            title_th: `มีคนจองทริปของคุณ (${pickupName})`,
+            title_en: `New booking on your trip (${pickupName})`,
+            unread: true
+          }).then(() => {});
+        }
         // อัปเดต booking id ใน local
         const localBooking = myTrips.passenger.upcoming.find(t => t.id === bookingId);
         if (localBooking) { localBooking.dbId = data.id; saveMyTrips(); }
@@ -10871,7 +11220,7 @@ function doBookSeat(paymentMethod) {
     `จ่ายแล้ว ฿${price.toLocaleString()} · รอคนขับรับ`,
     `Paid ฿${price.toLocaleString()} · waiting for driver pickup`);
 
-  showBookingConfirmation(bookingId, pickupName, mockTrip.to, price, km, mockTrip.other, paymentMethod);
+  showBookingConfirmation(bookingId, pickupName, tripToName, price, km, driverName, paymentMethod);
 }
 
 // หน้า booking confirmation
@@ -10931,6 +11280,9 @@ function cancelMyTrip(tripId, role) {
     : (currentLang === 'EN' ? 'Cancel this trip?' : 'ยกเลิกทริปนี้?');
   if (!confirm(confirmMsg)) return;
 
+  // หาทริป/การจองใน local เพื่อเอา dbId
+  const localItem = myTrips[role].upcoming.find(tr => tr.id === tripId);
+
   // ถ้าผู้โดยสารยกเลิก → refund
   if (role === 'passenger') {
     const tx = refundEscrow(tripId);
@@ -10939,12 +11291,21 @@ function cancelMyTrip(tripId, role) {
         `คืนเงิน ฿${tx.amount.toLocaleString()} แล้ว`,
         `Refunded ฿${tx.amount.toLocaleString()}`);
     }
+    // อัปเดต DB: booking → cancelled, payment → refunded
+    if (sb && localItem && localItem.dbId) {
+      sb.from('bookings').update({ status: 'cancelled', escrow_status: 'refunded' }).eq('id', localItem.dbId).then(() => {});
+      sb.from('payments').update({ status: 'refunded' }).eq('booking_id', localItem.dbId).then(() => {});
+    }
   }
 
   myTrips[role].upcoming = myTrips[role].upcoming.filter(tr => tr.id !== tripId);
   if (role === 'driver') {
     userPostedTrips = userPostedTrips.filter(tr => tr.id !== tripId);
     saveUserPostedTrips();
+    // ลบทริปจาก DB (หรือเปลี่ยนสถานะเป็น cancelled)
+    if (sb && localItem && localItem.dbId) {
+      sb.from('trips').update({ status: 'cancelled' }).eq('id', localItem.dbId).then(() => {});
+    }
   }
   saveMyTrips();
   showToast(currentLang === 'EN' ? '✓ Trip canceled' : '✓ ยกเลิกแล้ว');
@@ -11181,7 +11542,7 @@ function saveAuthSession() {
 // แสดง splash + ตัดสินใจไปหน้าไหน
 function initApp() {
   // ── เคลียร์ข้อมูล demo เก่าที่ค้าง (เช่น ชื่อวีรนุช จากตอนทดสอบ) ──
-  const DATA_VERSION = '2';
+  const DATA_VERSION = '3';
   try {
     const v = localStorage.getItem('coolpar_data_version');
     if (v !== DATA_VERSION) {
@@ -11606,6 +11967,50 @@ navBtns.forEach(b => b.addEventListener('click', () => {
   // ปล่อยให้กดได้ทุก tab แต่ action ใน tab จะ gate ทีหลัง
   show(b.dataset.screen);
 }));
+
+// ====== PWA: manifest + service worker (ติดตั้งเป็นแอปได้) ======
+(function setupPWA() {
+  try {
+    const icon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%2300A082'/%3E%3Ctext x='256' y='340' font-family='Arial,sans-serif' font-size='280' font-weight='800' fill='white' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E";
+    const manifest = {
+      name: 'Coolpar',
+      short_name: 'Coolpar',
+      description: 'ทางเดียวกัน ไปด้วยกัน',
+      start_url: '.',
+      display: 'standalone',
+      background_color: '#FFFFFF',
+      theme_color: '#00A082',
+      icons: [
+        { src: icon, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
+        { src: icon, sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
+      ]
+    };
+    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+    const manifestURL = URL.createObjectURL(blob);
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = manifestURL;
+    document.head.appendChild(link);
+
+    // service worker แบบ inline (ให้ติดตั้งได้ + cache เบื้องต้น)
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        self.addEventListener('install', e => self.skipWaiting());
+        self.addEventListener('activate', e => self.clients.claim());
+        self.addEventListener('fetch', e => {
+          // network-first สำหรับหน้าเว็บ, ปล่อยผ่านสำหรับ API
+          if (e.request.method !== 'GET') return;
+          e.respondWith(
+            fetch(e.request).catch(() => caches.match(e.request))
+          );
+        });
+      `;
+      const swBlob = new Blob([swCode], { type: 'application/javascript' });
+      const swURL = URL.createObjectURL(swBlob);
+      navigator.serviceWorker.register(swURL).catch(() => {});
+    }
+  } catch (e) { console.warn('PWA setup skipped:', e); }
+})();
 
 // init: splash → welcome/home
 initApp();
