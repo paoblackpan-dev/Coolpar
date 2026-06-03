@@ -5419,7 +5419,7 @@ let currentLang = 'TH';
 const i18n = {
   // หัวข้อหลัก
   greet: { TH: 'ไปไหนดีครับ, ', EN: 'Where to today, ' },
-  userName: { TH: 'คุณวีรนุช', EN: 'Weeranuch' },
+  userName: { TH: 'คุณ', EN: 'You' },
   tagline: { TH: 'Carpool with Coolpar', EN: 'Carpool with Coolpar' },
 
   // search pill
@@ -6244,12 +6244,12 @@ function renderUserProfile() {
 // ====== My Profile Screen (BlaBlaCar-style) ======
 const profileState = { tab: 'about' }; // 'about' | 'account'
 const userProfile = {
-  name: 'วีรนุช',
-  nameEN: 'Weeranuch',
+  name: '',
+  nameEN: '',
   tag: 'newbie',
   photo: null,        // base64 data URL ของรูปที่อัปโหลด
-  email: 'paoblackpan@gmail.com',
-  phone: '+66955951222',
+  email: '',
+  phone: '',
   bio: '',
   car: null,
   // 5 ขั้นตอน — เก็บเป็น Set/Object ของขั้นที่ทำแล้ว
@@ -8349,7 +8349,11 @@ function resetHomeSearch() {
 
 function getScreens() { return {
   home: `
-    <h2>${t('greet')}<span style="color:var(--primary)">${currentLang === 'EN' ? userProfile.nameEN : 'คุณ' + userProfile.name}</span></h2>
+    <h2>${(() => {
+      const nm = currentLang === 'EN' ? userProfile.nameEN : userProfile.name;
+      if (!nm) return currentLang === 'EN' ? 'Where to today?' : 'ไปไหนดีครับวันนี้?';
+      return t('greet') + `<span style="color:var(--primary)">${currentLang === 'EN' ? nm : 'คุณ' + nm}</span>`;
+    })()}</h2>
     <p class="tagline">${t('tagline')}</p>
     <div id="search-pill-wrap"></div>
     <div id="home-results"></div>
@@ -9079,8 +9083,8 @@ function confirmPost() {
 
   // สร้าง trip object
   const tripId = genTripId();
-  const driverName = userProfile.name || 'คุณวีรนุช';
-  const driverNameEN = userProfile.nameEN || 'Weeranuch';
+  const driverName = userProfile.name || authState.user?.name || (currentLang === 'EN' ? 'You' : 'คุณ');
+  const driverNameEN = userProfile.nameEN || authState.user?.nameEN || 'You';
   const newTrip = {
     id: tripId,
     from: fromVal, to: toVal,
@@ -11106,11 +11110,12 @@ function toggleOtherAuth() {
 }
 
 function loginWith(provider) {
-  // ข้อมูล mock ตาม provider
+  // ข้อมูล mock — ใช้เฉพาะตอน demo (เมื่อยังไม่ได้ตั้งค่า OAuth จริง)
+  const demoName = currentLang === 'EN' ? 'Demo User' : 'ผู้ใช้ทดสอบ';
   const mockUsers = {
-    google: { name: 'วีรนุช', nameEN: 'Weeranuch', email: 'weeranuch@gmail.com', phone: '', provider: 'google' },
-    apple: { name: 'วีรนุช', nameEN: 'Weeranuch', email: 'weeranuch@privaterelay.appleid.com', phone: '', provider: 'apple' },
-    facebook: { name: 'วีรนุช', nameEN: 'Weeranuch', email: 'weeranuch@fb.com', phone: '', provider: 'facebook' },
+    google: { name: demoName, nameEN: 'Demo User', email: 'demo@gmail.com', phone: '', provider: 'google' },
+    apple: { name: demoName, nameEN: 'Demo User', email: 'demo@privaterelay.appleid.com', phone: '', provider: 'apple' },
+    facebook: { name: demoName, nameEN: 'Demo User', email: 'demo@fb.com', phone: '', provider: 'facebook' },
     email: null, // ต้องไปหน้ากรอก
     phone: null  // ต้องไปหน้ากรอก
   };
@@ -11253,7 +11258,10 @@ function showEmailLogin() {
     if (!pw) return;
     authState.isLoggedIn = true;
     authState.isGuest = false;
-    authState.user = { name: 'วีรนุช', nameEN: 'Weeranuch', email, phone: '', provider: 'email' };
+    const guessName = email.split('@')[0];
+    authState.user = { name: guessName, nameEN: guessName, email, phone: '', provider: 'email' };
+    userProfile.name = guessName;
+    userProfile.nameEN = guessName;
     userProfile.email = email;
     userProfile.done.email = true;
     saveAuthSession();
@@ -11403,11 +11411,14 @@ function showPhoneLogin() {
   const otp = prompt(currentLang === 'EN' ? 'Enter OTP (any 6 digits):' : 'กรอกรหัส OTP (6 หลักอะไรก็ได้):');
   if (!otp || otp.length < 4) return;
 
+  let nm = prompt(currentLang === 'EN' ? 'Your name:' : 'ชื่อของคุณ:');
+  if (!nm) nm = currentLang === 'EN' ? 'User' : 'ผู้ใช้';
+
   authState.isLoggedIn = true;
   authState.isGuest = false;
-  authState.user = { name: 'วีรนุช', nameEN: 'Weeranuch', email: '', phone, provider: 'phone' };
-  userProfile.name = 'วีรนุช';
-  userProfile.nameEN = 'Weeranuch';
+  authState.user = { name: nm, nameEN: nm, email: '', phone, provider: 'phone' };
+  userProfile.name = nm;
+  userProfile.nameEN = nm;
   userProfile.phone = phone;
   userProfile.done.phone = true;
   saveAuthSession();
