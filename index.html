@@ -1512,6 +1512,29 @@
   }
   .h-scroll::-webkit-scrollbar { display: none; height: 0; }
   .h-scroll > * { scroll-snap-align: start; }
+  /* เมาส์บนคอม: แสดง scrollbar เส้นจริง + เคอร์เซอร์ลากได้ */
+  @media (hover: hover) and (pointer: fine) {
+    .h-scroll, .filter-chips { cursor: grab; }
+    .h-scroll:active, .filter-chips:active { cursor: grabbing; }
+
+    /* scrollbar เส้นบางๆ ให้เห็นว่าเลื่อนได้ */
+    .h-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) var(--bg-soft);
+      padding-bottom: 16px;
+    }
+    .h-scroll::-webkit-scrollbar { display: block; height: 7px; }
+    .h-scroll::-webkit-scrollbar-track {
+      background: var(--bg-soft);
+      border-radius: 99px;
+      margin: 0 22px;
+    }
+    .h-scroll::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 99px;
+    }
+    .h-scroll::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
+  }
   .suggest-card {
     flex-shrink: 0;
     width: 160px;
@@ -1732,6 +1755,24 @@
     scrollbar-width: none;
   }
   .filter-chips::-webkit-scrollbar { display: none; }
+  /* เมาส์บนคอม: แสดง scrollbar เส้นจริงให้ chips Coolpar Star */
+  @media (hover: hover) and (pointer: fine) {
+    .filter-chips {
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) var(--bg-soft);
+      padding-bottom: 10px;
+    }
+    .filter-chips::-webkit-scrollbar { display: block; height: 7px; }
+    .filter-chips::-webkit-scrollbar-track {
+      background: var(--bg-soft);
+      border-radius: 99px;
+    }
+    .filter-chips::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 99px;
+    }
+    .filter-chips::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
+  }
   .chip {
     flex-shrink: 0;
     padding: 6px 14px;
@@ -6471,6 +6512,8 @@ function triggerPhotoUpload() {
 function handlePhotoUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
+
+  // แสดงรูปทันที (base64) เพื่อความเร็ว
   const reader = new FileReader();
   reader.onload = (e) => {
     userProfile.photo = e.target.result;
@@ -6478,6 +6521,26 @@ function handlePhotoUpload(event) {
     show('profile');
   };
   reader.readAsDataURL(file);
+
+  // อัปโหลดขึ้น Supabase Storage (cloud) — ให้รูปอยู่ถาวร + คนอื่นเห็น
+  if (sb && authState.user && authState.user.id) {
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    const path = `${authState.user.id}/avatar_${Date.now()}.${ext}`;
+    sb.storage.from('avatars').upload(path, file, { upsert: true })
+      .then(({ data, error }) => {
+        if (error) { console.warn('Upload photo failed:', error.message); return; }
+        // เอา public URL
+        const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
+        const publicUrl = urlData?.publicUrl;
+        if (publicUrl) {
+          userProfile.photo = publicUrl;
+          // บันทึก URL ลง profile
+          sb.from('profiles').update({ photo_url: publicUrl }).eq('id', authState.user.id).then(() => {
+            console.log('Photo uploaded to cloud');
+          });
+        }
+      });
+  }
 }
 
 function markStepDone(key) {
@@ -6576,10 +6639,14 @@ function submitAppRating() {
 // ====== Rate a trip (หลังทริปจบ) ======
 let tripRatingValue = 0;
 let tripRatingTarget = null;
+let tripRatingTargetId = null;
+let tripRatingTripId = null;
 
-function showTripRating(targetName, targetNameEN) {
+function showTripRating(targetName, targetNameEN, targetId, tripId) {
   tripRatingValue = 0;
   tripRatingTarget = currentLang === 'EN' ? (targetNameEN || targetName) : targetName;
+  tripRatingTargetId = targetId || null;
+  tripRatingTripId = tripId || null;
   const name = tripRatingTarget;
 
   showSheet(`
@@ -6612,12 +6679,31 @@ function setTripStars(n) {
 
 function submitTripRating() {
   const comment = document.getElementById('trip-rate-comment')?.value.trim() || '';
+  const stars = tripRatingValue;
+  const targetName = tripRatingTarget;
+
+  // บันทึกลง DB (ตาราง ratings)
+  if (sb && authState.user && authState.user.id && tripRatingTargetId) {
+    sb.from('ratings').insert({
+      trip_id: tripRatingTripId || null,
+      from_user_id: authState.user.id,
+      to_user_id: tripRatingTargetId,
+      stars: stars,
+      comment: comment || null
+    }).then(({ error }) => {
+      if (error) console.warn('Save rating failed:', error.message);
+      else console.log('Rating saved to DB');
+    });
+  }
+
   closeSheet();
   showToast(currentLang === 'EN'
-    ? `✓ Thanks! You rated ${tripRatingTarget} ${tripRatingValue}★`
-    : `✓ ขอบคุณ! ให้ ${tripRatingTarget} ${tripRatingValue}★`);
+    ? `✓ Thanks! You rated ${targetName} ${stars}★`
+    : `✓ ขอบคุณ! ให้ ${targetName} ${stars}★`);
   tripRatingValue = 0;
   tripRatingTarget = null;
+  tripRatingTargetId = null;
+  tripRatingTripId = null;
 }
 
 // ====== Generic bottom sheet ======
@@ -7186,6 +7272,7 @@ function renderPostDetail() {
         <div class="post-actions">
           <button class="post-action-btn" id="like-btn" onclick="toggleLike(this)">${t('pdLike')}</button>
           <button class="post-action-btn" onclick="openChatFromPost('${p.authorId || ''}','${postAuthor(p)}')">${t('pdComment')}</button>
+          <button class="post-action-btn" onclick="sharePost('${postTitle(p).replace(/'/g, "\\'")}')">${t('pdShare')}</button>
         </div>
 
         ${relatedHtml ? `<div class="post-related-title">${t('pdRelated')}</div><div class="posts-grid">${relatedHtml}</div>` : ''}
@@ -7198,6 +7285,26 @@ function renderPostDetail() {
 function openChatFromPost(authorId, authorName) {
   showToast(currentLang === 'EN' ? 'Opening chat...' : 'กำลังเปิดแชท...');
   show('messages');
+}
+
+// แชร์โพสต์ (Web Share API + fallback คัดลอกลิงก์)
+async function sharePost(title) {
+  const shareData = {
+    title: 'Coolpar',
+    text: title,
+    url: window.location.href.split('#')[0]
+  };
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      // fallback: คัดลอกลิงก์
+      await navigator.clipboard.writeText(shareData.url);
+      showToast(currentLang === 'EN' ? '✓ Link copied' : '✓ คัดลอกลิงก์แล้ว');
+    }
+  } catch (e) {
+    // ผู้ใช้กดยกเลิก — ไม่ต้องทำอะไร
+  }
 }
 
 function toggleLike(btn) {
@@ -8174,7 +8281,57 @@ function startCO2Counter() {
   }, 1500 + Math.random() * 1500);
 }
 
+// เปิดให้เลื่อนแนวนอนด้วยเมาส์ (ลาก + หมุนล้อ) บนคอมพิวเตอร์
+function enableDragScroll() {
+  const containers = document.querySelectorAll('.h-scroll, .filter-chips, .posts-grid, .role-tab-row');
+  containers.forEach(el => {
+    if (el.dataset.dragScroll === '1') return; // ผูกแล้ว ไม่ผูกซ้ำ
+    el.dataset.dragScroll = '1';
+
+    // หมุนล้อเมาส์ (แนวตั้ง) → เลื่อนแนวนอน
+    el.addEventListener('wheel', (e) => {
+      if (el.scrollWidth <= el.clientWidth) return; // ไม่มีอะไรให้เลื่อน
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        el.scrollLeft += e.deltaY;
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // ลากด้วยเมาส์
+    let isDown = false, startX = 0, startScroll = 0, moved = false;
+    el.addEventListener('mousedown', (e) => {
+      isDown = true; moved = false;
+      startX = e.pageX;
+      startScroll = el.scrollLeft;
+      el.style.cursor = 'grabbing';
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      const dx = e.pageX - startX;
+      if (Math.abs(dx) > 4) moved = true;
+      el.scrollLeft = startScroll - dx;
+    });
+    window.addEventListener('mouseup', () => {
+      if (!isDown) return;
+      isDown = false;
+      el.style.cursor = '';
+      // กันการคลิกการ์ดเด้งตอนเพิ่งลาก
+      if (moved) {
+        const block = (ev) => { ev.stopPropagation(); ev.preventDefault(); el.removeEventListener('click', block, true); };
+        el.addEventListener('click', block, true);
+        setTimeout(() => el.removeEventListener('click', block, true), 50);
+      }
+    });
+  });
+}
+
 function updateHome() {
+  _renderHome();
+  // เปิด drag-scroll หลัง render เสร็จ
+  setTimeout(enableDragScroll, 30);
+}
+
+function _renderHome() {
   renderSearchPill();
   // เริ่ม CO2 counter ทันที (เพิ่มเลขเรื่อยๆ เพื่อแสดงว่ายังลดต่อเนื่อง)
   startCO2Counter();
@@ -8605,6 +8762,8 @@ function show(name) {
   navBtns.forEach(b => b.classList.toggle('active', b.dataset.screen === navName));
   // อัปเดต notification badge
   setTimeout(updateBellBadge, 50);
+  // เปิด drag-scroll สำหรับ container แนวนอน (เลื่อนด้วยเมาส์บนคอม)
+  setTimeout(enableDragScroll, 60);
 
   // หน้า post: ตั้งวันที่ default = พรุ่งนี้, คงค่าที่เคยกรอกไว้
   if (name === 'post') {
@@ -11021,6 +11180,20 @@ function saveAuthSession() {
 
 // แสดง splash + ตัดสินใจไปหน้าไหน
 function initApp() {
+  // ── เคลียร์ข้อมูล demo เก่าที่ค้าง (เช่น ชื่อวีรนุช จากตอนทดสอบ) ──
+  const DATA_VERSION = '2';
+  try {
+    const v = localStorage.getItem('coolpar_data_version');
+    if (v !== DATA_VERSION) {
+      // ล้าง session + ข้อมูล demo เก่า แล้วเริ่มใหม่สะอาดๆ
+      localStorage.removeItem('coolpar_auth');
+      localStorage.removeItem('coolpar_my_trips');
+      localStorage.removeItem('coolpar_posted_trips');
+      localStorage.removeItem('coolpar_notifs');
+      localStorage.setItem('coolpar_data_version', DATA_VERSION);
+    }
+  } catch (e) {}
+
   loadAuthSession();
 
   // เช็ค Supabase session (ถ้า login ค้างไว้)
