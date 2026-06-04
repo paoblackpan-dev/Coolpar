@@ -61,6 +61,22 @@
   }
   [data-theme="dark"] .phone { box-shadow: 0 30px 70px rgba(0,0,0,0.6); }
   [data-theme="dark"] img { filter: brightness(0.92); }
+  /* โหมดมืด: ปุ่ม/overlay กระจกฝ้า (เคยขาว) → ดำโปร่ง */
+  [data-theme="dark"] .back-btn-map,
+  [data-theme="dark"] .post-detail-back,
+  [data-theme="dark"] .detail-map-overlay,
+  [data-theme="dark"] .post-rank {
+    background: rgba(30, 33, 40, 0.92) !important;
+    color: var(--text) !important;
+  }
+  /* โหมดมืด: badge สีพาสเทลอ่อน → โทนเข้มอ่านง่าย */
+  [data-theme="dark"] .av-3 { background: #3A3320; color: #FFD98A; }
+  [data-theme="dark"] .notif-icon-trip { background: #3A3320 !important; color: #FFD98A !important; border-color: #3A3320 !important; }
+  [data-theme="dark"] .notif-icon-rating { background: #3A2230 !important; color: #FFA8D0 !important; border-color: #3A2230 !important; }
+  [data-theme="dark"] .st-icon-to { background: #3A2222 !important; color: #FF9A9A !important; }
+  [data-theme="dark"] .st-icon-date { background: #3A3320 !important; color: #FFD98A !important; }
+  /* โหมดมืด: พื้นแดง/เหลืองอ่อน (เตือน) → เข้ม */
+  [data-theme="dark"] .price-feedback.fb-5 { background: #3A2222 !important; color: #FF9A9A !important; }
   body {
     font-family: 'IBM Plex Sans Thai', 'Manrope', -apple-system, sans-serif;
     background: linear-gradient(135deg, #00A082 0%, #006B5C 100%);
@@ -89,7 +105,7 @@
   .splash-screen {
     position: absolute;
     inset: 0;
-    background: #FFFFFF;
+    background: var(--bg);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -278,7 +294,7 @@
     font-size: 18px;
   }
   .auth-btn-google {
-    background: white;
+    background: var(--bg);
     border-color: #DADCE0;
   }
   .auth-btn-apple {
@@ -1391,7 +1407,7 @@
   }
   .map-loading {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    background: white; padding: 18px 24px; border-radius: 16px;
+    background: var(--bg); padding: 18px 24px; border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.15);
     font-size: 14px; font-weight: 600; color: var(--text);
     z-index: 999; display: flex; align-items: center; gap: 10px;
@@ -1405,7 +1421,7 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
   .route-summary {
-    background: white; padding: 16px 22px 18px;
+    background: var(--bg); padding: 16px 22px 18px;
     border-top: 1px solid var(--border);
     border-radius: 22px 22px 0 0; margin-top: -22px;
     position: relative; z-index: 2;
@@ -2243,7 +2259,7 @@
     appearance: none;
     width: 24px;
     height: 24px;
-    background: white;
+    background: var(--bg);
     border: 3px solid var(--thumb-color, var(--primary));
     border-radius: 50%;
     cursor: pointer;
@@ -2253,7 +2269,7 @@
   .price-slider-input::-moz-range-thumb {
     width: 24px;
     height: 24px;
-    background: white;
+    background: var(--bg);
     border: 3px solid var(--thumb-color, var(--primary));
     border-radius: 50%;
     cursor: pointer;
@@ -3210,7 +3226,7 @@
     width: 100%;
     margin-top: 14px;
     padding: 11px;
-    background: white;
+    background: var(--bg);
     color: var(--primary-dark);
     border: none;
     border-radius: 12px;
@@ -3240,7 +3256,7 @@
   }
   .pf-progress-fill {
     height: 100%;
-    background: white;
+    background: var(--bg);
     border-radius: 99px;
     transition: width 0.4s;
   }
@@ -4229,39 +4245,24 @@
 
   /* dark mode toggle pill */
   .theme-pill {
-    width: 58px; height: 30px;
-    background: #FFB23E;
+    width: 50px; height: 28px;
+    background: var(--border-strong);
     border-radius: 99px;
     position: relative;
-    transition: background 0.35s ease;
+    transition: background 0.3s ease;
     flex-shrink: 0;
-    overflow: hidden;
   }
-  .theme-pill.on { background: #3A4256; }
-  .theme-icon {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 14px;
-    line-height: 1;
-    transition: opacity 0.35s ease;
-    z-index: 1;
-  }
-  .theme-icon.sun { left: 7px; opacity: 1; }
-  .theme-icon.moon { right: 7px; opacity: 0.45; }
-  .theme-pill.on .theme-icon.sun { opacity: 0.45; }
-  .theme-pill.on .theme-icon.moon { opacity: 1; }
+  .theme-pill.on { background: var(--primary); }
   .theme-knob {
     position: absolute;
     top: 3px; left: 3px;
-    width: 24px; height: 24px;
+    width: 22px; height: 22px;
     background: #fff;
     border-radius: 50%;
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 2px 5px rgba(0,0,0,0.25);
-    z-index: 2;
   }
-  .theme-pill.on .theme-knob { transform: translateX(28px); }
+  .theme-pill.on .theme-knob { transform: translateX(22px); }
 
   /* server status indicator */
   .server-status {
@@ -5292,7 +5293,7 @@
   .promo-arrow {
     width: 32px;
     height: 32px;
-    background: white;
+    background: var(--bg);
     color: var(--primary);
     border-radius: 50%;
     display: flex;
@@ -5734,7 +5735,7 @@ const i18n = {
   // หัวข้อหลัก
   greet: { TH: 'ไปไหนดีครับ, ', EN: 'Where to today, ' },
   userName: { TH: 'คุณ', EN: 'You' },
-  tagline: { TH: 'Carpool with Coolpar', EN: 'Carpool with Coolpar' },
+  tagline: { TH: 'แชร์รถไปด้วยกันกับ Coolpar', EN: 'Carpool with Coolpar' },
 
   // search pill
   pillStart: { TH: 'ค้นหารถ', EN: 'Find a ride' },
@@ -5766,7 +5767,7 @@ const i18n = {
   perPerson: { TH: '/คน', EN: '/person' },
 
   // Coolpar Star
-  starCreate: { TH: '➕ create your travel guide', EN: '➕ create your travel guide' },
+  starCreate: { TH: '➕ เขียนรีวิว', EN: '➕ Write a guide' },
   searchPlaceholder: { TH: 'ค้นหาจังหวัด เช่น เชียงใหม่ ปาย ภูเก็ต', EN: 'Search provinces e.g. Chiang Mai, Pai, Phuket' },
   chipAll: { TH: 'ทั้งหมด', EN: 'All' },
   chipNorth: { TH: 'ภาคเหนือ', EN: 'North' },
@@ -5782,7 +5783,7 @@ const i18n = {
   resetBtn: { TH: '↑ กลับขึ้นบน · หาโพสใหม่', EN: '↑ Back to top · Find new posts' },
 
   // nav
-  navHome: { TH: 'Home', EN: 'Home' },
+  navHome: { TH: 'หน้าแรก', EN: 'Home' },
   navPost: { TH: 'แชร์รถของคุณ', EN: 'Share Ride' },
   navTrips: { TH: 'เดินทาง', EN: 'Trips' },
   navMessages: { TH: 'ข้อความ', EN: 'Messages' },
@@ -6009,9 +6010,6 @@ function toggleDarkMode() {
   // สลับ class ที่ปุ่มโดยตรง → เลื่อนลื่นๆ ไม่ re-render (ไม่กระตุก)
   const pill = document.getElementById('theme-pill');
   if (pill) pill.classList.toggle('on', isDarkMode);
-  showToast(isDarkMode
-    ? (currentLang === 'EN' ? '🌙 Dark mode on' : '🌙 โหมดมืดเปิด')
-    : (currentLang === 'EN' ? '☀️ Light mode on' : '☀️ โหมดสว่างเปิด'));
 }
 
 function toggleLang() {
@@ -6029,6 +6027,15 @@ function toggleLang() {
 }
 
 // แปลข้อความใน nav + re-render หน้าปัจจุบัน
+// แปลข้อความ static (element ที่มี data-th/data-en) เช่น หน้า welcome
+function applyStaticLang() {
+  const EN = currentLang === 'EN';
+  document.querySelectorAll('[data-th][data-en]').forEach(el => {
+    const v = EN ? el.getAttribute('data-en') : el.getAttribute('data-th');
+    if (v != null) el.textContent = v;
+  });
+}
+
 function applyLang() {
   document.querySelectorAll('.nav-btn').forEach(b => {
     const key = b.dataset.screen;
@@ -6036,6 +6043,8 @@ function applyLang() {
     const labelEl = b.querySelector('.label');
     if (labelEl && labelMap[key]) labelEl.textContent = t(labelMap[key]);
   });
+  // แปลข้อความ static (welcome ฯลฯ)
+  applyStaticLang();
   // หาหน้าปัจจุบันแล้ว re-render
   const activeBtn = document.querySelector('.nav-btn.active');
   if (activeBtn) {
@@ -6397,7 +6406,12 @@ async function fetchConversations() {
       .or(`from_user_id.eq.${me},to_user_id.eq.${me}`)
       .order('created_at', { ascending: false })
       .limit(300);
-    if (error) { console.warn('Fetch conversations failed:', error.message); return; }
+    if (error) {
+      console.warn('Fetch conversations failed:', error.message);
+      const w = document.getElementById('messages-list-wrap');
+      if (w) w.innerHTML = renderConversationItems(); // แสดงหน้าว่าง
+      return;
+    }
 
     // group ตามคู่สนทนา (เอาข้อความล่าสุดของแต่ละคน)
     const convos = {};
@@ -6442,13 +6456,24 @@ async function fetchConversations() {
     const wrap = document.getElementById('messages-list-wrap');
     if (wrap) wrap.innerHTML = renderConversationItems();
     updateBellBadge();
-  } catch (e) { console.warn('fetchConversations error:', e); }
+  } catch (e) {
+    console.warn('fetchConversations error:', e);
+    const w = document.getElementById('messages-list-wrap');
+    if (w) w.innerHTML = renderConversationItems(); // หน้าว่าง ไม่ค้าง
+  }
 }
 
 function renderConversationItems() {
   const convos = window._conversations || [];
   if (convos.length === 0) {
-    return `<div class="trips-empty">${currentLang === 'EN' ? 'No messages yet' : 'ยังไม่มีข้อความ'}<div style="font-size:13px;margin-top:6px;color:var(--text-muted)">${currentLang === 'EN' ? 'Message a driver from a trip to start' : 'เริ่มแชทโดยทักคนขับจากทริป'}</div></div>`;
+    return `
+      <div class="trips-empty" style="padding:50px 20px">
+        <div style="color:var(--text-light);opacity:0.5;margin-bottom:12px;display:flex;justify-content:center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="46" height="46"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div style="font-size:15px;font-weight:700;color:var(--text)">${currentLang === 'EN' ? 'No messages yet' : 'ยังไม่มีข้อความ'}</div>
+        <div style="font-size:13px;margin-top:6px;color:var(--text-muted)">${currentLang === 'EN' ? 'Message a driver from a trip to start chatting' : 'เริ่มแชทโดยทักคนขับจากทริป'}</div>
+      </div>`;
   }
   return convos.map(c => {
     const name = currentLang === 'EN' ? c.nameEN : c.name;
@@ -6471,13 +6496,17 @@ function renderConversationItems() {
 
 function renderMessagesList() {
   // โหลดบทสนทนาจาก DB (async)
-  setTimeout(fetchConversations, 30);
+  if (sb && authState.user && authState.user.id) {
+    setTimeout(fetchConversations, 30);
+  }
+  // ถ้ามีข้อมูล cache แล้ว → แสดงเลย, ถ้าไม่มี → หน้าว่าง (ไม่หมุนค้าง)
+  const initialContent = (window._conversations && window._conversations.length > 0)
+    ? renderConversationItems()
+    : renderConversationItems(); // renderConversationItems คืนหน้าว่างถ้าไม่มี
   return `
     <h2>${t('messagesTitle')}</h2>
     <p class="subtitle">${t('messagesSub')}</p>
-    <div id="messages-list-wrap">
-      <div class="trips-empty">${currentLang === 'EN' ? 'Loading...' : 'กำลังโหลด...'}</div>
-    </div>
+    <div id="messages-list-wrap">${initialContent}</div>
   `;
 }
 
@@ -6817,8 +6846,6 @@ function renderProfileAccount2() {
       <div class="pf2-acc-row" onclick="toggleDarkMode()" style="cursor:pointer">
         <span>${currentLang === 'EN' ? 'Dark mode' : 'โหมดมืด'}</span>
         <span class="theme-pill ${isDarkMode ? 'on' : ''}" id="theme-pill">
-          <span class="theme-icon sun">☀️</span>
-          <span class="theme-icon moon">🌙</span>
           <span class="theme-knob"></span>
         </span>
       </div>
@@ -7550,38 +7577,49 @@ let dbPosts = [];
 // ดึงโพสต์จาก database
 async function fetchPostsFromDB() {
   if (!sb) return;
+
+  const mapPost = (p) => {
+    const authorName = p.profiles?.name || (currentLang === 'EN' ? 'User' : 'ผู้ใช้');
+    return {
+      id: p.id,
+      dbId: p.id,
+      authorId: p.author_id,
+      authorTH: authorName,
+      authorEN: p.profiles?.name_en || authorName,
+      avatar: authorName.slice(0, 2),
+      avatarEN: (p.profiles?.name_en || authorName).slice(0, 2),
+      avClass: 'av-' + ((parseInt((p.id || '0').slice(-1), 16) % 3) + 1),
+      provinceTH: p.province || '',
+      provinceEN: p.province || '',
+      titleTH: p.title,
+      titleEN: p.title,
+      contentTH: p.content || '',
+      contentEN: p.content || '',
+      img: p.image_url || '',
+      photoUrl: p.profiles?.photo_url || null
+    };
+  };
+
   try {
-    const { data, error } = await sb
+    let { data, error } = await sb
       .from('posts')
       .select('*, profiles:author_id(name, name_en, photo_url)')
       .order('created_at', { ascending: false })
       .limit(50);
+
+    // ถ้า join พลาด → ดึงแบบไม่ join
+    if (error) {
+      console.warn('Posts join failed, retrying without join:', error.message);
+      const retry = await sb.from('posts').select('*').order('created_at', { ascending: false }).limit(50);
+      data = retry.data;
+      error = retry.error;
+    }
+
     if (error) { console.warn('Fetch posts failed:', error.message); return; }
     if (data) {
-      dbPosts = data.map(p => {
-        const authorName = p.profiles?.name || 'ผู้ใช้';
-        return {
-          id: p.id,
-          dbId: p.id,
-          authorId: p.author_id,
-          authorTH: authorName,
-          authorEN: p.profiles?.name_en || authorName,
-          avatar: authorName.slice(0, 2),
-          avatarEN: (p.profiles?.name_en || authorName).slice(0, 2),
-          avClass: 'av-' + ((parseInt(p.id.slice(-1), 16) % 3) + 1),
-          provinceTH: p.province || '',
-          provinceEN: p.province || '',
-          titleTH: p.title,
-          titleEN: p.title,
-          contentTH: p.content || '',
-          contentEN: p.content || '',
-          img: p.image_url || '',
-          photoUrl: p.profiles?.photo_url || null
-        };
-      });
+      dbPosts = data.map(mapPost);
       travelPosts = dbPosts;
       console.log('Loaded', dbPosts.length, 'posts from database');
-      // refresh ถ้าอยู่หน้า home
       if (typeof updateHome === 'function') {
         const starSection = document.getElementById('star-section-wrap');
         if (starSection) updateHome();
@@ -8005,35 +8043,53 @@ let dbTrips = [];
 // ดึงทริปทั้งหมดจาก database
 async function fetchTripsFromDB() {
   if (!sb) return;
+
+  // map ฟังก์ชัน (ใช้ซ้ำทั้งแบบ join และไม่ join)
+  const mapTrip = (t) => ({
+    id: t.id,
+    dbId: t.id,
+    driverId: t.driver_id,
+    from: t.from_location,
+    to: t.to_location,
+    date: t.trip_date,
+    time: t.trip_time || '07:00',
+    driver: t.profiles?.name || (currentLang === 'EN' ? 'Driver' : 'คนขับ'),
+    driverEN: t.profiles?.name_en || 'Driver',
+    av: 'av-1',
+    rating: t.profiles?.rating || 5.0,
+    seats: t.seats_left || 3,
+    price: t.price_per_seat,
+    pricePerKm: t.price_per_km || 1.2,
+    distKm: t.distance_km || 0,
+    routeCoords: t.route_coords || null,
+    fromDB: true
+  });
+
   try {
-    const { data, error } = await sb
+    // ลองดึงแบบ join profiles ก่อน
+    let { data, error } = await sb
       .from('trips')
       .select('*, profiles:driver_id(name, name_en, photo_url, rating)')
       .eq('status', 'open')
       .order('created_at', { ascending: false })
       .limit(50);
+
+    // ถ้า join พลาด → ดึงใหม่แบบไม่ join (ทริปจะขึ้นเสมอ)
+    if (error) {
+      console.warn('Join failed, retrying without join:', error.message);
+      const retry = await sb
+        .from('trips')
+        .select('*')
+        .eq('status', 'open')
+        .order('created_at', { ascending: false })
+        .limit(50);
+      data = retry.data;
+      error = retry.error;
+    }
+
     if (error) { console.warn('Fetch trips failed:', error.message); return; }
     if (data) {
-      // แปลงรูปแบบ DB → รูปแบบที่ UI ใช้
-      dbTrips = data.map(t => ({
-        id: t.id,
-        dbId: t.id,
-        driverId: t.driver_id,
-        from: t.from_location,
-        to: t.to_location,
-        date: t.trip_date,
-        time: t.trip_time || '07:00',
-        driver: t.profiles?.name || 'คนขับ',
-        driverEN: t.profiles?.name_en || 'Driver',
-        av: 'av-1',
-        rating: t.profiles?.rating || 5.0,
-        seats: t.seats_left || 3,
-        price: t.price_per_seat,
-        pricePerKm: t.price_per_km || 1.2,
-        distKm: t.distance_km || 0,
-        routeCoords: t.route_coords || null,
-        fromDB: true
-      }));
+      dbTrips = data.map(mapTrip);
       console.log('Loaded', dbTrips.length, 'trips from database');
     }
   } catch (e) {
