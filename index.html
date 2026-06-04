@@ -77,6 +77,20 @@
   [data-theme="dark"] .st-icon-date { background: #3A3320 !important; color: #FFD98A !important; }
   /* โหมดมืด: พื้นแดง/เหลืองอ่อน (เตือน) → เข้ม */
   [data-theme="dark"] .price-feedback.fb-5 { background: #3A2222 !important; color: #FF9A9A !important; }
+  /* โหมดมืด: escrow (เหลืองอ่อน → เข้มอ่านง่าย) */
+  [data-theme="dark"] .escrow-note { background: #322A14 !important; border-color: #4A3D1A !important; }
+  [data-theme="dark"] .escrow-title { color: #FFD98A !important; }
+  [data-theme="dark"] .escrow-sub { color: #E0C68A !important; }
+  [data-theme="dark"] .escrow-status-row.escrow-held { background: #322A14 !important; color: #FFD98A !important; }
+  /* โหมดมืด: status pill */
+  [data-theme="dark"] .pill-warning { background: #322A14; color: #FFC04D; }
+  [data-theme="dark"] .pill-success { background: #15302B; color: #1AC09B; }
+  /* โหมดมืด: toast (เคยขาวบนขาว → เทาเข้ม ตัวอักษรขาว) */
+  [data-theme="dark"] .cp-toast { background: #2E333D !important; color: #fff !important; }
+  [data-theme="dark"] .sub-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  /* โหมดมืด: badge ตัวเลข + tooltip (เคยขาว → เข้ม) */
+  [data-theme="dark"] .st-count { background: var(--primary) !important; color: #fff !important; }
+  [data-theme="dark"] .pickup-tooltip { background: #2E333D !important; color: #fff !important; }
   body {
     font-family: 'IBM Plex Sans Thai', 'Manrope', -apple-system, sans-serif;
     background: linear-gradient(135deg, #00A082 0%, #006B5C 100%);
@@ -1257,9 +1271,9 @@
     transition: all 0.15s;
   }
   .sub-tab.active {
-    background: var(--text);
+    background: var(--primary);
     color: white;
-    border-color: var(--text);
+    border-color: var(--primary);
   }
   .sub-tab .badge-num {
     display: inline-block;
@@ -2418,17 +2432,8 @@
   .pickup-item.start .pickup-dot { border-color: #00A082; }
   .pickup-item.end .pickup-dot { border-color: #DC2626; background: #DC2626; }
   .pickup-line {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 2px;
-    height: 100%;
-    background: var(--border-strong);
-    transform: translateX(-50%);
-    z-index: 1;
+    display: none;
   }
-  .pickup-item:first-child .pickup-line { top: 50%; height: 50%; }
-  .pickup-item:last-child .pickup-line { height: 50%; }
   .pickup-content { flex: 1; min-width: 0; }
   .pickup-name {
     font-size: 15px;
@@ -8881,7 +8886,6 @@ function enablePullToRefresh() {
         } else if (screenId.includes('messages')) {
           if (typeof fetchConversations === 'function') fetchConversations();
         }
-        showToast(currentLang === 'EN' ? '↻ Refreshing...' : '↻ กำลังรีเฟรช...');
       }
       const ind = indicator;
       ind.style.height = '0px';
@@ -9434,7 +9438,8 @@ function show(name) {
   }
 
   if (name === 'detail') {
-    setTimeout(initDetailMap, 100);
+    // รอ animation เปลี่ยนหน้าจบก่อน (transform ทำ Leaflet เพี้ยน → แผนที่หาย)
+    setTimeout(initDetailMap, 350);
   }
 
   if (name === 'chat') {
@@ -10062,17 +10067,36 @@ function closeReturnDialog(goToTrips) {
 }
 
 // Geocoding via Nominatim (OSM) — แปลงชื่อสถานที่เป็นพิกัด GPS
+// fetch ที่มี timeout (กันค้างถ้า server ช้า/ล่ม)
+function fetchWithTimeout(url, ms = 8000) {
+  return Promise.race([
+    fetch(url),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), ms))
+  ]);
+}
+
 async function geocode(name) {
+  // 1) ลองหาจาก provinceDB ก่อน (เร็ว + ชัวร์ ไม่ต้องพึ่ง server)
+  if (name && typeof provinceDB !== 'undefined') {
+    const clean = name.trim().toLowerCase();
+    const hit = provinceDB.find(p =>
+      clean.includes(p.name.toLowerCase()) || p.name.toLowerCase().includes(clean) ||
+      clean.includes((p.nameEN || '').toLowerCase()) || (p.nameEN || '').toLowerCase().includes(clean)
+    );
+    if (hit) return { lat: hit.lat, lng: hit.lng };
+  }
+
+  // 2) ถ้าไม่เจอ → ถาม Nominatim (มี timeout)
   const lang = currentLang === 'EN' ? 'en' : 'th';
   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(name + ', Thailand')}&limit=1&accept-language=${lang}`;
   try {
-    const res = await fetch(url);
+    const res = await fetchWithTimeout(url, 8000);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if (!data || data.length === 0) throw new Error((currentLang === 'EN' ? 'Place not found: ' : 'ไม่พบสถานที่: ') + name);
     return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
   } catch (e) {
-    if (e.message && (e.message.includes('Failed to fetch') || e.message.includes('NetworkError'))) {
+    if (e.message && (e.message.includes('Failed to fetch') || e.message.includes('NetworkError') || e.message.includes('timeout'))) {
       throw new Error(currentLang === 'EN'
         ? 'Cannot connect to map server. Check your internet or try again.'
         : 'เชื่อมต่อแผนที่ไม่ได้ ตรวจอินเทอร์เน็ตหรือลองใหม่อีกครั้ง');
@@ -10086,18 +10110,21 @@ async function getRoute(from, to) {
   // ขอ 3 ทางเลือก: ?alternatives=true&overview=full
   const url = `https://router.project-osrm.org/route/v1/driving/${from.lng},${from.lat};${to.lng},${to.lat}?alternatives=3&overview=full&geometries=geojson`;
   try {
-    const res = await fetch(url);
+    const res = await fetchWithTimeout(url, 9000);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    if (!data.routes || data.routes.length === 0) throw new Error(currentLang === 'EN' ? 'Route not found' : 'ไม่พบเส้นทาง');
+    if (!data.routes || data.routes.length === 0) throw new Error('no route');
     return data.routes;  // array ของ routes (ไม่ใช่ตัวเดียว)
   } catch (e) {
-    if (e.message && (e.message.includes('Failed to fetch') || e.message.includes('NetworkError'))) {
-      throw new Error(currentLang === 'EN'
-        ? 'Cannot connect to routing server. Try again.'
-        : 'เชื่อมต่อบริการเส้นทางไม่ได้ ลองใหม่อีกครั้ง');
-    }
-    throw e;
+    // OSRM ล่ม/ช้า → ใช้เส้นตรงสำรอง (แผนที่ยังแสดงได้ ไม่ค้าง)
+    console.warn('Routing failed, using straight-line fallback:', e.message);
+    const straightDist = distanceKm(from, to) * 1000; // เมตร
+    return [{
+      distance: straightDist,
+      duration: straightDist / 1000 / 80 * 3600, // ประมาณ 80 กม./ชม.
+      geometry: { coordinates: [[from.lng, from.lat], [to.lng, to.lat]] },
+      _fallback: true
+    }];
   }
 }
 
@@ -10526,8 +10553,15 @@ async function initDetailMap() {
 
   // ลบ map เก่า ถ้ามี
   if (detailMap) {
-    detailMap.remove();
+    try { detailMap.remove(); } catch (e) {}
     detailMap = null;
+  }
+
+  // รอให้ container มีขนาดก่อน (กัน map สร้างตอน div สูง 0 → แผนที่หาย/เทา)
+  let waited = 0;
+  while (mapDiv.offsetHeight < 10 && waited < 1000) {
+    await new Promise(r => setTimeout(r, 50));
+    waited += 50;
   }
 
   // สร้าง map
@@ -10535,6 +10569,10 @@ async function initDetailMap() {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19
   }).addTo(detailMap);
+  // invalidateSize หลายรอบ — แก้ปัญหา map เทา/หาย หลัง animation เปลี่ยนหน้า
+  setTimeout(() => { try { detailMap && detailMap.invalidateSize(); } catch(e){} }, 150);
+  setTimeout(() => { try { detailMap && detailMap.invalidateSize(); } catch(e){} }, 400);
+  setTimeout(() => { try { detailMap && detailMap.invalidateSize(); } catch(e){} }, 800);
 
   try {
     const fromPt = await geocode(mockTripFrom);
@@ -10641,10 +10679,16 @@ async function initDetailMap() {
       if (distEl) distEl.textContent = Math.round(distKmNum) + (currentLang === 'EN' ? ' km' : ' กม.');
     }
     if (loadingEl) loadingEl.style.display = 'none';
-    setTimeout(() => detailMap && detailMap.invalidateSize(), 100);
+    setTimeout(() => { try { detailMap && detailMap.invalidateSize(); } catch(e){} }, 100);
 
   } catch (e) {
-    if (loadingEl) loadingEl.textContent = '❌ ' + e.message;
+    // ไม่ให้ error ทับแผนที่ — ซ่อน loading แล้วแจ้งเตือนเบาๆ (แผนที่ยังเห็น)
+    if (loadingEl) loadingEl.style.display = 'none';
+    console.warn('initDetailMap error:', e.message);
+    showToast(currentLang === 'EN'
+      ? 'Could not load full route, showing map'
+      : 'โหลดเส้นทางเต็มไม่ได้ แต่ยังดูแผนที่ได้');
+    setTimeout(() => { try { detailMap && detailMap.invalidateSize(); } catch(e){} }, 100);
   }
 }
 
