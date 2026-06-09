@@ -140,6 +140,9 @@
   .splash-logo span {
     color: #00A082;
   }
+  [data-theme="dark"] .splash-logo {
+    color: #FFFFFF;
+  }
   .splash-tagline {
     margin-top: 10px;
     color: var(--text-muted);
@@ -1676,6 +1679,19 @@
     transition: transform 0.4s;
   }
   .photo-card:hover img { transform: scale(1.08); }
+  .photo-card .dest-visual {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.4s;
+  }
+  .photo-card .dest-visual svg {
+    width: 38px;
+    height: 38px;
+  }
+  .photo-card:hover .dest-visual { transform: scale(1.08); }
   .photo-card .img-overlay {
     position: absolute;
     inset: 0;
@@ -3539,6 +3555,32 @@
     display: flex;
     gap: 6px;
     margin: 10px 0 12px;
+  }
+  /* hint + ปุ่มย้อนกลับ + loading จุดรับ (2-phase) */
+  .route-pick-hint {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+    margin: 4px 0 12px;
+    line-height: 1.5;
+  }
+  .route-back-link {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 4px 0 12px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .pickup-gen-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 10px;
+    color: var(--text-muted);
+    font-size: 13px;
   }
   .route-option {
     flex: 1;
@@ -7456,6 +7498,95 @@ function img(keyword) {
   return `https://picsum.photos/seed/${seed}/400/300`;
 }
 
+// ====== Destination visual (gradient + emoji แทนรูปจริง) ======
+// gradient ตามประเภทภูมิประเทศ — ดูตั้งใจ ไม่มีทางผิดรูป
+const destGradients = {
+  beach:    'linear-gradient(135deg,#2BC0E4,#0A7CA8)',
+  mountain: 'linear-gradient(135deg,#3A7D44,#1B4332)',
+  temple:   'linear-gradient(135deg,#E0A458,#B5651D)',
+  forest:   'linear-gradient(135deg,#1D976C,#2E7D32)',
+  city:     'linear-gradient(135deg,#5C6E91,#2D3250)',
+  river:    'linear-gradient(135deg,#43A8C9,#2C7A8F)',
+  lotus:    'linear-gradient(135deg,#C75B8E,#7B3C8E)'
+};
+// แต่ละจังหวัด → { type } (ไอคอนเส้นตามประเภทภูมิประเทศ)
+const destInfo = {
+  'เชียงใหม่':{t:'mountain'}, 'เชียงราย':{t:'temple'}, 'ปาย':{t:'mountain'},
+  'แม่ฮ่องสอน':{t:'mountain'}, 'ลำปาง':{t:'city'}, 'น่าน':{t:'mountain'},
+  'กรุงเทพ':{t:'city'}, 'อยุธยา':{t:'temple'}, 'นครปฐม':{t:'temple'},
+  'กาญจนบุรี':{t:'river'}, 'สมุทรสงคราม':{t:'river'},
+  'พัทยา':{t:'beach'}, 'ระยอง':{t:'beach'}, 'จันทบุรี':{t:'forest'},
+  'ตราด':{t:'beach'}, 'เกาะช้าง':{t:'beach'},
+  'หัวหิน':{t:'beach'}, 'ประจวบคีรีขันธ์':{t:'beach'}, 'ชุมพร':{t:'beach'},
+  'เขาใหญ่':{t:'forest'}, 'นครราชสีมา':{t:'temple'}, 'บุรีรัมย์':{t:'temple'},
+  'ภูเก็ต':{t:'beach'}, 'กระบี่':{t:'beach'}, 'พังงา':{t:'beach'},
+  'สุราษฎร์ธานี':{t:'beach'}, 'สมุย':{t:'beach'}, 'ตรัง':{t:'beach'},
+  'นครศรีธรรมราช':{t:'temple'}, 'สงขลา':{t:'beach'},
+  'อุดรธานี':{t:'river'}, 'ขอนแก่น':{t:'city'}, 'อุบลราชธานี':{t:'river'},
+  'เลย':{t:'mountain'}
+};
+// ไอคอนเส้น SVG สีขาว ตามประเภท
+const destIcons = {
+  mountain: '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20 L9 9 L13 15"/><path d="M11 20 L16 6 L21 20"/></svg>',
+  beach:    '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="17" cy="8" r="2.5"/><path d="M3 15 q3 -2 6 0 t6 0 t5 0"/><path d="M3 19 q3 -2 6 0 t6 0 t5 0"/></svg>',
+  temple:   '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20 V12 M18 20 V12"/><path d="M5 12 H19"/><path d="M7 12 L12 8 L17 12"/><path d="M9 8 L12 5 L15 8"/><path d="M3 20 H21"/></svg>',
+  forest:   '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 L8 11 H16 Z"/><path d="M12 9 L7 17 H17 Z"/><path d="M12 17 V20"/></svg>',
+  city:     '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="6" height="10" rx="0.5"/><rect x="13" y="5" width="6" height="15" rx="0.5"/><path d="M3 20 H21"/></svg>',
+  river:    '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8 q3 -2 6 0 t6 0 t4 0"/><path d="M4 13 q3 -2 6 0 t6 0 t4 0"/><path d="M4 18 q3 -2 6 0 t6 0 t4 0"/></svg>'
+};
+// คืน { gradient, icon } — รับชื่อ TH (key) เป็นหลัก
+function destVisual(thName) {
+  const info = destInfo[thName] || { t: 'mountain' };
+  return { gradient: destGradients[info.t] || destGradients.mountain, icon: destIcons[info.t] || destIcons.mountain };
+}
+
+// ====== รูปจุดหมายจาก Pixabay API ======
+// ใส่ API key ฟรีจาก https://pixabay.com/api/docs/ (สมัครฟรี)
+const PIXABAY_KEY = '56236840-0fcc119c4d8ac867297386d7d';
+const pixabayMem = {}; // cache ใน session
+
+async function fetchPixabayImage(query) {
+  if (!PIXABAY_KEY || !query) return null;
+  if (pixabayMem[query] !== undefined) return pixabayMem[query];
+  // cache localStorage 24 ชม.
+  try {
+    const c = JSON.parse(localStorage.getItem('px_' + query) || 'null');
+    if (c && Date.now() - c.t < 86400000) { pixabayMem[query] = c.url; return c.url; }
+  } catch (e) {}
+  try {
+    const url = `https://pixabay.com/api/?key=${PIXABAY_KEY}&q=${encodeURIComponent(query)}&image_type=photo&orientation=horizontal&per_page=3&safesearch=true`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const hit = data.hits && data.hits[0];
+    const imgUrl = hit ? hit.webformatURL : null;
+    pixabayMem[query] = imgUrl;
+    if (imgUrl) { try { localStorage.setItem('px_' + query, JSON.stringify({ url: imgUrl, t: Date.now() })); } catch (e) {} }
+    return imgUrl;
+  } catch (e) { pixabayMem[query] = null; return null; }
+}
+
+// โหลดรูป Pixabay ทับการ์ด gradient (เรียกหลัง render เสร็จ)
+async function hydrateDestPhotos() {
+  if (!PIXABAY_KEY) return;
+  const visuals = document.querySelectorAll('#home-results .dest-visual[data-q]');
+  visuals.forEach(async (el) => {
+    if (el.dataset.loaded) return;
+    el.dataset.loaded = '1';
+    const q = el.getAttribute('data-q');
+    const url = await fetchPixabayImage(q);
+    if (!url) return;
+    const im = new Image();
+    im.onload = () => {
+      el.style.backgroundImage = `url('${url}')`;
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center';
+      const svg = el.querySelector('svg');
+      if (svg) svg.style.display = 'none';
+    };
+    im.src = url;
+  });
+}
+
 // ฐานข้อมูลจังหวัด (พิกัด GPS จริง + รูป + แปล EN)
 const provinceDB = [
   { name: 'เชียงใหม่', nameEN: 'Chiang Mai', lat: 18.79, lng: 98.99, desc: 'ภูเขา ทะเลหมอก', descEN: 'Mountains, mist', img: img('chiang mai temple thailand') },
@@ -7542,7 +7673,7 @@ function findNearbyProvinces(originName, limit = 7) {
   if (!origin) {
     // หาไม่เจอ → สุ่มมา 7 อัน
     return shuffle(provinceDB).slice(0, limit).map(p => ({
-      to: pName(p),
+      to: pName(p), key: p.name, q: (p.nameEN || p.name) + ' thailand',
       meta: currentLang === 'EN' ? 'Popular destination' : 'จุดหมายยอดนิยม',
       price: estimatePrice(300 + Math.random() * 400), img: p.img
     }));
@@ -7556,7 +7687,7 @@ function findNearbyProvinces(originName, limit = 7) {
     .slice(0, limit);
 
   return sorted.map(p => ({
-    to: pName(p),
+    to: pName(p), key: p.name, q: (p.nameEN || p.name) + ' thailand',
     meta: estimateDriveTime(p.dist),
     price: estimatePrice(p.dist),
     img: p.img
@@ -7852,7 +7983,7 @@ function getDefaultDestinations(limit = 7) {
     .map(n => provinceDB.find(p => p.name === n))
     .filter(Boolean);
   return shuffle(featuredProvinces).slice(0, limit).map(p => ({
-    name: pName(p), meta: pDesc(p), img: p.img
+    name: pName(p), key: p.name, q: (p.nameEN || p.name) + ' thailand', meta: pDesc(p), img: p.img
   }));
 }
 
@@ -8962,7 +9093,7 @@ function _renderHome() {
     let cards = dests.map(d => `
       <button class="photo-card" onclick="quickFill('','${d.name}')">
         <div class="img-wrap">
-          <img src="${d.img}" alt="${d.name}" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>
+          <div class="dest-visual" data-q="${d.q || ''}" style="background:${destVisual(d.key || d.name).gradient}">${destVisual(d.key || d.name).icon}</div>
           <div class="img-overlay"></div>
           <div class="img-name">${d.name}</div>
         </div>
@@ -9001,6 +9132,7 @@ function _renderHome() {
       <div class="h-scroll">${cards}</div>
       ${renderStarSection()}
     `;
+    hydrateDestPhotos();
     return;
   }
 
@@ -9010,7 +9142,7 @@ function _renderHome() {
     let cards = suggestions.map(s => `
       <button class="photo-card" onclick="quickFill('${from}','${s.to}')">
         <div class="img-wrap">
-          <img src="${s.img}" alt="${s.to}" loading="lazy" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#00A082,#007A63)'"/>
+          <div class="dest-visual" data-q="${s.q || ''}" style="background:${destVisual(s.key || s.to).gradient}">${destVisual(s.key || s.to).icon}</div>
           <div class="img-overlay"></div>
           <div class="img-name">${s.to}</div>
         </div>
@@ -9032,6 +9164,7 @@ function _renderHome() {
       </div>
       ${renderStarSection()}
     `;
+    hydrateDestPhotos();
     return;
   }
 
@@ -9324,17 +9457,37 @@ function getScreens() { return {
           </div>
         </div>
 
-        <!-- ปุ่มเลือกเส้นทาง (insert dynamically หลัง initMap) -->
-        <div id="route-options-container"></div>
-
-        <div class="pickup-info-bar">
-          <span>${t('pickupHint')}</span>
+        <!-- PHASE 1: เลือกเส้นทาง -->
+        <div id="route-phase">
+          <!-- ปุ่มเลือกเส้นทาง (insert dynamically หลัง initMap) -->
+          <div id="route-options-container"></div>
+          <div class="route-pick-hint" id="route-pick-hint">
+            ${currentLang === 'EN' ? 'Tap a route on the map or below to choose, then continue' : 'แตะเส้นทางบนแผนที่หรือด้านล่างเพื่อเลือก แล้วกดถัดไป'}
+          </div>
+          <button class="btn-primary" id="confirm-route-btn" onclick="confirmRouteAndContinue()">
+            ${currentLang === 'EN' ? 'Next: choose pickup points →' : 'ถัดไป: เลือกจุดรับ →'}
+          </button>
         </div>
 
-        <p class="section-title" style="margin-top:4px">${t('pickupPoints')}</p>
-        <div class="pickup-list" id="pickup-list"></div>
+        <!-- PHASE 2: เลือกจุดรับ -->
+        <div id="pickup-phase" style="display:none">
+          <button class="route-back-link" onclick="backToRoutePhase()">
+            ${currentLang === 'EN' ? '← Change route' : '← เปลี่ยนเส้นทาง'}
+          </button>
+          <div class="pickup-info-bar">
+            <span>${t('pickupHint')}</span>
+          </div>
 
-        <button class="btn-primary" onclick="confirmPost()">✓ ยืนยันและลงประกาศ</button>
+          <p class="section-title" style="margin-top:4px">${t('pickupPoints')}</p>
+          <div class="pickup-list" id="pickup-list">
+            <div class="pickup-gen-loading" id="pickup-gen-loading">
+              <span class="spinner" style="width:20px;height:20px;border-width:2px;margin-right:8px"></span>
+              ${currentLang === 'EN' ? 'Finding cities along route...' : 'กำลังหาเมืองที่ผ่าน...'}
+            </div>
+          </div>
+
+          <button class="btn-primary" onclick="confirmPost()">✓ ${currentLang === 'EN' ? 'Confirm & publish' : 'ยืนยันและลงประกาศ'}</button>
+        </div>
       </div>
     </div>
   `,
@@ -9422,9 +9575,15 @@ function show(name) {
   }
 
   if (name === 'map') {
-    // ล้างจุดที่เลือกไว้
+    // ล้างจุดที่เลือกไว้ + reset กลับไป phase เลือกเส้นทาง
     selectedPickups.clear();
-    setTimeout(initMap, 100);
+    setTimeout(() => {
+      const routePhase = document.getElementById('route-phase');
+      const pickupPhase = document.getElementById('pickup-phase');
+      if (routePhase) routePhase.style.display = 'block';
+      if (pickupPhase) pickupPhase.style.display = 'none';
+    }, 10);
+    setTimeout(initMap, 350);
   }
 
   if (name === 'home') {
@@ -9648,10 +9807,10 @@ function updatePriceSlider() {
   // คำนวณราคารวมต่อที่นั่ง (ใช้โชว์ผู้ใช้)
   let totalPrice = null;
   if (tripData.distanceKm) {
-    totalPrice = Math.round(tripData.distanceKm * pricePerKm);
+    totalPrice = Math.max(50, Math.round(tripData.distanceKm * pricePerKm));
   } else if (tripData.fromCoords && tripData.toCoords) {
     const approxKm = distanceKm(tripData.fromCoords, tripData.toCoords) * 1.3;
-    totalPrice = Math.round(approxKm * pricePerKm);
+    totalPrice = Math.max(50, Math.round(approxKm * pricePerKm));
   }
 
   // เลือกสี + feedback ตามช่วงราคา (฿0.8 - ฿2.0)
@@ -9870,7 +10029,7 @@ function confirmPost() {
   // คำนวณราคาต่อที่นั่ง (mock: ระยะ * price/km / 1 ที่นั่ง = ผู้โดยสารจ่ายเอง)
   const pricePerKm = tripData.pricePerKm || 1.5;
   const distKm = tripData.distanceKm || 696; // fallback
-  const pricePerSeat = Math.round(distKm * pricePerKm);
+  const pricePerSeat = Math.max(50, Math.round(distKm * pricePerKm));
 
   // สร้าง trip object
   const tripId = genTripId();
@@ -10088,7 +10247,7 @@ async function geocode(name) {
 
   // 2) ถ้าไม่เจอ → ถาม Nominatim (มี timeout)
   const lang = currentLang === 'EN' ? 'en' : 'th';
-  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(name + ', Thailand')}&limit=1&accept-language=${lang}`;
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(name + ', Thailand')}&countrycodes=th&limit=1&accept-language=${lang}`;
   try {
     const res = await fetchWithTimeout(url, 8000);
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -10307,129 +10466,149 @@ async function initMap() {
     tripData.selectedRouteCoords = route.geometry.coordinates;
     tripData.selectedRouteIdx = 0;
 
-    // ====== Generate Smart Pickup Points (หาจังหวัดที่ผ่านจริง) ======
-    const routeCoords = route.geometry.coordinates; // [lng, lat]
+    // เก็บเส้นทางที่ผู้ขับเลือก (สำหรับให้ผู้โดยสารเห็น)
+    tripData.selectedRouteCoords = route.geometry.coordinates;
+    tripData.selectedRouteIdx = 0;
 
-    // คำนวณระยะสะสมของแต่ละจุดบนเส้นทาง
-    const cumDist = [0];
-    for (let i = 1; i < routeCoords.length; i++) {
-      const [lng1, lat1] = routeCoords[i-1];
-      const [lng2, lat2] = routeCoords[i];
-      const segDist = distanceKm({lat: lat1, lng: lng1}, {lat: lat2, lng: lng2});
-      cumDist.push(cumDist[i-1] + segDist);
-    }
-
-    // สุ่มตัวอย่างจุดทุก ~30 กม. (ไม่เกิน 14 จุดตัวอย่าง)
-    const sampleInterval = Math.max(30, distKmNum / 14); // อย่างน้อย 30 กม. ต่อจุด
-    const sampleIndices = [];
-    let nextDist = sampleInterval;
-    for (let i = 0; i < cumDist.length && nextDist < distKmNum - 20; i++) {
-      if (cumDist[i] >= nextDist) {
-        sampleIndices.push(i);
-        nextDist += sampleInterval;
-      }
-    }
-
-    // ถ้าเส้นทางสั้น (<80 กม.) แสดงจุดกลาง 2-3 จุด
-    if (distKmNum < 80) {
-      sampleIndices.length = 0;
-      for (let k = 1; k <= 3; k++) {
-        const idx = Math.floor(routeCoords.length * k / 4);
-        if (routeCoords[idx]) sampleIndices.push(idx);
-      }
-    }
-
-    loadingText.textContent = currentLang === 'EN' ? 'Finding cities along route...' : 'กำลังหาเมืองที่ผ่าน...';
-
-    // Reverse geocode แต่ละจุด — เอาชื่อจังหวัดมา
-    const candidatePoints = [];
-    for (const idx of sampleIndices) {
-      const [lng, lat] = routeCoords[idx];
-      try {
-        const lang = currentLang === 'EN' ? 'en' : 'th';
-        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=${lang}&zoom=10`;
-        const res = await fetch(url);
-        const data = await res.json();
-        const addr = data.address || {};
-        // เอาชื่อจังหวัด/เมืองหลัก
-        const province = addr.state || addr.province || addr.county || '';
-        const city = addr.city || addr.town || addr.municipality || addr.suburb || '';
-        const district = addr.county || addr.district || '';
-        const displayName = city || district || province || (currentLang === 'EN' ? 'Stop' : 'จุดพัก');
-
-        candidatePoints.push({
-          name: displayName,
-          province: province,
-          lat: lat,
-          lng: lng,
-          distFromStart: cumDist[idx]
-        });
-      } catch (e) {
-        // ถ้า fail ใส่จุดเปล่าไว้
-        candidatePoints.push({
-          name: currentLang === 'EN' ? 'Stop' : 'จุดพัก',
-          province: '',
-          lat: lat,
-          lng: lng,
-          distFromStart: cumDist[idx]
-        });
-      }
-    }
-
-    // กรองชื่อซ้ำ (ใช้ name ไม่ใช่ province) — เก็บสูงสุด 10 จุด
-    const seenNames = new Set();
-    const uniquePoints = [];
-    for (const pt of candidatePoints) {
-      const key = (pt.name || '').toLowerCase();
-      if (key && !seenNames.has(key) && uniquePoints.length < 10) {
-        seenNames.add(key);
-        uniquePoints.push(pt);
-      }
-    }
-
-    // สร้าง pickup list
-    const pickupPoints = [
-      { name: tripData.from, distFromStart: 0, isStart: true }
-    ];
-    uniquePoints.forEach((pt) => {
-      pickupPoints.push({
-        name: pt.name + (pt.province && pt.name !== pt.province ? ' · ' + pt.province : ''),
-        distFromStart: pt.distFromStart,
-        lat: pt.lat,
-        lng: pt.lng
-      });
-    });
-    pickupPoints.push({ name: tripData.to, distFromStart: distKmNum, isEnd: true });
-
-    renderPickupPoints(pickupPoints, distKmNum, pricePerKm);
-
-    // วาด marker pickup บนแผนที่ — ใช้สีและขนาดแตกต่างให้ดูเป็นจุดสำคัญ
-    uniquePoints.forEach((pt, i) => {
-      const stopIcon = L.divIcon({
-        className: 'cp-marker',
-        html: `<div style="background:#FFA630;color:white;width:28px;height:28px;border-radius:50%;border:3px solid white;box-shadow:0 3px 10px rgba(255,166,48,0.5);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;font-family:'Manrope',sans-serif">${i + 1}</div>`,
-        iconSize: [28, 28], iconAnchor: [14, 14]
-      });
-      const marker = L.marker([pt.lat, pt.lng], { icon: stopIcon }).addTo(map);
-      // tooltip บอกชื่อ
-      marker.bindTooltip(pt.name, {
-        permanent: false,
-        direction: 'top',
-        offset: [0, -10],
-        className: 'pickup-tooltip'
-      });
-    });
-
+    // ✅ ไม่สร้างจุดรับตรงนี้แล้ว — รอคนขับเลือกเส้นทางก่อน แล้วกด "ถัดไป"
     loading.style.display = 'none';
     summary.style.display = 'block';
-    setTimeout(() => map.invalidateSize(), 100);
+    setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 100);
+    setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 400);
 
   } catch (e) {
     loadingText.textContent = '❌ ' + e.message;
     loading.style.background = '#FEF2F2';
     loading.style.color = '#991B1B';
-    loading.querySelector('.spinner').style.display = 'none';
+    const sp = loading.querySelector('.spinner');
+    if (sp) sp.style.display = 'none';
   }
+}
+
+// ====== Phase 2: สร้างจุดรับจากเส้นทางที่คนขับเลือก ======
+async function confirmRouteAndContinue() {
+  // ซ่อน phase เลือกเส้นทาง → โชว์ phase เลือกจุดรับ
+  const routePhase = document.getElementById('route-phase');
+  const pickupPhase = document.getElementById('pickup-phase');
+  if (routePhase) routePhase.style.display = 'none';
+  if (pickupPhase) pickupPhase.style.display = 'block';
+  setTimeout(() => { try { map && map.invalidateSize(); } catch(e){} }, 100);
+
+  // สร้างจุดรับจากเส้นทางที่เลือก
+  await generatePickupPoints();
+}
+
+function backToRoutePhase() {
+  const routePhase = document.getElementById('route-phase');
+  const pickupPhase = document.getElementById('pickup-phase');
+  if (pickupPhase) pickupPhase.style.display = 'none';
+  if (routePhase) routePhase.style.display = 'block';
+  setTimeout(() => { try { map && map.invalidateSize(); } catch(e){} }, 100);
+}
+
+// เก็บ marker จุดรับไว้ลบเวลาสร้างใหม่
+window._pickupMarkers = [];
+
+async function generatePickupPoints() {
+  if (!window._allRoutes) return;
+  const route = window._allRoutes[window._selectedRouteIdx || 0];
+  const distKmNum = route.distance / 1000;
+  const pricePerKm = tripData.pricePerKm || 1.5;
+  const routeCoords = route.geometry.coordinates; // [lng, lat]
+
+  // ลบ marker จุดรับเก่า (เผื่อเปลี่ยนเส้นทาง)
+  window._pickupMarkers.forEach(m => { try { map.removeLayer(m); } catch(e){} });
+  window._pickupMarkers = [];
+
+  // คำนวณระยะสะสมของแต่ละจุดบนเส้นทาง
+  const cumDist = [0];
+  for (let i = 1; i < routeCoords.length; i++) {
+    const [lng1, lat1] = routeCoords[i-1];
+    const [lng2, lat2] = routeCoords[i];
+    const segDist = distanceKm({lat: lat1, lng: lng1}, {lat: lat2, lng: lng2});
+    cumDist.push(cumDist[i-1] + segDist);
+  }
+
+  // สุ่มตัวอย่างจุดทุก ~30 กม.
+  const sampleInterval = Math.max(30, distKmNum / 14);
+  const sampleIndices = [];
+  let nextDist = sampleInterval;
+  for (let i = 0; i < cumDist.length && nextDist < distKmNum - 20; i++) {
+    if (cumDist[i] >= nextDist) {
+      sampleIndices.push(i);
+      nextDist += sampleInterval;
+    }
+  }
+  if (distKmNum < 80) {
+    sampleIndices.length = 0;
+    for (let k = 1; k <= 3; k++) {
+      const idx = Math.floor(routeCoords.length * k / 4);
+      if (routeCoords[idx]) sampleIndices.push(idx);
+    }
+  }
+
+  // Reverse geocode แต่ละจุด — เอาชื่อจังหวัดมา
+  const candidatePoints = [];
+  for (const idx of sampleIndices) {
+    const [lng, lat] = routeCoords[idx];
+    try {
+      const lang = currentLang === 'EN' ? 'en' : 'th';
+      const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=${lang}&zoom=10`;
+      const res = await fetchWithTimeout(url, 7000);
+      const data = await res.json();
+      const addr = data.address || {};
+      const province = addr.state || addr.province || addr.county || '';
+      const city = addr.city || addr.town || addr.municipality || addr.suburb || '';
+      const district = addr.county || addr.district || '';
+      const displayName = city || district || province || (currentLang === 'EN' ? 'Stop' : 'จุดพัก');
+      candidatePoints.push({ name: displayName, province, lat, lng, distFromStart: cumDist[idx] });
+    } catch (e) {
+      candidatePoints.push({ name: currentLang === 'EN' ? 'Stop' : 'จุดพัก', province: '', lat, lng, distFromStart: cumDist[idx] });
+    }
+  }
+
+  // กรองชื่อซ้ำ — เก็บสูงสุด 10 จุด
+  const seenNames = new Set();
+  const uniquePoints = [];
+  for (const pt of candidatePoints) {
+    const key = (pt.name || '').toLowerCase();
+    if (key && !seenNames.has(key) && uniquePoints.length < 10) {
+      seenNames.add(key);
+      uniquePoints.push(pt);
+    }
+  }
+
+  // สร้าง pickup list
+  const pickupPoints = [{ name: tripData.from, distFromStart: 0, isStart: true }];
+  uniquePoints.forEach((pt) => {
+    pickupPoints.push({
+      name: pt.name + (pt.province && pt.name !== pt.province ? ' · ' + pt.province : ''),
+      distFromStart: pt.distFromStart,
+      lat: pt.lat,
+      lng: pt.lng
+    });
+  });
+  pickupPoints.push({ name: tripData.to, distFromStart: distKmNum, isEnd: true });
+
+  // ลบ loading ก่อน render
+  const genLoading = document.getElementById('pickup-gen-loading');
+  if (genLoading) genLoading.remove();
+
+  renderPickupPoints(pickupPoints, distKmNum, pricePerKm);
+
+  // วาด marker จุดรับบนแผนที่
+  uniquePoints.forEach((pt, i) => {
+    const stopIcon = L.divIcon({
+      className: 'cp-marker',
+      html: `<div style="background:#FFA630;color:white;width:28px;height:28px;border-radius:50%;border:3px solid white;box-shadow:0 3px 10px rgba(255,166,48,0.5);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;font-family:'Manrope',sans-serif">${i + 1}</div>`,
+      iconSize: [28, 28], iconAnchor: [14, 14]
+    });
+    const marker = L.marker([pt.lat, pt.lng], { icon: stopIcon }).addTo(map);
+    marker.bindTooltip(pt.name, { permanent: false, direction: 'top', offset: [0, -10], className: 'pickup-tooltip' });
+    window._pickupMarkers.push(marker);
+  });
+
+  setTimeout(() => { try { map.invalidateSize(); } catch(e){} }, 100);
 }
 
 // render pickup points list
