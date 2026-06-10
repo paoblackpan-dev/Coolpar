@@ -2397,6 +2397,45 @@
   }
   .pickup-info-bar .ico { font-size: 16px; flex-shrink: 0; }
 
+  /* ช่องพิมพ์หาเพิ่มจุดรับ (คนขับ) */
+  .pickup-search-wrap { position: relative; margin-bottom: 12px; }
+  .pickup-search-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: var(--bg-soft);
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .pickup-search-input:focus { border-color: var(--primary); }
+  .pickup-search-input::placeholder { color: var(--text-muted); }
+  .pickup-search-results {
+    position: absolute;
+    top: calc(100% + 4px); left: 0; right: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    z-index: 50;
+    overflow: hidden;
+  }
+  .pickup-search-results:empty { display: none; }
+  .pickup-search-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px;
+    font-size: 13px; color: var(--text);
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+  }
+  .pickup-search-item:last-child { border-bottom: none; }
+  .pickup-search-item:hover { background: var(--bg-soft); }
+  .pickup-search-item .psi-ico { color: var(--primary); flex-shrink: 0; display: flex; }
+  .pickup-search-empty { padding: 12px 14px; font-size: 13px; color: var(--text-muted); }
+
   .pickup-list {
     display: flex;
     flex-direction: column;
@@ -3401,6 +3440,45 @@
     transition: transform 0.3s cubic-bezier(0.34, 1.3, 0.64, 1);
   }
   .cp-sheet-overlay.show .cp-sheet { transform: translateY(0); }
+
+  /* ====== Photo Cropper ====== */
+  .crop-overlay {
+    position: absolute; inset: 0; z-index: 8000;
+    background: rgba(0,0,0,0.9);
+    display: flex; flex-direction: column;
+    opacity: 0; transition: opacity 0.25s;
+  }
+  .crop-overlay.show { opacity: 1; }
+  .crop-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 18px 6px; color: #fff;
+  }
+  .crop-head .crop-title { font-size: 16px; font-weight: 700; }
+  .crop-head button {
+    background: none; border: none; color: #fff; font-size: 15px;
+    cursor: pointer; padding: 6px 4px; font-family: inherit;
+  }
+  .crop-stage { flex: 1; display: flex; align-items: center; justify-content: center; }
+  .crop-window {
+    position: relative; width: 300px; height: 300px; border-radius: 50%;
+    overflow: hidden; touch-action: none; cursor: grab;
+    box-shadow: 0 0 0 2000px rgba(0,0,0,0.55);
+  }
+  .crop-window:active { cursor: grabbing; }
+  .crop-window img {
+    position: absolute; top: 0; left: 0; max-width: none;
+    user-select: none; -webkit-user-drag: none; pointer-events: none;
+  }
+  .crop-controls { padding: 14px 28px 30px; }
+  .crop-zoom-row { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+  .crop-zoom-row input[type=range] { flex: 1; accent-color: var(--primary); }
+  .crop-zoom-row .zico { color: #fff; opacity: 0.85; font-size: 20px; font-weight: 700; width: 14px; text-align: center; }
+  .crop-confirm-btn {
+    width: 100%; padding: 14px; border: none; border-radius: 14px;
+    background: var(--primary); color: #fff; font-size: 16px; font-weight: 700;
+    font-family: inherit; cursor: pointer;
+  }
+  .crop-confirm-btn:active { transform: scale(0.98); }
   .sheet-grab {
     width: 40px;
     height: 4px;
@@ -4590,6 +4668,88 @@
     background: var(--primary-dark);
     transform: translateY(-1px);
     box-shadow: 0 8px 22px rgba(0, 160, 130, 0.45);
+  }
+
+  /* สลับโหมด: ค้นหาทริป / ประกาศหาคนขับ */
+  .st-mode-tabs {
+    display: flex;
+    background: var(--bg-soft);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 16px;
+    gap: 4px;
+  }
+  .st-mode-tab {
+    flex: 1;
+    padding: 10px 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .st-mode-tab.active {
+    background: var(--bg);
+    color: var(--primary);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  /* ช่องโน้ตในโหมดประกาศ */
+  .st-note-field {
+    width: 100%;
+    min-height: 64px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    background: var(--bg-soft);
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'Manrope', sans-serif;
+    resize: vertical;
+    outline: none;
+    margin-bottom: 14px;
+    box-sizing: border-box;
+  }
+  .st-note-field:focus { border-color: var(--primary); }
+  .st-note-field::placeholder { color: var(--text-muted); }
+  /* การ์ดประกาศหาคนขับ */
+  .req-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+  .req-card.mine { border-color: var(--primary); background: var(--primary-light); }
+  .req-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .req-route { display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 700; color: var(--text); flex-wrap: wrap; }
+  .req-route .arr { color: var(--text-muted); }
+  .req-when { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+  .req-note { font-size: 13px; color: var(--text); line-height: 1.5; margin: 6px 0 10px; }
+  .req-foot { display: flex; align-items: center; justify-content: space-between; }
+  .req-passenger { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); }
+  .req-contact-btn {
+    padding: 8px 16px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    cursor: pointer;
+  }
+  .req-badge-mine {
+    font-size: 11px; font-weight: 700; color: var(--primary);
+    background: var(--bg); padding: 3px 9px; border-radius: 8px;
+  }
+  .req-del-btn {
+    padding: 8px 14px; background: transparent; color: #DC2626;
+    border: 1px solid #DC2626; border-radius: 10px; font-size: 13px;
+    font-weight: 700; font-family: 'Manrope', sans-serif; cursor: pointer;
   }
 
   /* Section title */
@@ -7037,36 +7197,199 @@ function triggerPhotoUpload() {
 function handlePhotoUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
-
-  // แสดงรูปทันที (base64) เพื่อความเร็ว
   const reader = new FileReader();
-  reader.onload = (e) => {
-    userProfile.photo = e.target.result;
-    userProfile.done.photo = true;
-    show('profile');
-  };
+  reader.onload = (e) => openPhotoCropper(e.target.result);
   reader.readAsDataURL(file);
-
-  // อัปโหลดขึ้น Supabase Storage (cloud) — ให้รูปอยู่ถาวร + คนอื่นเห็น
-  if (sb && authState.user && authState.user.id) {
-    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
-    const path = `${authState.user.id}/avatar_${Date.now()}.${ext}`;
-    sb.storage.from('avatars').upload(path, file, { upsert: true })
-      .then(({ data, error }) => {
-        if (error) { console.warn('Upload photo failed:', error.message); return; }
-        // เอา public URL
-        const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
-        const publicUrl = urlData?.publicUrl;
-        if (publicUrl) {
-          userProfile.photo = publicUrl;
-          // บันทึก URL ลง profile
-          sb.from('profiles').update({ photo_url: publicUrl }).eq('id', authState.user.id).then(() => {
-            console.log('Photo uploaded to cloud');
-          });
-        }
-      });
-  }
+  event.target.value = ''; // ให้เลือกไฟล์เดิมซ้ำได้
 }
+
+// ====== Photo Cropper (เลือก → ลากเลื่อน + ซูม → ยืนยัน) ======
+let _crop = null;
+
+function openPhotoCropper(dataUrl) {
+  document.querySelectorAll('.crop-overlay').forEach(el => el.remove());
+  const phone = document.querySelector('.phone');
+  if (!phone) return;
+  const CW = 300;
+  const overlay = document.createElement('div');
+  overlay.className = 'crop-overlay';
+  overlay.innerHTML = `
+    <div class="crop-head">
+      <button onclick="closePhotoCropper()">${currentLang === 'EN' ? 'Cancel' : 'ยกเลิก'}</button>
+      <div class="crop-title">${currentLang === 'EN' ? 'Adjust photo' : 'ปรับรูป'}</div>
+      <span style="width:48px"></span>
+    </div>
+    <div class="crop-stage">
+      <div class="crop-window" id="crop-window">
+        <img id="crop-img" src="${dataUrl}" alt=""/>
+      </div>
+    </div>
+    <div class="crop-controls">
+      <div class="crop-zoom-row">
+        <span class="zico">−</span>
+        <input type="range" id="crop-zoom" min="1" max="3" step="0.01" value="1"/>
+        <span class="zico">+</span>
+      </div>
+      <button class="crop-confirm-btn" onclick="confirmPhotoCrop()">${currentLang === 'EN' ? 'Use photo' : 'ใช้รูปนี้'}</button>
+    </div>`;
+  phone.appendChild(overlay);
+  setTimeout(() => overlay.classList.add('show'), 10);
+
+  const img = overlay.querySelector('#crop-img');
+  const win = overlay.querySelector('#crop-window');
+  _crop = { CW, scale: 1, baseScale: 1, tx: 0, ty: 0, nw: 0, nh: 0, dragging: false, sx: 0, sy: 0, _cleanup: null };
+
+  img.onload = () => {
+    _crop.nw = img.naturalWidth;
+    _crop.nh = img.naturalHeight;
+    _crop.baseScale = Math.max(CW / _crop.nw, CW / _crop.nh);
+    _crop.scale = _crop.baseScale;
+    _crop.tx = (CW - _crop.nw * _crop.scale) / 2;
+    _crop.ty = (CW - _crop.nh * _crop.scale) / 2;
+    applyCrop();
+  };
+
+  const zoom = overlay.querySelector('#crop-zoom');
+  zoom.oninput = () => {
+    const z = parseFloat(zoom.value);
+    const newScale = _crop.baseScale * z;
+    const cx = (CW / 2 - _crop.tx) / _crop.scale;
+    const cy = (CW / 2 - _crop.ty) / _crop.scale;
+    _crop.scale = newScale;
+    _crop.tx = CW / 2 - cx * newScale;
+    _crop.ty = CW / 2 - cy * newScale;
+    clampCrop();
+    applyCrop();
+  };
+
+  const pt = (e) => { const t = e.touches ? e.touches[0] : e; return { x: t.clientX, y: t.clientY }; };
+  const onDown = (e) => { _crop.dragging = true; const p = pt(e); _crop.sx = p.x - _crop.tx; _crop.sy = p.y - _crop.ty; };
+  const onMove = (e) => { if (!_crop || !_crop.dragging) return; const p = pt(e); _crop.tx = p.x - _crop.sx; _crop.ty = p.y - _crop.sy; clampCrop(); applyCrop(); e.preventDefault(); };
+  const onUp = () => { if (_crop) _crop.dragging = false; };
+  win.addEventListener('mousedown', onDown);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+  win.addEventListener('touchstart', onDown, { passive: false });
+  win.addEventListener('touchmove', onMove, { passive: false });
+  win.addEventListener('touchend', onUp);
+  _crop._cleanup = () => {
+    window.removeEventListener('mousemove', onMove);
+    window.removeEventListener('mouseup', onUp);
+  };
+}
+
+function clampCrop() {
+  const { CW, scale, nw, nh } = _crop;
+  const dw = nw * scale, dh = nh * scale;
+  _crop.tx = Math.min(0, Math.max(CW - dw, _crop.tx));
+  _crop.ty = Math.min(0, Math.max(CW - dh, _crop.ty));
+}
+
+function applyCrop() {
+  const img = document.getElementById('crop-img');
+  if (!img || !_crop) return;
+  img.style.width = (_crop.nw * _crop.scale) + 'px';
+  img.style.height = (_crop.nh * _crop.scale) + 'px';
+  img.style.left = _crop.tx + 'px';
+  img.style.top = _crop.ty + 'px';
+}
+
+function confirmPhotoCrop() {
+  if (!_crop) return;
+  const img = document.getElementById('crop-img');
+  const { CW, scale, tx, ty } = _crop;
+  const OUT = 512;
+  const canvas = document.createElement('canvas');
+  canvas.width = OUT; canvas.height = OUT;
+  const ctx = canvas.getContext('2d');
+  const sSize = CW / scale;
+  const sx = (-tx) / scale;
+  const sy = (-ty) / scale;
+  ctx.drawImage(img, sx, sy, sSize, sSize, 0, 0, OUT, OUT);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+
+  // แสดงทันที
+  userProfile.photo = dataUrl;
+  userProfile.done.photo = true;
+  closePhotoCropper();
+  show('profile');
+
+  // อัปโหลดขึ้น cloud
+  canvas.toBlob((blob) => { if (blob) uploadAvatarBlob(blob); }, 'image/jpeg', 0.9);
+}
+
+function uploadAvatarBlob(blob) {
+  if (!sb || !authState.user || !authState.user.id) return;
+  const path = `${authState.user.id}/avatar_${Date.now()}.jpg`;
+  sb.storage.from('avatars').upload(path, blob, { upsert: true, contentType: 'image/jpeg' })
+    .then(({ error }) => {
+      if (error) { console.warn('Upload photo failed:', error.message); return; }
+      const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
+      const publicUrl = urlData?.publicUrl;
+      if (publicUrl) {
+        userProfile.photo = publicUrl;
+        sb.from('profiles').update({ photo_url: publicUrl }).eq('id', authState.user.id).then(() => {
+          console.log('Photo uploaded to cloud');
+        });
+      }
+    });
+}
+
+function closePhotoCropper() {
+  document.querySelectorAll('.crop-overlay').forEach(el => {
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 250);
+  });
+  if (_crop && _crop._cleanup) _crop._cleanup();
+  _crop = null;
+}
+
+// ====== UI Sounds (เบาๆ ไม่รบกวน) ======
+let _audioCtx = null;
+let soundEnabled = true;
+function _getAudioCtx() {
+  if (!_audioCtx) {
+    try { _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+  }
+  if (_audioCtx.state === 'suspended') { _audioCtx.resume().catch(() => {}); }
+  return _audioCtx;
+}
+// เสียงกดปุ่ม — สั้น เบา
+function playTapSound() {
+  if (!soundEnabled) return;
+  const ctx = _getAudioCtx();
+  if (!ctx) return;
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = 'sine';
+  o.frequency.setValueAtTime(430, ctx.currentTime);
+  o.frequency.exponentialRampToValueAtTime(290, ctx.currentTime + 0.05);
+  g.gain.setValueAtTime(0.05, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.08);
+  o.connect(g); g.connect(ctx.destination);
+  o.start(); o.stop(ctx.currentTime + 0.09);
+}
+// เสียงแจ้งเตือน — สองโน้ตขึ้น เบาๆ
+function playNotifSound() {
+  if (!soundEnabled) return;
+  const ctx = _getAudioCtx();
+  if (!ctx) return;
+  [660, 880].forEach((f, i) => {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    const t0 = ctx.currentTime + i * 0.11;
+    o.type = 'sine';
+    o.frequency.setValueAtTime(f, t0);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(0.10, t0 + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.22);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(t0); o.stop(t0 + 0.23);
+  });
+}
+// เล่นเสียงกดปุ่มอัตโนมัติ (delegated — ครอบ button + การ์ด + เมนูล่าง)
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('button, .nav-item');
+  if (el && !el.dataset.noSound) playTapSound();
+}, true);
 
 function markStepDone(key) {
   if (userProfile.done.hasOwnProperty(key)) {
@@ -8566,6 +8889,16 @@ function renderSearchPill() {
 }
 
 // ====== Search Trip (full-screen) ======
+// โหมดหน้าค้นหา: 'trips' (ค้นหาทริป) | 'requests' (ประกาศหาคนขับ)
+let searchMode = 'trips';
+let rideRequests = [];
+
+function switchSearchMode(mode) {
+  searchMode = mode;
+  show('searchTrip');
+  if (mode === 'requests') fetchRideRequests();
+}
+
 function renderSearchTripScreen() {
   let trips = filterAvailableTrips();
   trips = applySearchFiltersToTrips(trips);
@@ -8604,12 +8937,23 @@ function renderSearchTripScreen() {
       `).join('');
 
   const todayStr = new Date().toISOString().split('T')[0];
+  const isReq = searchMode === 'requests';
 
   return `
     <div class="search-trip-screen">
       <div class="st-header">
         <button class="st-back" onclick="show('home')">←</button>
-        <div class="st-title">${currentLang === 'EN' ? 'Find a ride' : 'ค้นหารถ'}</div>
+        <div class="st-title">${currentLang === 'EN' ? 'Find trips & drivers' : 'ค้นหาทริปและคนขับ'}</div>
+      </div>
+
+      <!-- สลับโหมด -->
+      <div class="st-mode-tabs">
+        <button class="st-mode-tab ${!isReq ? 'active' : ''}" onclick="switchSearchMode('trips')">
+          ${currentLang === 'EN' ? 'Find a ride' : 'ค้นหาทริป'}
+        </button>
+        <button class="st-mode-tab ${isReq ? 'active' : ''}" onclick="switchSearchMode('requests')">
+          ${currentLang === 'EN' ? 'Post request' : 'ประกาศหาคนขับ'}
+        </button>
       </div>
 
       <!-- Input card สวยๆ -->
@@ -8651,25 +8995,182 @@ function renderSearchTripScreen() {
         </div>
       </div>
 
-      <!-- Search button big CTA -->
-      <button class="st-search-cta" onclick="applySTSearch()">
-        ${currentLang === 'EN' ? 'Search rides' : 'ค้นหา'}
-      </button>
-
-      <div class="st-section-title">
-        <span>${trips.length > 0 ? (currentLang === 'EN' ? 'Available rides' : 'ทริปที่เปิดรับ') : (currentLang === 'EN' ? 'Suggested' : 'แนะนำ')}</span>
-        <button class="st-filter-btn" onclick="showSearchFilters()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
-            <line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/>
-          </svg>
-          ${currentLang === 'EN' ? 'Filter' : 'กรอง'}
-          <span class="st-count">${trips.length}</span>
+      ${isReq ? `
+        <textarea id="st-req-note" class="st-note-field" placeholder="${currentLang === 'EN' ? 'Add a note for drivers (e.g. I have 1 bag, flexible on time)' : 'ข้อความถึงคนขับ (เช่น มีกระเป๋า 1 ใบ ยืดหยุ่นเรื่องเวลาได้)'}"></textarea>
+        <button class="st-search-cta" onclick="submitRideRequest()">
+          ${currentLang === 'EN' ? '📣 Post request to drivers' : '📣 ประกาศหาคนขับ'}
         </button>
-      </div>
+        <div class="st-section-title">
+          <span>${currentLang === 'EN' ? 'Recent requests' : 'ประกาศล่าสุด'}</span>
+        </div>
+        <div id="st-requests-list">${renderRideRequestsList()}</div>
+      ` : `
+        <button class="st-search-cta" onclick="applySTSearch()">
+          ${currentLang === 'EN' ? 'Search rides' : 'ค้นหา'}
+        </button>
 
-      <div id="st-trips-list">${tripsHtml}</div>
+        <div class="st-section-title">
+          <span>${trips.length > 0 ? (currentLang === 'EN' ? 'Available rides' : 'ทริปที่เปิดรับ') : (currentLang === 'EN' ? 'Suggested' : 'แนะนำ')}</span>
+          <button class="st-filter-btn" onclick="showSearchFilters()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+              <line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/>
+            </svg>
+            ${currentLang === 'EN' ? 'Filter' : 'กรอง'}
+            <span class="st-count">${trips.length}</span>
+          </button>
+        </div>
+
+        <div id="st-trips-list">${tripsHtml}</div>
+      `}
     </div>
   `;
+}
+
+// ====== ประกาศหาคนขับ (Ride Requests) ======
+// เทียบเส้นทางว่าตรงกันไหม (substring 2 ทาง)
+function routeMatches(aFrom, aTo, bFrom, bTo) {
+  const n = s => (s || '').toLowerCase().trim();
+  const af = n(aFrom), at = n(aTo), bf = n(bFrom), bt = n(bTo);
+  const fOk = af && bf && (af.includes(bf) || bf.includes(af));
+  const tOk = at && bt && (at.includes(bt) || bt.includes(at));
+  return fOk && tOk;
+}
+
+function renderRideRequestsList() {
+  if (!rideRequests.length) {
+    return `<div class="search-empty">
+      <div class="search-empty-title">${currentLang === 'EN' ? 'No requests yet' : 'ยังไม่มีประกาศ'}</div>
+      <div class="search-empty-sub">${currentLang === 'EN' ? 'Be the first to post where you want to go' : 'เป็นคนแรกที่ประกาศว่าจะไปไหน'}</div>
+    </div>`;
+  }
+  const myId = authState.user?.id;
+  return rideRequests.map(r => {
+    const mine = myId && r.passenger_id === myId;
+    const when = r.ride_date ? new Date(r.ride_date).toLocaleDateString(currentLang === 'EN' ? 'en-US' : 'th-TH', { day: 'numeric', month: 'short' }) : '';
+    const nameSafe = JSON.stringify(r.passenger_name || (currentLang === 'EN' ? 'Passenger' : 'ผู้โดยสาร')).replace(/"/g, '&quot;');
+    return `
+      <div class="req-card ${mine ? 'mine' : ''}">
+        <div class="req-top">
+          <div class="req-route">
+            <span>${r.from_location}</span><span class="arr">→</span><span>${r.to_location}</span>
+          </div>
+          <div class="req-when">${when}</div>
+        </div>
+        ${r.note ? `<div class="req-note">"${r.note}"</div>` : ''}
+        <div class="req-foot">
+          <div class="req-passenger">
+            <div class="avatar av-1" style="width:26px;height:26px;font-size:11px">${(r.passenger_name || 'P').charAt(0)}</div>
+            <span>${r.passenger_name || (currentLang === 'EN' ? 'Passenger' : 'ผู้โดยสาร')}</span>
+          </div>
+          ${mine
+            ? `<button class="req-del-btn" onclick="deleteRideRequest('${r.id}')">${currentLang === 'EN' ? 'Delete' : 'ลบ'}</button>`
+            : `<button class="req-contact-btn" onclick="contactRequester('${r.passenger_id}', ${nameSafe})">${currentLang === 'EN' ? 'I can take you' : 'รับงานนี้'}</button>`}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function fetchRideRequests() {
+  if (!sb) return;
+  try {
+    const { data, error } = await sb
+      .from('ride_requests')
+      .select('*')
+      .eq('status', 'open')
+      .order('created_at', { ascending: false })
+      .limit(50);
+    if (error) { console.warn('fetchRideRequests:', error.message); return; }
+    rideRequests = data || [];
+    const list = document.getElementById('st-requests-list');
+    if (list) list.innerHTML = renderRideRequestsList();
+  } catch (e) { console.warn('fetchRideRequests error:', e.message); }
+}
+
+async function submitRideRequest() {
+  if (!requireLogin(currentLang === 'EN' ? 'post a request' : 'ประกาศหาคนขับ')) return;
+  const from = document.getElementById('st-from')?.value.trim() || homeSearch.from;
+  const to = document.getElementById('st-to')?.value.trim() || homeSearch.to;
+  const date = document.getElementById('st-date')?.value || '';
+  const note = document.getElementById('st-req-note')?.value.trim() || '';
+  if (!from || !to) {
+    showToast(currentLang === 'EN' ? 'Please enter from/to' : 'กรุณากรอกต้นทางและปลายทาง');
+    return;
+  }
+  const pName = userProfile.name || authState.user?.name || (currentLang === 'EN' ? 'Passenger' : 'ผู้โดยสาร');
+
+  if (!sb) { showToast(currentLang === 'EN' ? 'Not connected' : 'เชื่อมต่อไม่ได้'); return; }
+
+  const { data, error } = await sb.from('ride_requests').insert({
+    passenger_id: authState.user.id,
+    passenger_name: pName,
+    from_location: from,
+    to_location: to,
+    ride_date: date || null,
+    note: note || null,
+    status: 'open'
+  }).select().single();
+
+  if (error) {
+    console.warn('submitRideRequest:', error.message);
+    showToast(currentLang === 'EN' ? 'Could not post (table not ready?)' : 'ประกาศไม่สำเร็จ (ตารางยังไม่พร้อม?)');
+    return;
+  }
+
+  showToast(currentLang === 'EN' ? '✓ Request posted' : '✓ ประกาศแล้ว');
+  addNotification('request',
+    `ประกาศหาคนขับ ${from} → ${to} แล้ว`,
+    `Request posted: ${from} → ${to}`);
+
+  // เคลียร์โน้ต + refresh รายการ
+  const noteEl = document.getElementById('st-req-note');
+  if (noteEl) noteEl.value = '';
+  fetchRideRequests();
+
+  // เช็คว่ามีทริปที่เปิดอยู่ตรงเส้นทางไหม → แจ้งผู้โดยสารทันที
+  const matches = getAllTrips().filter(tr => routeMatches(from, to, tr.from, tr.to));
+  if (matches.length) {
+    addNotification('match',
+      `เจอ ${matches.length} ทริปที่ตรงเส้นทางคุณ!`,
+      `Found ${matches.length} matching trip(s) for you!`);
+  }
+}
+
+async function deleteRideRequest(id) {
+  if (!sb) return;
+  if (!confirm(currentLang === 'EN' ? 'Delete this request?' : 'ลบประกาศนี้?')) return;
+  const { error } = await sb.from('ride_requests').update({ status: 'closed' }).eq('id', id);
+  if (error) { showToast(currentLang === 'EN' ? 'Delete failed' : 'ลบไม่สำเร็จ'); return; }
+  rideRequests = rideRequests.filter(r => r.id !== id);
+  const list = document.getElementById('st-requests-list');
+  if (list) list.innerHTML = renderRideRequestsList();
+  showToast(currentLang === 'EN' ? '✓ Deleted' : '✓ ลบแล้ว');
+}
+
+// คนขับกด "รับงานนี้" → เปิดแชทกับผู้โดยสาร
+function contactRequester(passengerId, name) {
+  if (!requireLogin(currentLang === 'EN' ? 'contact' : 'ติดต่อ')) return;
+  if (!passengerId) { showToast(currentLang === 'EN' ? 'No contact info' : 'ไม่มีข้อมูลติดต่อ'); return; }
+  openChat(passengerId, name, name);
+}
+
+// คนขับโพสต์ทริป → เช็คประกาศที่รออยู่ → แจ้งเตือนคนขับ
+async function notifyDriverOfWaitingRequests(from, to) {
+  if (!sb) return;
+  try {
+    const { data, error } = await sb
+      .from('ride_requests')
+      .select('*')
+      .eq('status', 'open')
+      .limit(50);
+    if (error || !data) return;
+    const matches = data.filter(r => routeMatches(r.from_location, r.to_location, from, to));
+    if (matches.length) {
+      addNotification('match',
+        `มีผู้โดยสาร ${matches.length} คนรอเส้นทางนี้!`,
+        `${matches.length} passenger(s) waiting on this route!`);
+    }
+  } catch (e) { console.warn('notifyDriverOfWaitingRequests:', e.message); }
 }
 
 function onSTInput(which) {
@@ -9426,11 +9927,11 @@ function getScreens() { return {
   `,
   map: `
     <div class="map-screen-wrap">
-      <button class="back-btn-map" onclick="show('post')">← กลับ</button>
+      <button class="back-btn-map" onclick="show('post')">← ${currentLang === 'EN' ? 'Back' : 'กลับ'}</button>
       <div id="map"></div>
       <div class="map-loading" id="map-loading">
         <div class="spinner"></div>
-        <span id="loading-text">กำลังค้นหาพิกัด...</span>
+        <span id="loading-text">${currentLang === 'EN' ? 'Finding location...' : 'กำลังค้นหาพิกัด...'}</span>
       </div>
       <div class="route-summary" id="route-summary" style="display:none">
         <div class="route-handle"></div>
@@ -9440,19 +9941,19 @@ function getScreens() { return {
         </div>
         <div class="route-row">
           <div class="route-from-to" id="rs-route">— → —</div>
-          <div class="route-stats-pill" id="rs-when">วันนี้</div>
+          <div class="route-stats-pill" id="rs-when">${currentLang === 'EN' ? 'Today' : 'วันนี้'}</div>
         </div>
         <div class="route-detail-grid">
           <div class="route-detail">
-            <div class="rd-label">ระยะทาง</div>
+            <div class="rd-label">${currentLang === 'EN' ? 'Distance' : 'ระยะทาง'}</div>
             <div class="rd-value primary" id="rs-distance">—</div>
           </div>
           <div class="route-detail">
-            <div class="rd-label">เวลาขับ</div>
+            <div class="rd-label">${currentLang === 'EN' ? 'Drive time' : 'เวลาขับ'}</div>
             <div class="rd-value" id="rs-duration">—</div>
           </div>
           <div class="route-detail">
-            <div class="rd-label">รายได้/คน</div>
+            <div class="rd-label">${currentLang === 'EN' ? 'Income/person' : 'รายได้/คน'}</div>
             <div class="rd-value primary" id="rs-income">—</div>
           </div>
         </div>
@@ -9479,6 +9980,12 @@ function getScreens() { return {
           </div>
 
           <p class="section-title" style="margin-top:4px">${t('pickupPoints')}</p>
+          <div class="pickup-search-wrap">
+            <input id="pickup-search-input" class="pickup-search-input" autocomplete="off"
+              placeholder="${currentLang === 'EN' ? '+ Search to add your own stop' : '+ พิมพ์หาเพื่อเพิ่มจุดรับเอง'}"
+              oninput="onPickupSearchInput(this.value)"/>
+            <div id="pickup-search-results" class="pickup-search-results"></div>
+          </div>
           <div class="pickup-list" id="pickup-list">
             <div class="pickup-gen-loading" id="pickup-gen-loading">
               <span class="spinner" style="width:20px;height:20px;border-width:2px;margin-right:8px"></span>
@@ -10078,7 +10585,12 @@ function confirmPost() {
         // อัปเดต local trip ให้มี db id จริง
         newTrip.dbId = data.id;
         saveUserPostedTrips();
+        // เก็บ dbId เข้า myTrips ด้วย (ให้กดลบแล้วอัปเดต DB ได้)
+        const mt = myTrips.driver.upcoming.find(tr => tr.id === tripId);
+        if (mt) { mt.dbId = data.id; saveMyTrips(); }
         console.log('Trip saved to database:', data.id);
+        // เช็คประกาศหาคนขับที่รอเส้นทางนี้ → แจ้งคนขับ
+        notifyDriverOfWaitingRequests(fromVal, toVal);
       }
     });
   }
@@ -10310,7 +10822,9 @@ function selectRoute(idx) {
   const distKm = distKmNum.toFixed(0);
   const durHr = Math.floor(route.duration / 3600);
   const durMin = Math.round((route.duration % 3600) / 60);
-  const durText = durHr > 0 ? durHr + ' ชม. ' + durMin + ' น.' : durMin + ' น.';
+  const durText = currentLang === 'EN'
+    ? (durHr > 0 ? durHr + 'h ' + durMin + 'm' : durMin + 'm')
+    : (durHr > 0 ? durHr + ' ชม. ' + durMin + ' น.' : durMin + ' น.');
 
   tripData.distanceKm = distKmNum;
   tripData.selectedRouteIdx = idx;
@@ -10319,7 +10833,8 @@ function selectRoute(idx) {
   const pricePerKm = tripData.pricePerKm || 1.2;
   const income = Math.round(distKmNum * pricePerKm);
 
-  document.getElementById('rs-distance') && (document.getElementById('rs-distance').textContent = distKm + ' กม.');
+  const kmU = currentLang === 'EN' ? ' km' : ' กม.';
+  document.getElementById('rs-distance') && (document.getElementById('rs-distance').textContent = distKm + kmU);
   document.getElementById('rs-duration') && (document.getElementById('rs-duration').textContent = durText);
   document.getElementById('rs-income') && (document.getElementById('rs-income').textContent = '฿' + income);
 
@@ -10434,15 +10949,18 @@ async function initMap() {
     const distKmNum = route.distance / 1000;
     const durHr = Math.floor(route.duration / 3600);
     const durMin = Math.round((route.duration % 3600) / 60);
-    const durText = durHr > 0 ? durHr + ' ชม. ' + durMin + ' น.' : durMin + ' น.';
+    const durText = currentLang === 'EN'
+      ? (durHr > 0 ? durHr + 'h ' + durMin + 'm' : durMin + 'm')
+      : (durHr > 0 ? durHr + ' ชม. ' + durMin + ' น.' : durMin + ' น.');
 
     // เก็บระยะทางไว้สำหรับคำนวณราคา
     tripData.distanceKm = distKmNum;
     const pricePerKm = tripData.pricePerKm || 1.5;
     const incomePerPassenger = Math.round(distKmNum * pricePerKm);
 
+    const kmU = currentLang === 'EN' ? ' km' : ' กม.';
     window._routeInfo = {
-      distance: distKm + ' กม.',
+      distance: distKm + kmU,
       duration: durText,
       income: '฿' + incomePerPassenger
     };
@@ -10452,7 +10970,7 @@ async function initMap() {
     const locale = currentLang === 'EN' ? 'en-US' : 'th-TH';
     const dateStr = dt.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
     document.getElementById('rs-when') && (document.getElementById('rs-when').textContent = dateStr + ' • ' + tripData.time);
-    document.getElementById('rs-distance') && (document.getElementById('rs-distance').textContent = distKm + ' กม.');
+    document.getElementById('rs-distance') && (document.getElementById('rs-distance').textContent = distKm + kmU);
     document.getElementById('rs-duration') && (document.getElementById('rs-duration').textContent = durText);
     document.getElementById('rs-income') && (document.getElementById('rs-income').textContent = '฿' + incomePerPassenger);
 
@@ -10528,6 +11046,9 @@ async function generatePickupPoints() {
     const segDist = distanceKm({lat: lat1, lng: lng1}, {lat: lat2, lng: lng2});
     cumDist.push(cumDist[i-1] + segDist);
   }
+  // เก็บไว้ให้ addCustomPickup ใช้ project จุดที่คนขับพิมพ์เพิ่ม
+  window._pickupRouteCoords = routeCoords;
+  window._pickupCumDist = cumDist;
 
   // สุ่มตัวอย่างจุดทุก ~30 กม.
   const sampleInterval = Math.max(30, distKmNum / 14);
@@ -10711,6 +11232,108 @@ function togglePickup(idx) {
   }
 }
 
+// ====== คนขับพิมพ์หาเพื่อเพิ่มจุดรับเอง ======
+let _pickupSearchTimer = null;
+const _pinSvg = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+
+function onPickupSearchInput(q) {
+  clearTimeout(_pickupSearchTimer);
+  const box = document.getElementById('pickup-search-results');
+  if (!box) return;
+  if (!q || q.trim().length < 2) { box.innerHTML = ''; return; }
+  _pickupSearchTimer = setTimeout(async () => {
+    try {
+      const lang = currentLang === 'EN' ? 'en' : 'th';
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&countrycodes=th&limit=5&accept-language=${lang}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!data.length) {
+        box.innerHTML = `<div class="pickup-search-empty">${currentLang === 'EN' ? 'No places found' : 'ไม่พบสถานที่'}</div>`;
+        return;
+      }
+      box.innerHTML = data.map(d => {
+        const name = d.display_name.split(',').slice(0, 2).join(',').trim();
+        const safe = JSON.stringify(name).replace(/"/g, '&quot;');
+        return `<div class="pickup-search-item" onclick="addCustomPickup(${d.lat}, ${d.lon}, ${safe})">
+          <span class="psi-ico">${_pinSvg}</span><span>${name}</span></div>`;
+      }).join('');
+    } catch (e) {
+      box.innerHTML = '';
+    }
+  }, 350);
+}
+
+function addCustomPickup(lat, lng, name) {
+  lat = parseFloat(lat); lng = parseFloat(lng);
+  const routeCoords = window._pickupRouteCoords;
+  const cumDist = window._pickupCumDist;
+  const totalKm = window._currentTotalKm;
+  const pricePerKm = window._currentPricePerKm;
+  if (!routeCoords || !cumDist || !window._currentPickups) return;
+
+  // หาจุดบนเส้นทางที่ใกล้ที่สุด → ระยะจากต้นทาง
+  let nearestIdx = 0, minD = Infinity;
+  for (let i = 0; i < routeCoords.length; i++) {
+    const d = distanceKm({ lat, lng }, { lat: routeCoords[i][1], lng: routeCoords[i][0] });
+    if (d < minD) { minD = d; nearestIdx = i; }
+  }
+  const distFromStart = cumDist[nearestIdx];
+
+  // กันซ้ำกับจุดที่มีอยู่ (ระยะใกล้กันมาก)
+  const dup = window._currentPickups.some(p => !p.isStart && !p.isEnd && Math.abs((p.distFromStart || 0) - distFromStart) < 2);
+  if (dup) {
+    showToast(currentLang === 'EN' ? 'A stop near here already exists' : 'มีจุดใกล้ตรงนี้อยู่แล้ว');
+  }
+
+  const newPoint = {
+    name, distFromStart,
+    lat: routeCoords[nearestIdx][1], lng: routeCoords[nearestIdx][0],
+    custom: true
+  };
+
+  // เก็บ object ที่เลือกไว้ก่อน (index จะเปลี่ยนหลัง re-sort)
+  const selectedObjs = [...selectedPickups].map(i => window._currentPickups[i]).filter(Boolean);
+
+  // แทรกจุดใหม่ + เรียงตามระยะ (start แรกสุด, end ท้ายสุด)
+  const start = window._currentPickups.find(p => p.isStart);
+  const end = window._currentPickups.find(p => p.isEnd);
+  let middles = window._currentPickups.filter(p => !p.isStart && !p.isEnd);
+  middles.push(newPoint);
+  middles.sort((a, b) => (a.distFromStart || 0) - (b.distFromStart || 0));
+  const rebuilt = [start, ...middles, end].filter(Boolean);
+
+  // remap selection ตาม object เดิม
+  selectedPickups.clear();
+  selectedObjs.forEach(o => { const i = rebuilt.indexOf(o); if (i >= 0) selectedPickups.add(i); });
+  // auto-select จุดใหม่ ถ้ายังไม่เต็ม
+  if (selectedPickups.size < MAX_PICKUPS) {
+    const ni = rebuilt.indexOf(newPoint);
+    if (ni >= 0) selectedPickups.add(ni);
+  } else {
+    showToast(currentLang === 'EN' ? `Max ${MAX_PICKUPS} stops — added but not selected` : `เลือกได้สูงสุด ${MAX_PICKUPS} จุด — เพิ่มแล้วแต่ยังไม่เลือก`);
+  }
+
+  renderPickupPoints(rebuilt, totalKm, pricePerKm);
+
+  // วาด marker จุดที่เพิ่มเอง (สีเขียว แยกจาก auto)
+  try {
+    const ico = L.divIcon({
+      className: 'cp-marker',
+      html: `<div style="background:#00A082;color:white;width:28px;height:28px;border-radius:50%;border:3px solid white;box-shadow:0 3px 10px rgba(0,160,130,0.5);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;font-family:'Manrope',sans-serif">+</div>`,
+      iconSize: [28, 28], iconAnchor: [14, 14]
+    });
+    const marker = L.marker([newPoint.lat, newPoint.lng], { icon: ico }).addTo(map);
+    marker.bindTooltip(name, { direction: 'top', offset: [0, -10], className: 'pickup-tooltip' });
+    window._pickupMarkers.push(marker);
+  } catch (e) {}
+
+  // เคลียร์ช่องค้นหา
+  const input = document.getElementById('pickup-search-input');
+  if (input) input.value = '';
+  const box = document.getElementById('pickup-search-results');
+  if (box) box.innerHTML = '';
+}
+
 // ====== Trip Detail Map (Passenger View) ======
 // state: เก็บ pickup ที่ผู้โดยสารเลือก (สำหรับคำนวณราคา)
 let passengerSelectedPickup = null;
@@ -10796,11 +11419,12 @@ async function initDetailMap() {
       cumDist.push(cumDist[i-1] + distanceKm({lat: lat1, lng: lng1}, {lat: lat2, lng: lng2}));
     }
 
-    // จุดจอด 4 จุดที่คนขับเลือก (สมมุติทุก ~140 กม.)
+    // จุดจอดกลาง — กระจายตามสัดส่วนระยะทางจริง (20/40/60/80%)
+    // ทำให้มีจุดให้เลือกครบทุกทริป ไม่ว่าสั้นหรือยาว
     const driverStops = [];
-    const stopDistances = [140, 290, 450, 580]; // กม. จากต้นทาง
+    const stopDistances = [0.2, 0.4, 0.6, 0.8].map(f => distKmNum * f);
     for (const d of stopDistances) {
-      if (d < distKmNum) {
+      if (d > 0.5 && d < distKmNum) {
         // หา index ที่ระยะใกล้ที่สุด
         let nearestIdx = 0;
         let minDiff = Infinity;
@@ -11930,11 +12554,19 @@ function cancelMyTrip(tripId, role) {
 
   myTrips[role].upcoming = myTrips[role].upcoming.filter(tr => tr.id !== tripId);
   if (role === 'driver') {
+    // หา dbId จาก userPostedTrips ด้วย (myTrips อาจไม่มี dbId)
+    const posted = userPostedTrips.find(tr => tr.id === tripId);
+    const dbId = (localItem && localItem.dbId) || (posted && posted.dbId);
     userPostedTrips = userPostedTrips.filter(tr => tr.id !== tripId);
     saveUserPostedTrips();
-    // ลบทริปจาก DB (หรือเปลี่ยนสถานะเป็น cancelled)
-    if (sb && localItem && localItem.dbId) {
-      sb.from('trips').update({ status: 'cancelled' }).eq('id', localItem.dbId).then(() => {});
+    // ลบทริปจาก DB + ล้าง cache ใน memory ทันที (กันโพสต์ค้างหน้าแรก)
+    if (dbId) {
+      dbTrips = dbTrips.filter(t => t.dbId !== dbId);
+      if (sb) {
+        sb.from('trips').update({ status: 'cancelled' }).eq('id', dbId).then(() => {
+          if (typeof fetchTripsFromDB === 'function') fetchTripsFromDB();
+        });
+      }
     }
   }
   saveMyTrips();
@@ -12106,6 +12738,7 @@ function clearAllNotifs() {
 
 // ฟังก์ชันเรียกตอนมี event → เพิ่ม notification ใหม่
 function addNotification(type, titleTH, titleEN) {
+  playNotifSound();
   const newNotif = {
     id: 'n_' + Date.now(),
     type, titleTH, titleEN,
