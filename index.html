@@ -23,6 +23,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* ให้ทุก input/textarea ใช้สีตัวอักษรตามธีม (แก้ dark mode พิมพ์แล้วดำ) */
+  input, textarea, select { color: var(--text); }
   :root {
     --primary: #00A082;
     --primary-dark: #007A63;
@@ -4934,10 +4936,35 @@
     animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .return-sheet::-webkit-scrollbar { width: 0; }
-  .return-confetti {
-    text-align: center;
-    margin-bottom: 4px;
+  /* การ์ดจองขากลับแบบเล็ก */
+  .return-mini {
+    background: var(--bg);
+    width: 100%;
+    max-width: 390px;
+    border-radius: 24px 24px 0 0;
+    padding: 8px 22px 26px;
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
+  .return-mini-handle {
+    width: 40px; height: 4px; background: var(--border-strong);
+    border-radius: 99px; margin: 0 auto 16px;
+  }
+  .return-mini-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .return-mini-check {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--primary); color: #fff; font-size: 13px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .return-mini-title { font-size: 15px; font-weight: 800; color: var(--text); }
+  .return-mini-q { font-size: 14px; color: var(--text); font-weight: 600; margin-bottom: 4px; }
+  .return-mini-route { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+  .return-mini-actions { display: flex; gap: 10px; }
+  .return-mini-btn {
+    flex: 1; padding: 13px; border-radius: 13px; font-size: 14px; font-weight: 700;
+    font-family: 'Manrope', sans-serif; cursor: pointer; border: none;
+  }
+  .return-mini-btn.ghost { background: var(--bg-soft); color: var(--text-muted); }
+  .return-mini-btn.solid { background: var(--primary); color: #fff; }
   .return-success-badge {
     display: inline-flex;
     align-items: center;
@@ -6576,6 +6603,7 @@ function subscribeToMessages() {
 
       // ถ้ากำลังเปิดแชทกับคนที่ส่งมาพอดี → เด้งเข้า feed
       if (activeChatRoom && fromId === activeChatRoom) {
+        playTapSound();
         if (!chatMessages[fromId]) chatMessages[fromId] = [];
         chatMessages[fromId].push({ from: 'them', text: msg.text, time: timeStr });
         const feed = document.getElementById('chat-feed');
@@ -7383,6 +7411,23 @@ function playNotifSound() {
     g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.22);
     o.connect(g); g.connect(ctx.destination);
     o.start(t0); o.stop(t0 + 0.23);
+  });
+}
+// เสียงสำเร็จ — 3 โน้ตขึ้นสั้นๆ (ใช้ตอนประกาศ/โพสต์เสร็จ)
+function playSuccessSound() {
+  if (!soundEnabled) return;
+  const ctx = _getAudioCtx();
+  if (!ctx) return;
+  [523, 659, 784].forEach((f, i) => {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    const t0 = ctx.currentTime + i * 0.09;
+    o.type = 'sine';
+    o.frequency.setValueAtTime(f, t0);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(0.11, t0 + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.2);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(t0); o.stop(t0 + 0.21);
   });
 }
 // เล่นเสียงกดปุ่มอัตโนมัติ (delegated — ครอบ button + การ์ด + เมนูล่าง)
@@ -8600,12 +8645,22 @@ async function fetchBookingsFromDB() {
   }
 }
 
+// ทริปหมดเวลา = วัน+เวลาออกเดินทางผ่านไปแล้ว
+function isTripExpired(tr) {
+  if (!tr || !tr.date) return false; // ไม่มีวันที่ → ไม่กรอง (กันลบผิด)
+  const time = (tr.time && /^\d{1,2}:\d{2}/.test(tr.time)) ? tr.time : '23:59';
+  const dt = new Date(tr.date + 'T' + time);
+  if (isNaN(dt.getTime())) return false;
+  return dt.getTime() < Date.now();
+}
+
 function getAllTrips() {
   // รวม: ทริปจาก DB + ที่ผู้ใช้โพสต์ (local) + mock
   // กรอง duplicate (ทริปที่ผู้ใช้โพสต์อาจอยู่ทั้ง local และ DB)
   const dbIds = new Set(dbTrips.map(t => t.dbId));
   const localUnsaved = userPostedTrips.filter(t => !t.dbId || !dbIds.has(t.dbId));
-  return [...dbTrips, ...localUnsaved, ...availableTrips];
+  // กรองทริปที่เลยเวลาออกเดินทางแล้ว — ไม่แสดงในระบบ
+  return [...dbTrips, ...localUnsaved, ...availableTrips].filter(tr => !isTripExpired(tr));
 }
 
 function filterAvailableTrips() {
@@ -9118,6 +9173,7 @@ async function submitRideRequest() {
   }
 
   showToast(currentLang === 'EN' ? '✓ Request posted' : '✓ ประกาศแล้ว');
+  playSuccessSound();
   addNotification('request',
     `ประกาศหาคนขับ ${from} → ${to} แล้ว`,
     `Request posted: ${from} → ${to}`);
@@ -10601,6 +10657,7 @@ function confirmPost() {
     id: tripId,
     time: displayTime,
     timeEN: displayTime,
+    tripDate: dateVal, tripTime: timeVal,
     from: fromVal, fromEN: fromVal,
     to: toVal, toEN: toVal,
     other: currentLang === 'EN' ? 'Waiting for passengers' : 'รอผู้โดยสาร',
@@ -10618,84 +10675,44 @@ function confirmPost() {
   showReturnDialog();
 }
 
-// ====== Return Trip Dialog ======
+// ====== Return Trip Dialog (กะทัดรัด) ======
 function showReturnDialog() {
-  // หาทริปขากลับ (สลับ from/to)
-  const returnTrips = availableTrips.filter(tr =>
-    (tr.from.includes(tripData.to) || tripData.to.includes(tr.from)) &&
-    (tr.to.includes(tripData.from) || tripData.from.includes(tr.to))
-  );
-
-  // คำนวณวัน default — 3 วันหลังจากวันที่ไป
-  const baseDate = tripData.date ? new Date(tripData.date) : new Date();
-  const defaultReturn = new Date(baseDate);
-  defaultReturn.setDate(defaultReturn.getDate() + 3);
-  const defaultDateStr = defaultReturn.toISOString().split('T')[0];
-
-  // สร้างรายการทริปขากลับ
-  let tripsHtml = '';
-  if (returnTrips.length === 0) {
-    tripsHtml = `
-      <div class="return-no-trips">
-        <div class="return-no-trips-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="40" height="40"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
-        <div class="return-no-trips-text">${t('returnNoTrips')}</div>
-        <button class="return-quick-btn active" onclick="setAlert()">${t('returnAlert')}</button>
-      </div>
-    `;
-  } else {
-    tripsHtml = '<div class="return-trips-list">' + returnTrips.map((tr, i) => `
-      <div class="return-trip-card ${i === 0 ? 'selected' : ''}" data-rt-idx="${i}" onclick="selectReturnTrip(${i})">
-        <div class="avatar ${tr.av}">${tripInitials(tr)}</div>
-        <div class="rtc-info">
-          <div class="rtc-time">${tripDate(tr)}</div>
-          <div class="rtc-driver">${tripDriver(tr)} • ★ ${tr.rating} • ${tr.seats}${t('seatsAvail')}</div>
-        </div>
-        <div class="rtc-price">฿${tr.price}</div>
-      </div>
-    `).join('') + '</div>';
-  }
-
   const overlay = document.createElement('div');
   overlay.className = 'return-overlay';
   overlay.id = 'return-overlay';
   overlay.innerHTML = `
-    <div class="return-sheet" onclick="event.stopPropagation()">
-      <div class="sheet-handle"></div>
-      <div class="return-confetti">
-        <span class="return-success-badge">✓ ${currentLang === 'EN' ? 'Booked' : 'จองสำเร็จ'}</span>
+    <div class="return-mini" onclick="event.stopPropagation()">
+      <div class="return-mini-handle"></div>
+      <div class="return-mini-head">
+        <span class="return-mini-check">✓</span>
+        <span class="return-mini-title">${currentLang === 'EN' ? 'Trip posted!' : 'ลงประกาศแล้ว!'}</span>
       </div>
-      <div class="return-title">${t('returnTitle')}</div>
-      <div class="return-sub">${t('returnSub')}</div>
-
-      <div class="return-route-card">
-        <div class="return-route-icon">🔄</div>
-        <div class="return-route-info">
-          <div class="return-route-label">${t('returnRoute')}</div>
-          <div class="return-route-name">${tripData.to} → ${tripData.from}</div>
-        </div>
-      </div>
-
-      <div class="return-date-picker">
-        <div class="return-date-label">📅 ${t('returnDate')}</div>
-        <input type="date" id="return-date" class="return-date-input" value="${defaultDateStr}"/>
-        <div class="return-quick-dates">
-          <button class="return-quick-btn" onclick="setReturnDate(0)">${currentLang === 'EN' ? 'Same day' : 'วันเดียวกัน'}</button>
-          <button class="return-quick-btn" onclick="setReturnDate(1)">+1 ${currentLang === 'EN' ? 'day' : 'วัน'}</button>
-          <button class="return-quick-btn active" onclick="setReturnDate(3)">+3 ${currentLang === 'EN' ? 'days' : 'วัน'}</button>
-          <button class="return-quick-btn" onclick="setReturnDate(7)">+7 ${currentLang === 'EN' ? 'days' : 'วัน'}</button>
-        </div>
-      </div>
-
-      ${tripsHtml}
-
-      <div class="return-actions">
-        <button class="return-skip-btn" onclick="closeReturnDialog(true)">${t('returnSkip')}</button>
-        <button class="return-book-btn" id="return-book-btn" onclick="confirmReturnTrip()" ${returnTrips.length === 0 ? 'disabled' : ''}>${t('returnBook')}</button>
+      <div class="return-mini-q">${currentLang === 'EN' ? 'Post the return trip too?' : 'ลงประกาศขากลับด้วยไหม?'}</div>
+      <div class="return-mini-route">${tripData.to} → ${tripData.from}</div>
+      <div class="return-mini-actions">
+        <button class="return-mini-btn ghost" onclick="closeReturnDialog(true)">${currentLang === 'EN' ? 'No return' : 'ไม่กลับ'}</button>
+        <button class="return-mini-btn solid" onclick="startReturnPost()">${currentLang === 'EN' ? 'Post return' : 'ลงขากลับ'}</button>
       </div>
     </div>
   `;
   overlay.addEventListener('click', () => closeReturnDialog(true));
   document.body.appendChild(overlay);
+}
+
+// ไปลงประกาศขากลับ (สลับต้นทาง-ปลายทาง)
+function startReturnPost() {
+  const oldFrom = tripData.from, oldTo = tripData.to;
+  const overlay = document.getElementById('return-overlay');
+  if (overlay) overlay.remove();
+  // สลับเส้นทาง + เคลียร์ข้อมูลเส้นทางเดิม
+  tripData.from = oldTo;
+  tripData.to = oldFrom;
+  tripData.fromCoords = null;
+  tripData.toCoords = null;
+  tripData.distanceKm = null;
+  tripData.selectedRouteCoords = null;
+  tripData.date = '';
+  show('post');
 }
 
 let selectedReturnIdx = 0;
@@ -12577,6 +12594,43 @@ function cancelMyTrip(tripId, role) {
 // ====== Notification System ======
 const NOTIF_KEY = 'coolpar_notifs';
 
+// ===== แจ้งเตือนทริปใกล้ถึง =====
+const REMINDED_KEY = 'coolpar_reminded';
+const REMIND_WINDOW_MIN = 90; // แจ้งล่วงหน้าภายใน 90 นาที
+function getRemindedSet() {
+  try { return new Set(JSON.parse(localStorage.getItem(REMINDED_KEY) || '[]')); } catch (e) { return new Set(); }
+}
+function saveRemindedSet(set) {
+  try { localStorage.setItem(REMINDED_KEY, JSON.stringify([...set])); } catch (e) {}
+}
+function checkUpcomingTripReminders() {
+  const reminded = getRemindedSet();
+  const now = Date.now();
+  const items = [
+    ...(myTrips.driver?.upcoming || []),
+    ...(myTrips.passenger?.upcoming || [])
+  ];
+  let changed = false;
+  items.forEach(tr => {
+    if (!tr || !tr.id || reminded.has(tr.id)) return;
+    const d = tr.tripDate, tm = tr.tripTime;
+    if (!d) return;
+    const dt = new Date(d + 'T' + (/^\d{1,2}:\d{2}/.test(tm || '') ? tm : '07:00'));
+    if (isNaN(dt.getTime())) return;
+    const diffMin = (dt.getTime() - now) / 60000;
+    // อยู่ในช่วง 0–90 นาทีก่อนออกเดินทาง → แจ้งเตือน
+    if (diffMin > 0 && diffMin <= REMIND_WINDOW_MIN) {
+      addNotification('reminder',
+        `ทริป ${tr.from} → ${tr.to} ใกล้ถึงแล้ว! อีก ${Math.round(diffMin)} นาที`,
+        `Trip ${tr.from} → ${tr.to} starting soon! In ${Math.round(diffMin)} min`);
+      reminded.add(tr.id);
+      changed = true;
+    }
+  });
+  if (changed) saveRemindedSet(reminded);
+}
+
+
 // การแจ้งเตือน — มาจาก event จริง + database เท่านั้น (ไม่มี mock)
 let notifications = [];
 
@@ -13327,6 +13381,11 @@ navBtns.forEach(b => b.addEventListener('click', () => {
 
 // init: splash → welcome/home
 initApp();
+
+// เช็คแจ้งเตือนทริปใกล้ถึง — ตอนเปิดแอป + ทุก 5 นาที
+setTimeout(() => { try { checkUpcomingTripReminders(); } catch (e) {} }, 4000);
+setInterval(() => { try { checkUpcomingTripReminders(); } catch (e) {} }, 300000);
+
 </script>
 </body>
 </html>
