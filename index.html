@@ -13011,6 +13011,9 @@ function subscribeToBookingStatus() {
     .subscribe();
 }
 
+// ====== Monthly Trip Limit (กันคนทำเป็นอาชีพ) ======
+const MONTHLY_LIMIT = 12;  // ขับได้ 12 ทริป/เดือน
+
 function getDriverTripsThisMonth() {
   const now = new Date();
   const monthKey = `${now.getFullYear()}-${now.getMonth()}`;
