@@ -5017,6 +5017,49 @@
   .dt-empty svg { margin-bottom: 12px; opacity: 0.5; }
   .dt-empty-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
   .dt-empty-sub { font-size: 13px; }
+  /* ปุ่ม/badge ใหม่ — ยืนยันรายคน */
+  .dt-action-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .dt-action-row .dt-livemap-btn { flex: 1; margin-bottom: 0; }
+  .dt-refresh-btn {
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    padding: 14px 18px; border-radius: 14px; border: 1.5px solid var(--border);
+    background: var(--bg); color: var(--text); font-size: 14px; font-weight: 700;
+    font-family: 'Manrope', sans-serif; cursor: pointer; flex-shrink: 0;
+  }
+  .dt-accept-pax-btn {
+    width: 100%; margin-top: 11px; padding: 11px; border-radius: 11px;
+    border: none; font-size: 13px; font-weight: 700; font-family: 'Manrope', sans-serif;
+    background: var(--primary); color: #fff; cursor: pointer;
+  }
+  .dt-pax-badge {
+    display: inline-block; font-size: 10px; font-weight: 800; padding: 2px 8px;
+    border-radius: 7px; margin-left: 6px; vertical-align: middle;
+  }
+  .dt-pax-badge.wait { background: #FEF3C7; color: #B45309; }
+  .dt-pax-badge.ok { background: var(--primary-light); color: var(--primary-dark); }
+  .dt-pax-badge.done { background: #DBEAFE; color: #1D4ED8; }
+
+  /* ====== Contact Gate (กันคุยนอกรอบ) ====== */
+  .contact-gate { margin-top: 11px; }
+  .contact-gate.locked, .contact-gate.closed {
+    display: flex; align-items: center; gap: 7px;
+    padding: 11px 13px; border-radius: 11px; font-size: 12.5px; font-weight: 600;
+    background: var(--bg-soft); color: var(--text-muted);
+  }
+  .contact-gate.closed { background: #FEE2E2; color: #B91C1C; }
+  .contact-gate .contact-row { display: flex; gap: 8px; }
+  .contact-chat-btn, .contact-call-btn {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
+    padding: 11px; border-radius: 11px; font-size: 13px; font-weight: 700;
+    font-family: 'Manrope', sans-serif; cursor: pointer; border: none;
+  }
+  .contact-chat-btn { background: var(--primary-light); color: var(--primary-dark); }
+  .contact-call-btn { background: var(--primary); color: #fff; }
+  .contact-note {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 8px; font-size: 11.5px; color: var(--text-muted);
+  }
+  .contact-gate svg { flex-shrink: 0; }
 
   /* ====== Passenger Trip Status (B5) ====== */
   .pt-timeline {
@@ -6651,8 +6694,75 @@ function avClassFromId(id) {
 }
 
 // เปิดแชทกับผู้ใช้คนนึง (id จริง)
+// ====== ติดต่อแบบมีเงื่อนไข (กันคุยนอกรอบ) ======
+// คุยได้เมื่อคนขับ "รับ" / เปิดเบอร์เมื่อ "เริ่มเดินทาง" / ปิดเมื่อยกเลิก
+const CLOSED_CHATS_KEY = 'coolpar_closed_chats';
+function getClosedChats() {
+  try { return new Set(JSON.parse(localStorage.getItem(CLOSED_CHATS_KEY) || '[]')); } catch (e) { return new Set(); }
+}
+function saveClosedChats(set) { try { localStorage.setItem(CLOSED_CHATS_KEY, JSON.stringify([...set])); } catch (e) {} }
+function isChatClosed(otherId) { return getClosedChats().has(otherId); }
+function closeChatWith(otherId) {
+  if (!otherId) return;
+  const s = getClosedChats(); s.add(otherId); saveClosedChats(s);
+  if (chatMessages[otherId]) chatMessages[otherId] = [];
+  // ลบข้อความใน DB (2 ทาง)
+  if (sb && authState.user && authState.user.id) {
+    const me = authState.user.id;
+    sb.from('messages').delete()
+      .or(`and(from_user_id.eq.${me},to_user_id.eq.${otherId}),and(from_user_id.eq.${otherId},to_user_id.eq.${me})`)
+      .then(() => {});
+  }
+}
+
+const _icoChat = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/></svg>';
+const _icoPhone = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+const _icoLock = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+
+// คืน HTML ปุ่มติดต่อตามสถานะ booking
+function renderContactGate(otherId, status, otherName) {
+  const EN = currentLang === 'EN';
+  if (!otherId) return '';
+  if (isChatClosed(otherId) || status === 'cancelled') {
+    return `<div class="contact-gate closed">${_icoLock} ${EN ? 'Chat closed (trip cancelled)' : 'แชทถูกปิด (ทริปถูกยกเลิก)'}</div>`;
+  }
+  const released = status === 'in_progress' || status === 'completed';
+  const accepted = released || status === 'accepted';
+  const nameSafe = JSON.stringify(otherName || '').replace(/"/g, '&quot;');
+  if (!accepted) {
+    return `<div class="contact-gate locked">${_icoLock} ${EN ? 'Chat opens once the driver confirms' : 'แชทจะเปิดเมื่อคนขับยืนยันรับ'}</div>`;
+  }
+  let btns = `<button class="contact-chat-btn" onclick="openBookingChat('${otherId}', ${nameSafe})">${_icoChat} ${EN ? 'Chat' : 'แชท'}</button>`;
+  if (released) {
+    btns += `<button class="contact-call-btn" onclick="callUser('${otherId}')">${_icoPhone} ${EN ? 'Call' : 'โทร'}</button>`;
+  }
+  return `<div class="contact-gate">
+    <div class="contact-row">${btns}</div>
+    ${!released ? `<div class="contact-note">${_icoLock} ${EN ? 'Phone number unlocks when the trip starts' : 'เบอร์โทรจะเปิดเมื่อเริ่มเดินทาง'}</div>` : ''}
+  </div>`;
+}
+
+function openBookingChat(otherId, name) {
+  if (isChatClosed(otherId)) { showToast(currentLang === 'EN' ? 'Chat is closed' : 'แชทถูกปิดแล้ว'); return; }
+  openChat(otherId, name, name);
+}
+
+async function callUser(userId) {
+  if (!sb || !userId) return;
+  try {
+    const { data } = await sb.from('profiles').select('phone').eq('id', userId).single();
+    const phone = data && data.phone;
+    if (phone) { window.location.href = 'tel:' + phone; }
+    else showToast(currentLang === 'EN' ? 'No phone number available' : 'ยังไม่มีเบอร์โทร');
+  } catch (e) { showToast(currentLang === 'EN' ? 'Cannot get number' : 'ดึงเบอร์ไม่ได้'); }
+}
+
 function openChat(otherUserId, name, nameEN) {
   if (!requireLogin(currentLang === 'EN' ? 'send messages' : 'ส่งข้อความ')) return;
+  if (isChatClosed(otherUserId)) {
+    showToast(currentLang === 'EN' ? 'This chat is closed' : 'แชทนี้ถูกปิดแล้ว');
+    return;
+  }
   if (!otherUserId) {
     showToast(currentLang === 'EN' ? 'Cannot open chat' : 'เปิดแชทไม่ได้');
     return;
@@ -6931,6 +7041,10 @@ function sendMessage() {
   if (!input || !activeChatRoom) return;
   const text = input.value.trim();
   if (!text) return;
+  if (isChatClosed(activeChatRoom)) {
+    showToast(currentLang === 'EN' ? 'This chat is closed' : 'แชทนี้ถูกปิดแล้ว');
+    return;
+  }
 
   const now = new Date();
   const timeStr = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
@@ -12595,14 +12709,23 @@ function renderDriverTripDetail() {
   } else {
     paxHtml = driverTripBookings.map(b => {
       const pName = b.passenger_name || (EN ? 'Passenger' : 'ผู้โดยสาร');
-      const pickedUp = b.status === 'in_progress' || b.status === 'completed' || b.escrow_status === 'released';
-      let btn;
+      const st = b.status;
+      const pickedUp = st === 'in_progress' || st === 'completed' || b.escrow_status === 'released';
+      const isAccepted = st === 'accepted';
+      let btn, badge;
       if (pickedUp) {
-        btn = `<div class="dt-pax-done">✓ ${EN ? 'Picked up' : 'รับขึ้นรถแล้ว'}</div>`;
-      } else if (!reached) {
-        btn = `<button class="dt-pickup-btn" disabled>${EN ? 'Available at departure' : 'กดได้เมื่อถึงเวลา'}</button>`;
+        badge = `<span class="dt-pax-badge done">✓ ${EN ? 'On board' : 'ขึ้นรถแล้ว'}</span>`;
+        btn = `<div class="dt-pax-done">✓ ${EN ? 'Picked up · paid' : 'รับขึ้นรถแล้ว · จ่ายแล้ว'}</div>`;
+      } else if (isAccepted) {
+        badge = `<span class="dt-pax-badge ok">${EN ? 'Confirmed' : 'ยืนยันแล้ว'}</span>`;
+        if (!reached) {
+          btn = `<button class="dt-pickup-btn" disabled>${EN ? 'Pick up · at departure time' : 'รับขึ้นรถ · เมื่อถึงเวลา'}</button>`;
+        } else {
+          btn = `<button class="dt-pickup-btn active" onclick="pickupPassenger('${b.id}')">${EN ? 'Confirm pickup' : 'รับขึ้นรถ'}</button>`;
+        }
       } else {
-        btn = `<button class="dt-pickup-btn active" onclick="pickupPassenger('${b.id}')">${EN ? 'Confirm pickup' : 'รับขึ้นรถ'}</button>`;
+        badge = `<span class="dt-pax-badge wait">${EN ? 'Pending' : 'รอยืนยัน'}</span>`;
+        btn = `<button class="dt-accept-pax-btn" onclick="acceptPassenger('${b.id}')">✓ ${EN ? 'Accept this passenger' : 'ยืนยันรับคนนี้'}</button>`;
       }
       return `
         <div class="dt-pax-card">
@@ -12610,13 +12733,14 @@ function renderDriverTripDetail() {
             <div class="dt-pax-id">
               <div class="avatar av-2" style="width:34px;height:34px;font-size:14px">${pName.charAt(0)}</div>
               <div>
-                <div class="dt-pax-name">${pName}</div>
+                <div class="dt-pax-name">${pName} ${badge}</div>
                 <div class="dt-pax-pickup">${EN ? 'Boards at' : 'ขึ้นที่'}: ${b.pickup_location || '—'}</div>
               </div>
             </div>
             <div class="dt-pax-price">฿${(b.price || 0).toLocaleString()}</div>
           </div>
           ${btn}
+          ${renderContactGate(b.passenger_id, st, pName)}
         </div>`;
     }).join('');
   }
@@ -12639,22 +12763,48 @@ function renderDriverTripDetail() {
       </div>
     </div>
 
-    ${!accepted ? `
-      <button class="dt-accept-btn" onclick="acceptDriverTrip('${trip.id}')">
-        ${EN ? '✓ Accept this trip' : '✓ ยืนยันรับทริปนี้'}
-      </button>
-      <div class="dt-accept-note">${EN ? 'You won\'t be paid yet — payment releases when you pick up each passenger.' : 'ยังไม่ได้รับเงินตอนนี้ — เงินจะโอนเมื่อกดรับผู้โดยสารขึ้นรถจริง'}</div>
-    ` : `
-      <div class="dt-accepted-banner">✓ ${EN ? 'Trip accepted' : 'รับทริปแล้ว'}</div>
+    <div class="dt-action-row">
       <button class="dt-livemap-btn" onclick="openLiveMap('${trip.dbId || ''}','driver')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0-6 0"/><path d="M17.657 16.657 13.414 20.9a2 2 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"/></svg>
-        ${EN ? 'Start trip · Live map' : 'เริ่มเดินทาง · แผนที่สด'}
+        ${EN ? 'Live map' : 'แผนที่สด'}
       </button>
-    `}
+      <button class="dt-refresh-btn" onclick="reloadDriverTrip()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="17" height="17"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        ${EN ? 'Refresh' : 'รีเฟรช'}
+      </button>
+    </div>
+    <div class="dt-accept-note">${EN ? 'Confirm each passenger below. Payment releases only when you pick them up.' : 'ยืนยันรับผู้โดยสารทีละคนด้านล่าง · เงินจะโอนเมื่อกดรับขึ้นรถจริงเท่านั้น'}</div>
 
     <div class="dt-section-title">${EN ? 'Passengers' : 'ผู้โดยสาร'}</div>
     ${paxHtml}
   `;
+}
+
+// รีโหลดผู้โดยสารของทริปนี้
+function reloadDriverTrip() {
+  const trip = [...myTrips.driver.upcoming, ...myTrips.driver.past].find(t => t.id === currentDriverTripId);
+  if (trip && trip.dbId) {
+    driverTripLoading = true;
+    refreshDriverTrip();
+    fetchTripBookings(trip.dbId);
+  }
+}
+
+// ยืนยันรับผู้โดยสารทีละคน (ยังไม่ได้เงิน — แค่ยืนยันรับ)
+function acceptPassenger(bookingId) {
+  const b = driverTripBookings.find(x => x.id === bookingId);
+  if (!b) return;
+  b.status = 'accepted';
+  if (sb) {
+    sb.from('bookings').update({ status: 'accepted' }).eq('id', bookingId).then(({ error }) => {
+      if (error) console.warn('acceptPassenger:', error.message);
+    });
+  }
+  addNotification('booking',
+    `ยืนยันรับ ${b.passenger_name || 'ผู้โดยสาร'} แล้ว`,
+    `Accepted ${b.passenger_name || 'passenger'}`);
+  showToast(currentLang === 'EN' ? '✓ Passenger confirmed' : '✓ ยืนยันรับแล้ว');
+  refreshDriverTrip();
 }
 
 // ยืนยันรับทริป (ยังไม่ได้เงิน)
@@ -12956,6 +13106,8 @@ function renderPassengerTripDetail() {
 
     <div class="pt-timeline">${timeline}</div>
 
+    ${renderContactGate(trip.otherId, st, trip.other)}
+
     ${accepted ? `
       <button class="dt-livemap-btn" onclick="openLiveMap('${trip.tripDbId || ''}','passenger')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M9 11a3 3 0 1 0 6 0a3 3 0 0 0-6 0"/><path d="M17.657 16.657 13.414 20.9a2 2 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0z"/></svg>
@@ -12970,6 +13122,34 @@ function renderPassengerTripDetail() {
         : (EN ? 'Payment held safely · released only when driver picks you up' : 'เงินถูกถือไว้ปลอดภัย · จะโอนให้คนขับเมื่อรับคุณขึ้นรถจริงเท่านั้น')}</span>
     </div>
   `;
+}
+
+// realtime: ฝั่งคนขับ — มีคนจอง/เปลี่ยนสถานะใน bookings ของทริปตัวเอง
+let _driverBookingChannel = null;
+function subscribeToDriverBookings() {
+  if (!sb || !authState.user || !authState.user.id) return;
+  if (_driverBookingChannel) { try { sb.removeChannel(_driverBookingChannel); } catch (e) {} _driverBookingChannel = null; }
+  _driverBookingChannel = sb
+    .channel('driver-bookings-realtime')
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'bookings'
+    }, (payload) => {
+      const b = payload.new || payload.old;
+      if (!b) return;
+      const mine = b.passenger_id === authState.user.id;
+      if (payload.eventType === 'INSERT' && !mine) {
+        addNotification('booking',
+          `มีคนจองทริปของคุณ! ขึ้นที่ ${b.pickup_location || ''}`,
+          `New booking on your trip! Boards at ${b.pickup_location || ''}`);
+      }
+      const trip = [...myTrips.driver.upcoming, ...myTrips.driver.past].find(t => t.id === currentDriverTripId);
+      if (trip && trip.dbId && b.trip_id === trip.dbId) {
+        fetchTripBookings(trip.dbId);
+      }
+    })
+    .subscribe();
 }
 
 // realtime: ฟังการเปลี่ยนสถานะ booking ของคนนั่ง
@@ -13222,6 +13402,8 @@ function cancelMyTrip(tripId, role) {
       sb.from('bookings').update({ status: 'cancelled', escrow_status: 'refunded' }).eq('id', localItem.dbId).then(() => {});
       sb.from('payments').update({ status: 'refunded' }).eq('booking_id', localItem.dbId).then(() => {});
     }
+    // ปิดแชทกับคนขับ
+    if (localItem && localItem.otherId) closeChatWith(localItem.otherId);
   }
 
   myTrips[role].upcoming = myTrips[role].upcoming.filter(tr => tr.id !== tripId);
@@ -13237,6 +13419,10 @@ function cancelMyTrip(tripId, role) {
       if (sb) {
         sb.from('trips').update({ status: 'cancelled' }).eq('id', dbId).then(() => {
           if (typeof fetchTripsFromDB === 'function') fetchTripsFromDB();
+        });
+        // ปิดแชทกับผู้โดยสารทุกคนในทริปนี้
+        sb.from('bookings').select('passenger_id').eq('trip_id', dbId).then(({ data }) => {
+          (data || []).forEach(bk => { if (bk.passenger_id) closeChatWith(bk.passenger_id); });
         });
       }
     }
@@ -13959,6 +14145,7 @@ async function finishSupabaseLogin(user, fallback) {
   fetchNotificationsFromDB();
   subscribeToMessages();
   subscribeToBookingStatus();
+  subscribeToDriverBookings();
 }
 
 // หน้า login ด้วยเบอร์ + OTP
