@@ -6030,6 +6030,14 @@
           <span class="auth-label" data-th="เข้าสู่ระบบด้วย Google" data-en="Sign in with Google">เข้าสู่ระบบด้วย Google</span>
         </button>
 
+        <button class="auth-btn auth-btn-email" onclick="loginWith('email')">
+          <span class="auth-icon">📧</span>
+          <span class="auth-label" data-th="อีเมล + รหัสผ่าน" data-en="Email + password">อีเมล + รหัสผ่าน</span>
+        </button>
+      </div>
+
+      <!-- ปุ่มที่ยังไม่ได้ตั้งค่า (ซ่อนไว้ก่อน เปิดกลับได้): Apple, เบอร์โทร, Facebook -->
+      <div style="display:none">
         <button class="auth-btn auth-btn-apple" onclick="loginWith('apple')">
           <span class="auth-icon">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="#FFFFFF">
@@ -6038,30 +6046,18 @@
           </span>
           <span class="auth-label" data-th="เข้าสู่ระบบด้วย Apple" data-en="Sign in with Apple">เข้าสู่ระบบด้วย Apple</span>
         </button>
-
-        <button class="auth-btn auth-btn-other" onclick="toggleOtherAuth()">
-          <span class="auth-label" id="other-auth-label" data-th="ตัวเลือกอื่นๆ" data-en="Other options">ตัวเลือกอื่นๆ</span>
-          <span id="other-auth-arrow">▾</span>
+        <button class="auth-btn auth-btn-phone" onclick="loginWith('phone')">
+          <span class="auth-icon">📱</span>
+          <span class="auth-label" data-th="เบอร์โทรศัพท์ (OTP)" data-en="Phone number (OTP)">เบอร์โทรศัพท์ (OTP)</span>
         </button>
-
-        <div id="other-auth-list" style="display:none">
-          <button class="auth-btn auth-btn-email" onclick="loginWith('email')">
-            <span class="auth-icon">📧</span>
-            <span class="auth-label" data-th="อีเมล + รหัสผ่าน" data-en="Email + password">อีเมล + รหัสผ่าน</span>
-          </button>
-          <button class="auth-btn auth-btn-phone" onclick="loginWith('phone')">
-            <span class="auth-icon">📱</span>
-            <span class="auth-label" data-th="เบอร์โทรศัพท์ (OTP)" data-en="Phone number (OTP)">เบอร์โทรศัพท์ (OTP)</span>
-          </button>
-          <button class="auth-btn auth-btn-fb" onclick="loginWith('facebook')">
-            <span class="auth-icon">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="#FFFFFF">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-            </span>
-            <span class="auth-label" data-th="เข้าสู่ระบบด้วย Facebook" data-en="Sign in with Facebook">เข้าสู่ระบบด้วย Facebook</span>
-          </button>
-        </div>
+        <button class="auth-btn auth-btn-fb" onclick="loginWith('facebook')">
+          <span class="auth-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="#FFFFFF">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </span>
+          <span class="auth-label" data-th="เข้าสู่ระบบด้วย Facebook" data-en="Sign in with Facebook">เข้าสู่ระบบด้วย Facebook</span>
+        </button>
       </div>
 
       <button class="guest-btn" onclick="enterGuestMode()" data-th="ยังไม่สมัครตอนนี้ →" data-en="Skip for now →">
