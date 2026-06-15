@@ -5038,6 +5038,13 @@
   .dt-pax-badge.wait { background: #FEF3C7; color: #B45309; }
   .dt-pax-badge.ok { background: var(--primary-light); color: var(--primary-dark); }
   .dt-pax-badge.done { background: #DBEAFE; color: #1D4ED8; }
+  .dt-complete-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 15px; border-radius: 14px; margin-top: 6px;
+    border: 1.5px solid var(--primary); background: var(--bg); color: var(--primary);
+    font-size: 15px; font-weight: 800; font-family: 'Manrope', sans-serif; cursor: pointer;
+  }
+  .dt-complete-btn:active { background: var(--primary-light); }
 
   /* ====== Contact Gate (กันคุยนอกรอบ) ====== */
   .contact-gate { margin-top: 11px; }
@@ -6434,6 +6441,50 @@ function toggleDarkMode() {
   if (pill) pill.classList.toggle('on', isDarkMode);
 }
 
+// เปิด/ปิดเสียง
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  try { localStorage.setItem('coolpar_sound', soundEnabled ? 'on' : 'off'); } catch (e) {}
+  const pill = document.getElementById('sound-pill');
+  if (pill) pill.classList.toggle('on', soundEnabled);
+  if (soundEnabled) playTapSound(); // ให้ฟีดแบ็กว่าเปิดแล้ว
+}
+
+// เปิด/ปิดการแจ้งเตือนระดับระบบ
+function getNotifPref() {
+  if (localStorage.getItem('coolpar_notifs_off') === '1') return false;
+  return ('Notification' in window) && Notification.permission === 'granted';
+}
+function toggleNotifs() {
+  const pill = document.getElementById('notif-pill');
+  const currentlyOn = getNotifPref();
+  if (currentlyOn) {
+    // ปิด (เก็บ flag ฝั่งเรา — browser เพิกถอน permission เองไม่ได้)
+    try { localStorage.setItem('coolpar_notifs_off', '1'); } catch (e) {}
+    if (pill) pill.classList.remove('on');
+    showToast(currentLang === 'EN' ? 'Notifications off' : 'ปิดการแจ้งเตือนแล้ว');
+  } else {
+    try { localStorage.removeItem('coolpar_notifs_off'); } catch (e) {}
+    if (!('Notification' in window)) {
+      showToast(currentLang === 'EN' ? 'Not supported on this device' : 'อุปกรณ์นี้ไม่รองรับ');
+      return;
+    }
+    if (Notification.permission === 'granted') {
+      if (pill) pill.classList.add('on');
+      showToast(currentLang === 'EN' ? 'Notifications on' : 'เปิดการแจ้งเตือนแล้ว');
+    } else if (Notification.permission === 'denied') {
+      showToast(currentLang === 'EN' ? 'Blocked — enable in browser settings' : 'ถูกบล็อก — เปิดในตั้งค่าเบราว์เซอร์');
+    } else {
+      Notification.requestPermission().then(p => {
+        if (pill) pill.classList.toggle('on', p === 'granted');
+        showToast(p === 'granted'
+          ? (currentLang === 'EN' ? 'Notifications on' : 'เปิดการแจ้งเตือนแล้ว')
+          : (currentLang === 'EN' ? 'Permission not granted' : 'ยังไม่ได้อนุญาต'));
+      }).catch(() => {});
+    }
+  }
+}
+
 function toggleLang() {
   currentLang = currentLang === 'TH' ? 'EN' : 'TH';
   const toggle = document.getElementById('lang-toggle');
@@ -6585,8 +6636,10 @@ function renderTripsScreen() {
       const otherStr = currentLang === 'EN' ? (tr.otherEN || tr.other) : tr.other;
 
       let pillClass, pillText;
-      if (tr.status === 'confirmed') { pillClass = 'pill-success'; pillText = t('confirmed'); }
+      if (tr.status === 'confirmed' || tr.status === 'accepted') { pillClass = 'pill-success'; pillText = currentLang === 'EN' ? 'Confirmed' : 'ยืนยันแล้ว'; }
       else if (tr.status === 'pending') { pillClass = 'pill-warning'; pillText = t('pending'); }
+      else if (tr.status === 'in_progress') { pillClass = 'pill-success'; pillText = currentLang === 'EN' ? 'On the way' : 'กำลังเดินทาง'; }
+      else if (tr.status === 'cancelled') { pillClass = 'pill-neutral'; pillText = currentLang === 'EN' ? 'Cancelled' : 'ยกเลิกแล้ว'; }
       else { pillClass = 'pill-neutral'; pillText = t('completed'); }
 
       const isPast = tab === 'past';
@@ -7344,6 +7397,18 @@ function renderProfileAccount2() {
           <span class="theme-knob"></span>
         </span>
       </div>
+      <div class="pf2-acc-row" onclick="toggleSound()" style="cursor:pointer">
+        <span>${currentLang === 'EN' ? 'Sounds' : 'เสียง'}</span>
+        <span class="theme-pill ${soundEnabled ? 'on' : ''}" id="sound-pill">
+          <span class="theme-knob"></span>
+        </span>
+      </div>
+      <div class="pf2-acc-row" onclick="toggleNotifs()" style="cursor:pointer">
+        <span>${currentLang === 'EN' ? 'Notifications' : 'การแจ้งเตือน'}</span>
+        <span class="theme-pill ${getNotifPref() ? 'on' : ''}" id="notif-pill">
+          <span class="theme-knob"></span>
+        </span>
+      </div>
       ${row(currentLang === 'EN' ? 'Rate the app' : 'ให้คะแนนแอป', "showRateApp()")}
       ${row(currentLang === 'EN' ? 'Help' : 'ความช่วยเหลือ', "openProfileDetail('help')")}
       ${row(currentLang === 'EN' ? 'FAQ' : 'คำถามที่พบบ่อย', "openProfileDetail('faq')")}
@@ -7634,7 +7699,7 @@ function closePhotoCropper() {
 
 // ====== UI Sounds (เบาๆ ไม่รบกวน) ======
 let _audioCtx = null;
-let soundEnabled = true;
+let soundEnabled = (localStorage.getItem('coolpar_sound') !== 'off');
 function _getAudioCtx() {
   if (!_audioCtx) {
     try { _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
@@ -8867,7 +8932,7 @@ async function fetchBookingsFromDB() {
   try {
     const { data, error } = await sb
       .from('bookings')
-      .select('*')
+      .select('*, trips:trip_id(driver_id, from_location, to_location, trip_date, trip_time)')
       .eq('passenger_id', authState.user.id)
       .order('created_at', { ascending: false });
     if (error) { console.warn('Fetch bookings failed:', error.message); return; }
@@ -8879,18 +8944,23 @@ async function fetchBookingsFromDB() {
       );
       data.forEach(b => {
         if (localDbIds.has(b.id)) return; // มีแล้ว ข้าม
-        const isPast = (b.status === 'completed' || b.status === 'in_progress');
+        const tp = b.trips || {};
+        // in_progress = กำลังเดินทาง → ยังอยู่ upcoming (ดูสถานะสด/ติดต่อได้)
+        const isPast = (b.status === 'completed' || b.status === 'cancelled');
         const bucket = isPast ? 'past' : 'upcoming';
         myTrips.passenger[bucket].push({
           id: 'b_' + b.id,
           dbId: b.id,
           tripDbId: b.trip_id || null,
-          time: 'จองไว้',
-          timeEN: 'Booked',
-          from: b.pickup_location || '—',
-          fromEN: b.pickup_location || '—',
-          to: '—', toEN: '—',
+          tripDate: tp.trip_date || null,
+          tripTime: tp.trip_time || null,
+          time: tp.trip_date ? `${tp.trip_date} ${tp.trip_time || ''}`.trim() : 'จองไว้',
+          timeEN: tp.trip_date ? `${tp.trip_date} ${tp.trip_time || ''}`.trim() : 'Booked',
+          from: b.pickup_location || tp.from_location || '—',
+          fromEN: b.pickup_location || tp.from_location || '—',
+          to: tp.to_location || '—', toEN: tp.to_location || '—',
           other: 'คนขับ', otherEN: 'Driver',
+          otherId: tp.driver_id || null,
           price: b.price || 0,
           distKm: b.distance_km || 0,
           paymentLabel: b.payment_label || '',
@@ -9671,12 +9741,6 @@ function openSearchSheet() {
       if (l && typeof refreshSTTrips === 'function') refreshSTTrips();
     });
   }
-}
-
-function closeSearchSheet() {
-  // ปิดทุก overlay ถ้ามี + กลับหน้าหลัก
-  document.querySelectorAll('.search-overlay').forEach(el => el.remove());
-  show('home');
 }
 
 // อัพเดทรายการทริปใน sheet ตามที่กรอก (realtime)
@@ -12773,6 +12837,15 @@ function renderDriverTripDetail() {
 
     <div class="dt-section-title">${EN ? 'Passengers' : 'ผู้โดยสาร'}</div>
     ${paxHtml}
+
+    ${reached && trip.status !== 'completed' ? `
+      <button class="dt-complete-btn" onclick="completeDriverTrip('${trip.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+        ${EN ? 'Complete trip' : 'จบทริป'}
+      </button>
+      <div class="dt-accept-note">${EN ? 'Marks picked-up passengers as completed and moves this trip to history.' : 'ผู้โดยสารที่รับขึ้นรถแล้วจะถูกปิดเป็นเสร็จสิ้น และทริปย้ายไปประวัติ'}</div>
+    ` : ''}
+    ${trip.status === 'completed' ? `<div class="dt-accepted-banner">✓ ${EN ? 'Trip completed' : 'ทริปเสร็จสิ้นแล้ว'}</div>` : ''}
   `;
 }
 
@@ -12801,6 +12874,50 @@ function acceptPassenger(bookingId) {
     `Accepted ${b.passenger_name || 'passenger'}`);
   showToast(currentLang === 'EN' ? '✓ Passenger confirmed' : '✓ ยืนยันรับแล้ว');
   refreshDriverTrip();
+}
+
+// จบทริป — ปิด bookings ที่รับขึ้นรถแล้วเป็น completed + ย้ายทริปไปประวัติ
+function completeDriverTrip(tripId) {
+  const idx = myTrips.driver.upcoming.findIndex(t => t.id === tripId);
+  const trip = idx >= 0 ? myTrips.driver.upcoming[idx] : null;
+  if (!trip) return;
+  const EN = currentLang === 'EN';
+  const notPicked = driverTripBookings.filter(b => b.status !== 'in_progress' && b.status !== 'completed' && b.status !== 'cancelled').length;
+  let msg = EN ? 'Complete this trip?' : 'จบทริปนี้?';
+  if (notPicked > 0) {
+    msg += EN
+      ? `\n${notPicked} passenger(s) were never picked up — their payment stays held (they can cancel for a refund).`
+      : `\nมีผู้โดยสาร ${notPicked} คนที่ยังไม่ได้รับขึ้นรถ — เงินของพวกเขายังถูกถือไว้ (ยกเลิกเพื่อขอคืนได้)`;
+  }
+  if (!confirm(msg)) return;
+
+  // หยุดแชร์ตำแหน่ง (ถ้าเปิดอยู่)
+  try { closeLiveMap(); } catch (e) {}
+
+  trip.status = 'completed';
+  // ย้ายไปประวัติ
+  myTrips.driver.upcoming.splice(idx, 1);
+  myTrips.driver.past.unshift(trip);
+  saveMyTrips();
+
+  if (sb && trip.dbId) {
+    // ปิดทริปใน DB (หายจากหน้าค้นหา)
+    sb.from('trips').update({ status: 'completed' }).eq('id', trip.dbId).then(({ error }) => {
+      if (error) console.warn('complete trip update:', error.message);
+      dbTrips = dbTrips.filter(t => t.dbId !== trip.dbId);
+    });
+    // ปิดเฉพาะ booking ที่รับขึ้นรถแล้ว → completed (ฝั่งคนนั่งเด้งผ่าน realtime)
+    sb.from('bookings').update({ status: 'completed' })
+      .eq('trip_id', trip.dbId).eq('status', 'in_progress').then(({ error }) => {
+        if (error) console.warn('complete bookings update:', error.message);
+      });
+  }
+
+  addNotification('trip',
+    `จบทริป ${trip.from} → ${trip.to} แล้ว`,
+    `Trip ${trip.from} → ${trip.to} completed`);
+  playSuccessSound();
+  show('trips');
 }
 
 // ยืนยันรับทริป (ยังไม่ได้เงิน)
@@ -12965,6 +13082,10 @@ function openLiveMap(tripDbId, role) {
   const overlay = document.createElement('div');
   overlay.className = 'live-map-overlay';
   overlay.id = 'live-map-overlay';
+  if (!sb) {
+    showToast(EN ? 'Live map needs a connection' : 'แผนที่สดต้องเชื่อมต่ออินเทอร์เน็ต');
+    return;
+  }
   overlay.innerHTML = `
     <div class="lm-head">
       <button onclick="closeLiveMap()">←</button>
@@ -12976,19 +13097,34 @@ function openLiveMap(tripDbId, role) {
   `;
   phone.appendChild(overlay);
 
-  // หา route ของทริป (ถ้ามี) เพื่อวาดเส้นทาง
+  // หา route ของทริป: local ที่โพสต์เอง → cache จาก DB → ดึงสดจาก DB
   let routeCoords = null;
   const posted = userPostedTrips.find(t => t.dbId === tripDbId);
   if (posted && posted.routeCoords) routeCoords = posted.routeCoords;
+  if (!routeCoords) {
+    const cached = dbTrips.find(t => t.dbId === tripDbId);
+    if (cached && cached.routeCoords) routeCoords = cached.routeCoords;
+  }
+
+  const drawRoute = (coords) => {
+    if (!_liveMap || !coords || !coords.length) return;
+    try {
+      const latlngs = coords.map(c => [c[1], c[0]]);
+      const line = L.polyline(latlngs, { color: '#00A082', weight: 4, opacity: 0.7 }).addTo(_liveMap);
+      if (!_liveDriverMarker) _liveMap.fitBounds(line.getBounds(), { padding: [40, 40] });
+    } catch (e) {}
+  };
 
   setTimeout(() => {
     try {
       _liveMap = L.map('live-map', { zoomControl: false, attributionControl: false }).setView([15.87, 100.99], 6);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(_liveMap);
-      if (routeCoords && routeCoords.length) {
-        const latlngs = routeCoords.map(c => [c[1], c[0]]);
-        const line = L.polyline(latlngs, { color: '#00A082', weight: 4, opacity: 0.7 }).addTo(_liveMap);
-        _liveMap.fitBounds(line.getBounds(), { padding: [40, 40] });
+      if (routeCoords) drawRoute(routeCoords);
+      else if (sb) {
+        // ฝั่งคนนั่ง: ดึงเส้นทางจาก DB
+        sb.from('trips').select('route_coords').eq('id', tripDbId).single().then(({ data }) => {
+          if (data && data.route_coords) drawRoute(data.route_coords);
+        });
       }
       _liveMap.invalidateSize();
     } catch (e) { console.warn('live map init:', e); }
@@ -13140,6 +13276,16 @@ function subscribeToDriverBookings() {
           `มีคนจองทริปของคุณ! ขึ้นที่ ${b.pickup_location || ''}`,
           `New booking on your trip! Boards at ${b.pickup_location || ''}`);
       }
+      // ผู้โดยสารยกเลิก → ปิดแชท + แจ้งคนขับ (เช็คว่าทริปยังอยู่ = ไม่ใช่เรายกเลิกเอง)
+      if (payload.eventType === 'UPDATE' && !mine && b.status === 'cancelled') {
+        const ownTrip = myTrips.driver.upcoming.find(t => t.dbId === b.trip_id);
+        if (ownTrip) {
+          if (b.passenger_id) closeChatWith(b.passenger_id);
+          addNotification('booking',
+            `${b.passenger_name || 'ผู้โดยสาร'} ยกเลิกการจอง`,
+            `${b.passenger_name || 'A passenger'} cancelled their booking`);
+        }
+      }
       const trip = [...myTrips.driver.upcoming, ...myTrips.driver.past].find(t => t.id === currentDriverTripId);
       if (trip && trip.dbId && b.trip_id === trip.dbId) {
         fetchTripBookings(trip.dbId);
@@ -13167,16 +13313,47 @@ function subscribeToBookingStatus() {
       const prevStatus = item.status;
       item.status = b.status || item.status;
       item.escrowStatus = b.escrow_status || item.escrowStatus;
+
+      // จบทริป → ย้ายจาก upcoming ไป past
+      if (b.status === 'completed') {
+        const ui = myTrips.passenger.upcoming.findIndex(t => t.dbId === b.id);
+        if (ui >= 0) {
+          const [moved] = myTrips.passenger.upcoming.splice(ui, 1);
+          myTrips.passenger.past.unshift(moved);
+        }
+      }
+      // คนขับยกเลิก → คืนเงิน + ปิดแชท + ย้ายไปประวัติ
+      if (b.status === 'cancelled' && prevStatus !== 'cancelled') {
+        item.escrowStatus = 'refunded';
+        const ui = myTrips.passenger.upcoming.findIndex(t => t.dbId === b.id);
+        if (ui >= 0) {
+          const [moved] = myTrips.passenger.upcoming.splice(ui, 1);
+          myTrips.passenger.past.unshift(moved);
+        }
+        if (item.otherId) closeChatWith(item.otherId);
+        addNotification('booking',
+          `คนขับยกเลิกทริป ${item.from} → ${item.to} · คืนเงิน ฿${(item.price || 0).toLocaleString()} แล้ว`,
+          `Driver cancelled ${item.from} → ${item.to} · ฿${(item.price || 0).toLocaleString()} refunded`);
+        const activeBtn0 = document.querySelector('.nav-btn.active');
+        if (activeBtn0 && activeBtn0.dataset.screen === 'trips') show('trips');
+      }
       saveMyTrips();
 
       if (b.status === 'accepted' && prevStatus !== 'accepted') {
         addNotification('booking',
           `คนขับยืนยันทริป ${item.from} → ${item.to} แล้ว!`,
           `Driver confirmed your trip ${item.from} → ${item.to}!`);
-      } else if ((b.status === 'in_progress' || b.escrow_status === 'released') && prevStatus !== 'in_progress') {
+      } else if ((b.status === 'in_progress' || b.escrow_status === 'released') && prevStatus !== 'in_progress' && b.status !== 'completed') {
         addNotification('booking',
           `คนขับรับคุณขึ้นรถแล้ว · เดินทางปลอดภัย!`,
           `Driver picked you up · have a safe trip!`);
+      } else if (b.status === 'completed' && prevStatus !== 'completed') {
+        addNotification('trip',
+          `ทริป ${item.from} → ${item.to} เสร็จสิ้น · ให้คะแนนคนขับได้เลย`,
+          `Trip ${item.from} → ${item.to} completed · rate your driver`);
+        // ถ้าอยู่หน้าทริป รีเฟรชให้เห็นย้ายไปประวัติ
+        const activeBtn = document.querySelector('.nav-btn.active');
+        if (activeBtn && activeBtn.dataset.screen === 'trips') show('trips');
       }
 
       if (currentPassengerTripId) {
@@ -13397,6 +13574,12 @@ function cancelMyTrip(tripId, role) {
     if (sb && localItem && localItem.dbId) {
       sb.from('bookings').update({ status: 'cancelled', escrow_status: 'refunded' }).eq('id', localItem.dbId).then(() => {});
       sb.from('payments').update({ status: 'refunded' }).eq('booking_id', localItem.dbId).then(() => {});
+      // คืนที่นั่งให้ทริป (+1)
+      if (localItem.tripDbId) {
+        sb.from('trips').select('seats_left').eq('id', localItem.tripDbId).single().then(({ data }) => {
+          if (data) sb.from('trips').update({ seats_left: (data.seats_left || 0) + 1 }).eq('id', localItem.tripDbId).then(() => {});
+        });
+      }
     }
     // ปิดแชทกับคนขับ
     if (localItem && localItem.otherId) closeChatWith(localItem.otherId);
@@ -13416,10 +13599,16 @@ function cancelMyTrip(tripId, role) {
         sb.from('trips').update({ status: 'cancelled' }).eq('id', dbId).then(() => {
           if (typeof fetchTripsFromDB === 'function') fetchTripsFromDB();
         });
-        // ปิดแชทกับผู้โดยสารทุกคนในทริปนี้
-        sb.from('bookings').select('passenger_id').eq('trip_id', dbId).then(({ data }) => {
-          (data || []).forEach(bk => { if (bk.passenger_id) closeChatWith(bk.passenger_id); });
-        });
+        // คืนเงิน + ปิด booking ของผู้โดยสารที่ยังไม่ได้รับขึ้นรถ (ฝั่งคนนั่งเด้งผ่าน realtime)
+        sb.from('bookings').select('id, passenger_id')
+          .eq('trip_id', dbId).in('status', ['pending', 'accepted']).then(({ data }) => {
+            const ids = (data || []).map(bk => bk.id);
+            (data || []).forEach(bk => { if (bk.passenger_id) closeChatWith(bk.passenger_id); });
+            if (ids.length) {
+              sb.from('bookings').update({ status: 'cancelled', escrow_status: 'refunded' }).in('id', ids).then(() => {});
+              sb.from('payments').update({ status: 'refunded' }).in('booking_id', ids).then(() => {});
+            }
+          });
       }
     }
   }
@@ -13628,8 +13817,81 @@ function clearAllNotifs() {
 }
 
 // ฟังก์ชันเรียกตอนมี event → เพิ่ม notification ใหม่
+// ====== System Notifications (เด้งระดับระบบเมื่อย่อ/สลับแอป) ======
+// ทำงานฝั่ง frontend ล้วน — เด้งแม้สลับไปแอปอื่น แต่ยังไม่ปิดสนิท
+// (แจ้งเตือนตอนปิดสนิทต้องใช้ Web Push + Edge Function เพิ่ม)
+function ensureNotifPermission() {
+  try {
+    if (!('Notification' in window)) return;
+    if (Notification.permission === 'granted') { subscribeToPush(); return; }
+    if (Notification.permission === 'default') {
+      Notification.requestPermission().then(p => { if (p === 'granted') subscribeToPush(); }).catch(() => {});
+    }
+  } catch (e) {}
+}
+
+// ====== Web Push (แจ้งเตือนตอนปิดแอปสนิท) ======
+// ต้องมี: ไฟล์ sw.js ที่ root + VAPID_PUBLIC_KEY + ตาราง push_subscriptions + Edge Function
+// ถ้ายังไม่ครบ ฟังก์ชันนี้จะ return เงียบๆ ไม่ทำให้แอปพัง
+const VAPID_PUBLIC_KEY = ''; // <-- ใส่ public key จาก: npx web-push generate-vapid-keys
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const raw = atob(base64);
+  const arr = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+  return arr;
+}
+
+async function subscribeToPush() {
+  try {
+    if (!VAPID_PUBLIC_KEY) return; // ยังไม่ตั้งค่า push — ใช้ system notification ไปก่อน
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    if (Notification.permission !== 'granted') return;
+    if (localStorage.getItem('coolpar_notifs_off') === '1') return;
+    const reg = await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) {
+      sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+    }
+    if (sb && authState.user && authState.user.id) {
+      await sb.from('push_subscriptions').upsert({
+        user_id: authState.user.id,
+        endpoint: sub.endpoint,
+        subscription: sub
+      }, { onConflict: 'endpoint' });
+    }
+  } catch (e) { console.warn('push subscribe skipped:', e.message); }
+}
+
+function showSystemNotification(message) {
+  try {
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    if (localStorage.getItem('coolpar_notifs_off') === '1') return; // ผู้ใช้ปิดเอง
+    // เด้งเฉพาะตอนผู้ใช้ไม่ได้โฟกัสแอปอยู่ (กันเด้งซ้ำกับ in-app)
+    if (!document.hidden) return;
+    const icon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%2300A082'/%3E%3Ctext x='256' y='340' font-family='Arial' font-size='280' font-weight='800' fill='white' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E";
+    const opts = { body: message, icon, badge: icon, tag: 'coolpar', renotify: true };
+    // ใช้ service worker ถ้าพร้อม (เสถียรกว่าบนมือถือ) ไม่งั้น fallback
+    if ('serviceWorker' in navigator && navigator.serviceWorker.ready) {
+      navigator.serviceWorker.ready.then(reg => {
+        reg.showNotification('Coolpar', opts).catch(() => {
+          try { new Notification('Coolpar', opts); } catch (e) {}
+        });
+      }).catch(() => { try { new Notification('Coolpar', opts); } catch (e) {} });
+    } else {
+      new Notification('Coolpar', opts);
+    }
+  } catch (e) {}
+}
+
 function addNotification(type, titleTH, titleEN) {
   playNotifSound();
+  showSystemNotification(currentLang === 'EN' ? titleEN : titleTH);
   const newNotif = {
     id: 'n_' + Date.now(),
     type, titleTH, titleEN,
@@ -13741,6 +14003,8 @@ function initApp() {
         fetchBookingsFromDB();
         fetchNotificationsFromDB();
         subscribeToMessages();
+        subscribeToBookingStatus();
+        subscribeToDriverBookings();
       }
     }).catch(() => {});
   }
@@ -14142,6 +14406,7 @@ async function finishSupabaseLogin(user, fallback) {
   subscribeToMessages();
   subscribeToBookingStatus();
   subscribeToDriverBookings();
+  ensureNotifPermission();
 }
 
 // หน้า login ด้วยเบอร์ + OTP
@@ -14198,22 +14463,21 @@ navBtns.forEach(b => b.addEventListener('click', () => {
     link.href = manifestURL;
     document.head.appendChild(link);
 
-    // service worker แบบ inline (ให้ติดตั้งได้ + cache เบื้องต้น)
+    // service worker: ใช้ไฟล์ ./sw.js จริง (รองรับ Web Push)
+    // ถ้ายังไม่มีไฟล์ → fallback เป็น blob SW (ติดตั้ง/cache ได้ แต่ push ไม่ได้)
     if ('serviceWorker' in navigator) {
       const swCode = `
         self.addEventListener('install', e => self.skipWaiting());
         self.addEventListener('activate', e => self.clients.claim());
         self.addEventListener('fetch', e => {
-          // network-first สำหรับหน้าเว็บ, ปล่อยผ่านสำหรับ API
           if (e.request.method !== 'GET') return;
-          e.respondWith(
-            fetch(e.request).catch(() => caches.match(e.request))
-          );
+          e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
         });
       `;
-      const swBlob = new Blob([swCode], { type: 'application/javascript' });
-      const swURL = URL.createObjectURL(swBlob);
-      navigator.serviceWorker.register(swURL).catch(() => {});
+      navigator.serviceWorker.register('./sw.js').catch(() => {
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+      });
     }
   } catch (e) { console.warn('PWA setup skipped:', e); }
 })();
